@@ -1,11 +1,23 @@
-<div align="center">
+# Football Passion - Ultimate Fan Hub
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+An interactive web application for American football enthusiasts featuring real-time superstar analytics, head-to-head player comparisons, fantasy dream team roster building, and an animated stadium field canvas.
 
-  <h1>Built with AI Studio</h2>
+## Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- **Animated Gridiron Field**: Real-time canvas backdrop rendering turf gradients, perspective yard lines, and subtle stadium spotlights.
+- **Kickoff Countdown**: Live countdown timer to the Championship Game.
+- **Daily Fun Fact**: NFL trivia generator with randomizer.
+- **Superstar Spotlight & Directory**: Searchable directory with position filtering (QB, WR, RB, TE, EDGE).
+- **Player Deep-Dive**: Performance ratings, video highlight reels, personal scouting notes, and fan comments.
+- **Head-to-Head Comparison**: Side-by-side visual stat breakdown.
+- **Custom Roster Builder**: Full CRUD fantasy lineup management with CSV export.
+- **Theme & Auth**: Dark/Light mode toggle and login management.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Running Locally
 
-</div>
+```bash
+npm install
+npm run dev
+```
+
+App runs on `http://0.0.0.0:3000`.

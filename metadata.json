@@ -1,0 +1,8 @@
+{
+  "name": "Ian Tapia Reyes - Passion Project",
+  "description": "Personal website of Ian Tapia Reyes featuring football on the offensive line at tackle and center, videos, and fun facts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
