@@ -9,19 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #082414;
-      --bg-card: rgba(11, 33, 20, 0.88);
-      --bg-nav: rgba(5, 20, 12, 0.96);
+      --bg-main: #0c331a;
+      --bg-card: rgba(12, 38, 22, 0.82);
+      --bg-nav: rgba(7, 26, 15, 0.95);
       --text-main: #F8F9FA;
-      --text-muted: #9FB8A4;
+      --text-muted: #A8C4AD;
       --primary: #1E5631;
-      --primary-hover: #297442;
+      --primary-hover: #2A7944;
       --accent: #FFB800;
       --accent-green: #10B981;
       --accent-blue: #38BDF8;
-      --border: rgba(53, 98, 68, 0.55);
+      --border: rgba(62, 118, 80, 0.5);
       --danger: #EF4444;
-      --input-bg: rgba(6, 22, 13, 0.92);
+      --input-bg: rgba(8, 28, 16, 0.9);
     }
 
     [data-theme="light"] {
@@ -42,7 +42,7 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
     body {
-      background-color: #082414;
+      background-color: #0b3017;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -809,7 +809,7 @@
   </footer>
 
   <script>
-        // --- REAL AMERICAN FOOTBALL FIELD CANVAS BACKGROUND ---
+            // --- REAL AMERICAN FOOTBALL FIELD & THROWN SPIRAL FOOTBALLS ENGINE ---
     const canvas = document.getElementById('field-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -820,118 +820,253 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Floating leather footballs with laces drifting across the stadium field
-    const floatingFootballs = [];
-    for (let i = 0; i < 10; i++) {
-      floatingFootballs.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: 22 + Math.random() * 26,
-        speedX: (Math.random() - 0.5) * 0.7,
-        speedY: -0.35 - Math.random() * 0.7,
-        rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.018,
-        opacity: 0.18 + Math.random() * 0.22
-      });
+    // CLASS: Real Thrown Football flying across the gridiron in spiral pass trajectories
+    class ThrownFootball {
+      constructor(w, h, startLeft = null, customTarget = null) {
+        this.w = w;
+        this.h = h;
+        this.reset(startLeft, customTarget);
+      }
+
+      reset(forceLeft = null, customTarget = null) {
+        const fromLeft = forceLeft !== null ? forceLeft : (Math.random() > 0.45);
+        
+        // Types of throws:
+        // 'bomb' (high deep pass), 'bullet' (fast laser pass), 'slant' (quick slant), 'touchdown' (endzone corner fade)
+        const types = ['bomb', 'bullet', 'slant', 'touchdown'];
+        this.type = types[Math.floor(Math.random() * types.length)];
+
+        if (customTarget) {
+          // Thrown toward user click/tap
+          this.x = fromLeft ? -40 : this.w + 40;
+          this.y = this.h * 0.7 + (Math.random() - 0.5) * 100;
+          const dx = customTarget.x - this.x;
+          const dy = customTarget.y - this.y;
+          const dist = Math.hypot(dx, dy);
+          const speed = 16;
+          this.vx = (dx / dist) * speed;
+          this.vy = (dy / dist) * speed - 4;
+          this.gravity = 0.12;
+        } else if (fromLeft) {
+          // Thrown from left sideline toward right end of field
+          this.x = -60 - Math.random() * 80;
+          this.y = this.h * 0.35 + Math.random() * (this.h * 0.55);
+          const targetX = this.w + 80;
+          const targetY = this.h * 0.1 + Math.random() * (this.h * 0.65);
+
+          const isBomb = this.type === 'bomb' || this.type === 'touchdown';
+          const speed = isBomb ? (11 + Math.random() * 4) : (15 + Math.random() * 5);
+          const angle = Math.atan2(targetY - this.y, targetX - this.x);
+
+          this.vx = Math.cos(angle) * speed;
+          this.vy = Math.sin(angle) * speed - (isBomb ? 5.5 + Math.random() * 2.5 : 2);
+          this.gravity = isBomb ? 0.14 : 0.07;
+        } else {
+          // Thrown from right sideline toward left side of field
+          this.x = this.w + 60 + Math.random() * 80;
+          this.y = this.h * 0.35 + Math.random() * (this.h * 0.55);
+          const targetX = -80;
+          const targetY = this.h * 0.1 + Math.random() * (this.h * 0.65);
+
+          const isBomb = this.type === 'bomb' || this.type === 'touchdown';
+          const speed = isBomb ? (11 + Math.random() * 4) : (15 + Math.random() * 5);
+          const angle = Math.atan2(targetY - this.y, targetX - this.x);
+
+          this.vx = Math.cos(angle) * speed;
+          this.vy = Math.sin(angle) * speed - (isBomb ? 5.5 + Math.random() * 2.5 : 2);
+          this.gravity = isBomb ? 0.14 : 0.07;
+        }
+
+        // Football physical dimensions & spinning rotation
+        this.size = 28 + Math.random() * 16; // Length scale
+        this.spinPhase = Math.random() * Math.PI * 2;
+        this.spinSpeed = 0.28 + Math.random() * 0.24; // Fast spiral spin
+        this.opacity = 0.9;
+        this.trail = [];
+        this.maxTrail = 9;
+        this.delay = Math.random() * 60; // Staggered launch
+      }
+
+      update() {
+        if (this.delay > 0) {
+          this.delay--;
+          return;
+        }
+
+        // Add position to vapor slipstream trail
+        this.trail.unshift({ x: this.x, y: this.y, size: this.size });
+        if (this.trail.length > this.maxTrail) this.trail.pop();
+
+        // Physics step
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += this.gravity;
+        this.spinPhase += this.spinSpeed;
+
+        // Reset when thrown ball leaves field
+        if (this.x < -140 || this.x > this.w + 140 || this.y > this.h + 150) {
+          this.reset();
+        }
+      }
+
+      draw(ctx) {
+        if (this.delay > 0) return;
+
+        // 1. Draw wind slipstream speed trail behind the thrown ball
+        if (this.trail.length > 2) {
+          ctx.save();
+          for (let t = 1; t < this.trail.length; t++) {
+            const p1 = this.trail[t - 1];
+            const p2 = this.trail[t];
+            const alpha = (1 - (t / this.trail.length)) * 0.35;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.lineWidth = (this.size * 0.3) * (1 - (t / this.trail.length));
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // 2. Draw the spiraling Wilson leather football
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // Point the football in the direction it was thrown
+        const flightAngle = Math.atan2(this.vy, this.vx);
+        ctx.rotate(flightAngle);
+        ctx.globalAlpha = this.opacity;
+
+        const s = this.size;
+        const radiusY = s * 0.58;
+
+        // Leather body with rich authentic Wilson NFL pigskin brown gradient
+        const leather = ctx.createLinearGradient(0, -radiusY, 0, radiusY);
+        leather.addColorStop(0, '#7A380C');
+        leather.addColorStop(0.35, '#994B14');
+        leather.addColorStop(0.7, '#6E320A');
+        leather.addColorStop(1, '#421D05');
+        ctx.fillStyle = leather;
+
+        ctx.beginPath();
+        ctx.ellipse(0, 0, s, radiusY, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dark leather seam outline
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#2D1303';
+        ctx.stroke();
+
+        // Authentic white collegiate / pro tip stripes
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.lineWidth = s * 0.11;
+
+        // Left white stripe
+        ctx.beginPath();
+        ctx.arc(-s * 0.46, 0, s * 0.42, -Math.PI * 0.4, Math.PI * 0.4);
+        ctx.stroke();
+
+        // Right white stripe
+        ctx.beginPath();
+        ctx.arc(s * 0.46, 0, s * 0.42, Math.PI * 0.6, Math.PI * 1.4);
+        ctx.stroke();
+
+        // Spiral rotation effect: White laces rotate across the ball's center
+        // The laces oscillate up and down based on this.spinPhase to simulate 3D spiral rotation
+        const laceOffset = Math.sin(this.spinPhase) * (radiusY * 0.65);
+        const laceFacing = Math.cos(this.spinPhase);
+
+        if (laceFacing > -0.2) {
+          ctx.save();
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2.8;
+
+          // Main center lace line
+          ctx.beginPath();
+          ctx.moveTo(-s * 0.32, laceOffset);
+          ctx.lineTo(s * 0.32, laceOffset);
+          ctx.stroke();
+
+          // Perpendicular stitches
+          ctx.lineWidth = 2.2;
+          const stitchHeight = radiusY * 0.22 * Math.max(0.2, laceFacing);
+          for (let l = -0.24; l <= 0.24; l += 0.08) {
+            ctx.beginPath();
+            ctx.moveTo(s * l, laceOffset - stitchHeight);
+            ctx.lineTo(s * l, laceOffset + stitchHeight);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        ctx.restore();
+      }
     }
+
+    // Active fleet of footballs continuously being thrown across the field
+    const thrownFleet = [];
+    const NUM_THROWN_BALLS = 7;
+    for (let b = 0; b < NUM_THROWN_BALLS; b++) {
+      const fb = new ThrownFootball(canvas.width, canvas.height);
+      fb.delay = b * 30; // Staggered entry
+      thrownFleet.push(fb);
+    }
+
+    // Interactive Throw: Click or tap anywhere to throw a spiral football!
+    window.addEventListener('click', (e) => {
+      // Don't intercept if clicking inside inputs or buttons
+      if (['BUTTON', 'INPUT', 'SELECT', 'A', 'TEXTAREA'].includes(e.target.tagName)) return;
+      const customBall = new ThrownFootball(canvas.width, canvas.height, e.clientX < canvas.width / 2, { x: e.clientX, y: e.clientY });
+      customBall.delay = 0;
+      thrownFleet.push(customBall);
+      if (thrownFleet.length > 12) thrownFleet.shift();
+    });
 
     let fieldOffset = 0;
 
-    function drawFootball(ctx, x, y, size, rotation, opacity) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(rotation);
-      ctx.globalAlpha = opacity;
-
-      // Authentic pebble-grain Wilson leather brown
-      const leatherGrad = ctx.createLinearGradient(-size, -size * 0.5, size, size * 0.5);
-      leatherGrad.addColorStop(0, '#6D320A');
-      leatherGrad.addColorStop(0.5, '#8D4311');
-      leatherGrad.addColorStop(1, '#502305');
-      ctx.fillStyle = leatherGrad;
-
-      ctx.beginPath();
-      ctx.ellipse(0, 0, size, size * 0.62, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = '#381602';
-      ctx.stroke();
-
-      // White collegiate / pro tip stripes
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-      ctx.lineWidth = size * 0.09;
-      
-      // Left tip stripe
-      ctx.beginPath();
-      ctx.arc(-size * 0.45, 0, size * 0.38, -Math.PI * 0.4, Math.PI * 0.4);
-      ctx.stroke();
-
-      // Right tip stripe
-      ctx.beginPath();
-      ctx.arc(size * 0.45, 0, size * 0.38, Math.PI * 0.6, Math.PI * 1.4);
-      ctx.stroke();
-
-      // Center white laces
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 2.2;
-      ctx.beginPath();
-      ctx.moveTo(-size * 0.32, 0);
-      ctx.lineTo(size * 0.32, 0);
-      ctx.stroke();
-
-      // Cross stitches
-      for (let l = -0.24; l <= 0.24; l += 0.08) {
-        ctx.beginPath();
-        ctx.moveTo(size * l, -size * 0.14);
-        ctx.lineTo(size * l, size * 0.14);
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    }
-
+    // --- MAIN FOOTBALL FIELD & THROWN FOOTBALLS DRAW LOOP ---
     function drawStadiumBackground() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const w = canvas.width;
       const h = canvas.height;
 
-      // 1. BASE TURF GREEN BACKGROUND
-      ctx.fillStyle = '#0d361c';
+      // 1. VIBRANT STADIUM FIELD TURF
+      ctx.fillStyle = '#115227';
       ctx.fillRect(0, 0, w, h);
 
-      // Determine field dimensions & sidelines
-      // Sidelines positioned with realistic margins on desktop and mobile
-      const sidelineWidth = Math.max(25, Math.min(80, w * 0.06));
+      // Sideline calculations
+      const sidelineWidth = Math.max(30, Math.min(95, w * 0.07));
       const fieldLeft = sidelineWidth;
       const fieldRight = w - sidelineWidth;
       const fieldPlayWidth = fieldRight - fieldLeft;
 
-      // 2. ALTERNATING 5-YARD TURF MOWING STRIPES
-      const stripeHeight = 72; // height of each 5-yard segment
-      fieldOffset = (fieldOffset + 0.3) % (stripeHeight * 2);
+      // 2. ALTERNATING 5-YARD MOWED TURF GRASS STRIPES
+      const stripeHeight = 76; // 5-yard segment
+      fieldOffset = (fieldOffset + 0.35) % (stripeHeight * 2);
 
-      const stripeDark = '#0e381d';
-      const stripeLight = '#144c27';
+      const turfStripeDark = '#125429';
+      const turfStripeLight = '#1a6b36';
 
       const totalStripes = Math.ceil(h / stripeHeight) + 4;
       for (let i = -2; i < totalStripes; i++) {
         const yPos = (i * stripeHeight) + fieldOffset;
         const isAlternate = Math.abs(i) % 2 === 0;
 
-        ctx.fillStyle = isAlternate ? stripeDark : stripeLight;
+        ctx.fillStyle = isAlternate ? turfStripeDark : turfStripeLight;
         ctx.fillRect(fieldLeft, yPos, fieldPlayWidth, stripeHeight);
 
-        // Outside team bench apron (deeper turf green)
-        ctx.fillStyle = '#071f11';
+        // Outside team bench sideline apron
+        ctx.fillStyle = '#082a15';
         ctx.fillRect(0, yPos, fieldLeft, stripeHeight);
         ctx.fillRect(fieldRight, yPos, sidelineWidth, stripeHeight);
       }
 
-      // 3. SOLID WHITE SIDELINES & FIELD BORDERS
+      // 3. SOLID WHITE CHALK SIDELINES & BOUNDARIES
       ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 5;
-      
+      ctx.lineWidth = 6;
+
       // Left sideline
       ctx.beginPath();
       ctx.moveTo(fieldLeft, 0);
@@ -944,9 +1079,8 @@
       ctx.lineTo(fieldRight, h);
       ctx.stroke();
 
-      // 4. YARD LINES, HASH MARKS & YARD NUMBERS
-      // Major 10-yard lines are every 2 stripes (144px), minor 5-yard lines are every stripe (72px)
-      const majorStep = stripeHeight * 2;
+      // 4. CHALK YARD LINES, HASH MARKS & YARD NUMBERS
+      const majorStep = stripeHeight * 2; // 10-yard lines
       const startIdx = Math.floor(-h / majorStep) - 2;
       const endIdx = Math.ceil(h / majorStep) + 3;
 
@@ -955,42 +1089,40 @@
 
       for (let k = startIdx; k < endIdx; k++) {
         const yLine = (k * majorStep) + fieldOffset;
-
-        // Skip if offscreen
         if (yLine < -100 || yLine > h + 100) continue;
 
-        // Calculate yard number: cycle 10, 20, 30, 40, 50, 40, 30, 20, 10
+        // 10, 20, 30, 40, 50, 40, 30, 20
         const yardNumCycle = [10, 20, 30, 40, 50, 40, 30, 20];
         const cycleIdx = Math.abs(k) % yardNumCycle.length;
         const yardNumber = yardNumCycle[cycleIdx];
         const isFifty = yardNumber === 50;
 
         // --- BOLD MAJOR 10-YARD LINE ---
-        ctx.strokeStyle = isFifty ? '#FFB800' : 'rgba(255, 255, 255, 0.9)';
-        ctx.lineWidth = isFifty ? 4.5 : 3.5;
+        ctx.strokeStyle = isFifty ? '#FFB800' : 'rgba(255, 255, 255, 0.95)';
+        ctx.lineWidth = isFifty ? 5 : 4;
         ctx.beginPath();
         ctx.moveTo(fieldLeft, yLine);
         ctx.lineTo(fieldRight, yLine);
         ctx.stroke();
 
-        // 50-Yard Line Midfield Star / Accent
-        if (isFifty && fieldPlayWidth > 400) {
-          ctx.strokeStyle = 'rgba(255, 184, 0, 0.4)';
-          ctx.lineWidth = 3;
+        // 50-Yard Line Midfield Star & Ring
+        if (isFifty && fieldPlayWidth > 420) {
+          ctx.strokeStyle = 'rgba(255, 184, 0, 0.6)';
+          ctx.lineWidth = 3.5;
           ctx.beginPath();
-          ctx.arc(w * 0.5, yLine, 50, 0, Math.PI * 2);
+          ctx.arc(w * 0.5, yLine, 56, 0, Math.PI * 2);
           ctx.stroke();
 
           ctx.fillStyle = '#FFB800';
-          ctx.font = '900 13px Montserrat, sans-serif';
+          ctx.font = '900 15px Montserrat, sans-serif';
           ctx.fillText('★ 50 ★', w * 0.5, yLine);
         }
 
-        // --- 5-YARD LINE (Midway between 10-yard lines) ---
+        // --- 5-YARD LINE ---
         const y5 = yLine + stripeHeight;
         if (y5 >= 0 && y5 <= h) {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.lineWidth = 2.5;
           ctx.beginPath();
           ctx.moveTo(fieldLeft, y5);
           ctx.lineTo(fieldRight, y5);
@@ -998,99 +1130,115 @@
         }
 
         // --- 1-YARD NFL HASH MARKS ---
-        // 4 tracks: left sideline in-bounds, left hash, right hash, right sideline in-bounds
-        const hashLeftOuter = fieldLeft + 16;
-        const hashRightOuter = fieldRight - 16;
+        const hashLeftOuter = fieldLeft + 18;
+        const hashRightOuter = fieldRight - 18;
         const hashLeftCenter = fieldLeft + (fieldPlayWidth * 0.38);
         const hashRightCenter = fieldLeft + (fieldPlayWidth * 0.62);
 
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.68)';
+        ctx.lineWidth = 2.2;
 
         for (let sub = 1; sub < 10; sub++) {
           const yHash = yLine + (stripeHeight * 0.2 * sub);
           if (yHash < 0 || yHash > h) continue;
 
-          // Left Outer Hash
           ctx.beginPath();
-          ctx.moveTo(hashLeftOuter - 6, yHash);
-          ctx.lineTo(hashLeftOuter + 6, yHash);
+          ctx.moveTo(hashLeftOuter - 7, yHash);
+          ctx.lineTo(hashLeftOuter + 7, yHash);
           ctx.stroke();
 
-          // Left Center Hash
           ctx.beginPath();
-          ctx.moveTo(hashLeftCenter - 6, yHash);
-          ctx.lineTo(hashLeftCenter + 6, yHash);
+          ctx.moveTo(hashLeftCenter - 7, yHash);
+          ctx.lineTo(hashLeftCenter + 7, yHash);
           ctx.stroke();
 
-          // Right Center Hash
           ctx.beginPath();
-          ctx.moveTo(hashRightCenter - 6, yHash);
-          ctx.lineTo(hashRightCenter + 6, yHash);
+          ctx.moveTo(hashRightCenter - 7, yHash);
+          ctx.lineTo(hashRightCenter + 7, yHash);
           ctx.stroke();
 
-          // Right Outer Hash
           ctx.beginPath();
-          ctx.moveTo(hashRightOuter - 6, yHash);
-          ctx.lineTo(hashRightOuter + 6, yHash);
+          ctx.moveTo(hashRightOuter - 7, yHash);
+          ctx.lineTo(hashRightOuter + 7, yHash);
           ctx.stroke();
         }
 
-        // --- YARD NUMBERS PAINTED ON THE FIELD (10, 20, 30, 40, 50, etc.) ---
-        // Painted inward from both sidelines in classic NFL athletic stencil typography
-        if (fieldPlayWidth > 450) {
-          ctx.font = '800 24px Montserrat, Arial Black, sans-serif';
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        // --- ATHLETIC YARD NUMBERS (10, 20, 30, 40, 50, etc.) ---
+        if (fieldPlayWidth > 460) {
+          ctx.font = '900 28px Montserrat, Arial Black, sans-serif';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
 
-          const arrow = isFifty ? '' : (cycleIdx < 4 ? ' ◄' : '► ');
           const textLeft = isFifty ? '50' : (cycleIdx < 4 ? `${yardNumber} ◄` : `► ${yardNumber}`);
           const textRight = isFifty ? '50' : (cycleIdx < 4 ? `► ${yardNumber}` : `${yardNumber} ◄`);
 
-          // Left numbers track
-          ctx.fillText(textLeft, fieldLeft + 55, yLine);
-
-          // Right numbers track
-          ctx.fillText(textRight, fieldRight - 55, yLine);
+          ctx.fillText(textLeft, fieldLeft + 62, yLine);
+          ctx.fillText(textRight, fieldRight - 62, yLine);
         }
       }
 
-      // 5. STADIUM FLOODLIGHTS & LIGHTING BLOOMS
-      // Top-left and Top-right stadium spotlight towers casting warm white/gold lighting
-      const lightLeft = ctx.createRadialGradient(w * 0.2, 0, 40, w * 0.35, h * 0.45, w * 0.75);
-      lightLeft.addColorStop(0, 'rgba(255, 255, 230, 0.18)');
-      lightLeft.addColorStop(0.5, 'rgba(30, 86, 49, 0.12)');
-      lightLeft.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = lightLeft;
+      // 5. YELLOW NFL GOAL POST (FIELD GOAL UPRIGHTS) AT TOP OF FIELD
+      if (w > 480) {
+        ctx.save();
+        ctx.strokeStyle = '#FFC800';
+        ctx.lineWidth = 6;
+        ctx.shadowColor = 'rgba(255, 200, 0, 0.6)';
+        ctx.shadowBlur = 15;
+
+        const goalCenterX = w * 0.5;
+        const crossbarY = 32;
+        const postSpan = Math.min(180, fieldPlayWidth * 0.28);
+
+        // Center base post
+        ctx.beginPath();
+        ctx.moveTo(goalCenterX, 0);
+        ctx.lineTo(goalCenterX, crossbarY);
+        ctx.stroke();
+
+        // Horizontal crossbar
+        ctx.beginPath();
+        ctx.moveTo(goalCenterX - postSpan / 2, crossbarY);
+        ctx.lineTo(goalCenterX + postSpan / 2, crossbarY);
+        ctx.stroke();
+
+        // Vertical uprights
+        ctx.beginPath();
+        ctx.moveTo(goalCenterX - postSpan / 2, crossbarY);
+        ctx.lineTo(goalCenterX - postSpan / 2, 0);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(goalCenterX + postSpan / 2, crossbarY);
+        ctx.lineTo(goalCenterX + postSpan / 2, 0);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 6. STADIUM NIGHT FLOODLIGHTS
+      const spotLeft = ctx.createRadialGradient(w * 0.15, 0, 30, w * 0.35, h * 0.45, w * 0.8);
+      spotLeft.addColorStop(0, 'rgba(255, 255, 240, 0.22)');
+      spotLeft.addColorStop(0.5, 'rgba(30, 110, 50, 0.14)');
+      spotLeft.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = spotLeft;
       ctx.fillRect(0, 0, w, h);
 
-      const lightRight = ctx.createRadialGradient(w * 0.8, 0, 40, w * 0.65, h * 0.45, w * 0.75);
-      lightRight.addColorStop(0, 'rgba(255, 245, 200, 0.16)');
-      lightRight.addColorStop(0.5, 'rgba(30, 86, 49, 0.12)');
-      lightRight.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = lightRight;
+      const spotRight = ctx.createRadialGradient(w * 0.85, 0, 30, w * 0.65, h * 0.45, w * 0.8);
+      spotRight.addColorStop(0, 'rgba(255, 250, 210, 0.2)');
+      spotRight.addColorStop(0.5, 'rgba(30, 110, 50, 0.14)');
+      spotRight.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = spotRight;
       ctx.fillRect(0, 0, w, h);
 
-      // Subtle atmospheric vignette around borders to keep content legible
-      const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, w * 0.25, w * 0.5, h * 0.5, w * 0.75);
+      // Subtle atmospheric vignette
+      const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, w * 0.28, w * 0.5, h * 0.5, w * 0.78);
       vig.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      vig.addColorStop(1, 'rgba(4, 15, 8, 0.55)');
+      vig.addColorStop(1, 'rgba(5, 20, 10, 0.48)');
       ctx.fillStyle = vig;
       ctx.fillRect(0, 0, w, h);
 
-      // 6. FLOATING WILSON LEATHER FOOTBALLS ACROSS THE FIELD
-      floatingFootballs.forEach(fb => {
-        fb.x += fb.speedX;
-        fb.y += fb.speedY;
-        fb.rotation += fb.rotSpeed;
-
-        if (fb.y < -60) {
-          fb.y = canvas.height + 60;
-          fb.x = Math.random() * canvas.width;
-        }
-        if (fb.x < -60) fb.x = canvas.width + 60;
-        if (fb.x > canvas.width + 60) fb.x = -60;
-
-        drawFootball(ctx, fb.x, fb.y, fb.size, fb.rotation, fb.opacity);
+      // 7. DRAW AND UPDATE ALL THROWN SPIRAL FOOTBALLS
+      thrownFleet.forEach(football => {
+        football.update();
+        football.draw(ctx);
       });
 
       requestAnimationFrame(drawStadiumBackground);
