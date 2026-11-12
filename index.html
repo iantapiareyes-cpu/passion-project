@@ -52,30 +52,14 @@
     }
     h1, h2, h3, h4, .brand-title { font-family: 'Montserrat', sans-serif; text-transform: uppercase; }
 
-    /* High-Definition Photographic Football Field Background */
-    #bg-photo-layer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      background-image: linear-gradient(rgba(5, 20, 11, 0.45), rgba(5, 20, 11, 0.68)), url('https://images.unsplash.com/photo-1566577739112-5180d4bf9390?auto=format&fit=crop&w=1920&q=80');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      pointer-events: none;
-      transition: background-image 0.4s ease;
-    }
-
-    /* Transparent Overlay Canvas for Thrown Spiral Footballs */
+    /* Clean Football Field Canvas Background */
     #field-canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 1;
+      z-index: 0;
       pointer-events: none;
     }
 
@@ -485,6 +469,199 @@
     .modal.active { display: flex; }
     .modal-content { background: var(--bg-card); backdrop-filter: blur(15px); border: 1px solid var(--border); padding: 2rem; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
     .modal-theater { max-width: 760px; }
+    .modal-wide { max-width: 720px; }
+
+    /* Login Gate System */
+    .login-gate {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: radial-gradient(circle at center, rgba(6, 22, 13, 0.58), rgba(3, 12, 7, 0.85));
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .login-gate.active { display: flex; }
+    .login-gate-card {
+      background: rgba(9, 28, 16, 0.92);
+      backdrop-filter: blur(18px);
+      border: 2px solid rgba(255, 184, 0, 0.45);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 580px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(30, 86, 49, 0.45);
+      max-height: 92vh;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.35rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+    .auth-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.65rem 1rem;
+      border-radius: 7px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab-btn.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 12px rgba(255, 184, 0, 0.35);
+    }
+    .auth-error-msg {
+      display: none;
+      background: rgba(239, 68, 68, 0.16);
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      color: #FCA5A5;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .auth-error-msg.visible { display: block; }
+
+    /* Profile Pic & All 32 NFL Team Logos Grid */
+    .profile-trigger-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 184, 0, 0.45);
+      padding: 0.28rem 0.7rem 0.28rem 0.32rem;
+      border-radius: 999px;
+      color: #FFF;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .profile-trigger-btn:hover {
+      background: rgba(255, 184, 0, 0.18);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .profile-avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(226,232,240,0.9));
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      padding: 3px;
+    }
+    .profile-avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .profile-preview-large {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.96), rgba(226,232,240,0.88));
+      border: 3px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+      flex-shrink: 0;
+    }
+    .profile-preview-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .nfl-logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+      gap: 0.55rem;
+      max-height: 230px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.32);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .nfl-logo-grid.modal-grid {
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      max-height: 360px;
+    }
+    .nfl-logo-option {
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 0.5rem 0.35rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--text-main);
+    }
+    .nfl-logo-option:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 184, 0, 0.55);
+      transform: translateY(-2px);
+    }
+    .nfl-logo-option.selected {
+      background: rgba(255, 184, 0, 0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 14px rgba(255, 184, 0, 0.38);
+    }
+    .nfl-logo-badge-bg {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    }
+    .nfl-logo-badge-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .nfl-logo-abbr {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+    .nfl-logo-name {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .site-locked {
+      display: none !important;
+    }
 
     /* Video Container */
     .responsive-video { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin: 1rem 0; border: 1px solid var(--border); background: #000; }
@@ -498,10 +675,7 @@
 </head>
 <body>
 
-  <!-- High-Definition Football Field Photographic Wallpaper Layer -->
-  <div id="bg-photo-layer"></div>
-
-  <!-- Animated Canvas for Spiral Footballs Being Thrown Across the Field -->
+  <!-- Football Field Background Canvas -->
   <canvas id="field-canvas"></canvas>
 
   <!-- Navigation Bar -->
@@ -514,18 +688,6 @@
       <button class="nav-btn" id="nav-compare" onclick="switchView('compare')">Head-to-Head</button>
     </div>
     <div class="nav-controls">
-      <!-- Background Switcher Dropdown -->
-      <div style="display:flex; align-items:center; gap:0.35rem;">
-        <select id="bg-selector" onchange="changeBackground(this.value)" style="background:rgba(0,0,0,0.5); border:1px solid var(--border); color:#FFF; padding:0.4rem 0.7rem; border-radius:6px; font-size:0.8rem; font-weight:700; cursor:pointer;" title="Change Football Field Background">
-          <option value="stadium">🏟️ Stadium Under Lights</option>
-          <option value="turf">🏈 Turf & Yard Lines</option>
-          <option value="arena">⚡ Championship Arena</option>
-          <option value="grass">🌿 Green Gridiron Field</option>
-        </select>
-        <button class="btn btn-accent btn-sm" onclick="triggerSpiralThrow()" title="Throw a spiral football across the field!" style="white-space:nowrap;">
-          🏈 Throw Ball!
-        </button>
-      </div>
       <button class="btn btn-outline" style="padding: 0.4rem 0.8rem;" onclick="toggleTheme()" title="Toggle theme">☀️/🌙</button>
       <div id="auth-section">
         <!-- Auth buttons loaded dynamically via JS -->
@@ -818,18 +980,120 @@
     </div>
   </div>
 
-  <!-- AUTH MODAL -->
-  <div class="modal" id="auth-modal">
-    <div class="modal-content">
-      <h3 id="modal-title" style="margin-bottom: 1rem;">Login</h3>
-      <form onsubmit="handleAuthSubmit(event)">
+  <!-- MANDATORY LOGIN GATE TO ENTER THE SITE -->
+  <div class="login-gate" id="login-gate">
+    <div class="login-gate-card">
+      <div style="text-align:center; margin-bottom:1.25rem;">
+        <div style="font-size:2.1rem; line-height:1;">🏈</div>
+        <h2 style="margin-top:0.4rem; font-size:1.55rem; letter-spacing:1px;">
+          FOOTBALL <span style="color:var(--accent);">PASSION v2</span>
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.88rem; margin-top:0.25rem;">
+          Log in or create your fan account to enter the stadium and choose your NFL team profile pic.
+        </p>
+      </div>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tab-signin-btn" onclick="switchAuthTab('signin')">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tab-signup-btn" onclick="switchAuthTab('signup')">Create Account</button>
+      </div>
+
+      <div class="auth-error-msg" id="auth-error-banner"></div>
+
+      <!-- SIGN IN FORM -->
+      <form id="signin-form" onsubmit="handleSignIn(event)">
         <div style="margin-bottom: 1rem;">
-          <label style="display:block; font-size:0.85rem; margin-bottom:0.4rem;">Username</label>
-          <input type="text" id="auth-username" required placeholder="Enter username">
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;">Username</label>
+          <input type="text" id="signin-username" required placeholder="Enter your username">
         </div>
-        <button type="submit" class="btn" style="width: 100%;">Continue</button>
-        <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem;" onclick="closeAuthModal()">Cancel</button>
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;">Password</label>
+          <input type="password" id="signin-password" required placeholder="Enter your password">
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; justify-content:center; font-size:1rem; padding:0.75rem;">
+          🏟️ Log In & Enter Site
+        </button>
+        <p style="text-align:center; font-size:0.82rem; color:var(--text-muted); margin-top:0.9rem;">
+          New here? <a href="#" onclick="event.preventDefault(); switchAuthTab('signup')" style="color:var(--accent); font-weight:700; text-decoration:none;">Create an account & pick your NFL team logo →</a>
+        </p>
       </form>
+
+      <!-- CREATE ACCOUNT FORM WITH ALL 32 NFL TEAM LOGOS -->
+      <form id="signup-form" onsubmit="handleSignUp(event)" style="display:none;">
+        <div class="grid-2" style="gap:0.75rem; margin-bottom:0.9rem;">
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:0.35rem;">Choose Username</label>
+            <input type="text" id="signup-username" required minlength="2" placeholder="e.g. GridironFan15">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:0.35rem;">Create Password</label>
+            <input type="password" id="signup-password" required minlength="4" placeholder="Min 4 characters">
+          </div>
+        </div>
+
+        <!-- NFL Team Profile Pic Selection (All 32 Teams) -->
+        <div style="background:rgba(0,0,0,0.28); border:1px solid var(--border); border-radius:10px; padding:0.9rem; margin-bottom:1.1rem;">
+          <div style="display:flex; align-items:center; gap:0.9rem; margin-bottom:0.75rem;">
+            <div class="profile-preview-large" id="signup-avatar-preview">
+              <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" alt="Selected NFL Team">
+            </div>
+            <div style="flex:1;">
+              <span class="badge badge-accent" style="font-size:0.68rem;">PROFILE PIC • ALL 32 NFL TEAMS</span>
+              <h4 id="signup-team-label" style="margin-top:0.25rem; font-size:1rem;">San Francisco 49ers (SF)</h4>
+              <p style="font-size:0.76rem; color:var(--text-muted); margin-top:0.15rem;">Click any NFL team logo below to set your profile picture.</p>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.55rem; align-items:center;">
+            <button type="button" class="btn btn-sm btn-accent" id="signup-conf-all" onclick="filterSignupLogos('ALL')">All 32</button>
+            <button type="button" class="btn btn-sm btn-outline" id="signup-conf-afc" onclick="filterSignupLogos('AFC')">AFC (16)</button>
+            <button type="button" class="btn btn-sm btn-outline" id="signup-conf-nfc" onclick="filterSignupLogos('NFC')">NFC (16)</button>
+            <input type="text" id="signup-team-search" placeholder="Search NFL team..." oninput="renderSignupLogoGrid()" style="flex:1; min-width:120px; padding:0.32rem 0.6rem; font-size:0.8rem;">
+          </div>
+
+          <div class="nfl-logo-grid" id="signup-nfl-logo-grid">
+            <!-- All 32 NFL team logos rendered dynamically -->
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-accent" style="width: 100%; justify-content:center; font-size:1rem; padding:0.75rem;">
+          🚀 Create Account & Enter Site
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PROFILE PIC MODAL (ALL 32 NFL TEAM LOGOS) -->
+  <div class="modal" id="profile-pic-modal">
+    <div class="modal-content modal-wide">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="display:flex; align-items:center; gap:0.85rem;">
+          <div class="profile-preview-large" id="modal-avatar-preview">
+            <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" alt="Profile Team Logo">
+          </div>
+          <div>
+            <span class="badge badge-accent">NFL TEAM PROFILE PIC</span>
+            <h3 style="margin-top:0.25rem;" id="modal-profile-username">Fan Profile</h3>
+            <p style="font-size:0.82rem; color:var(--text-muted);" id="modal-profile-team">Selected: San Francisco 49ers</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeProfilePicModal()">✕ Close</button>
+      </div>
+
+      <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-bottom:0.75rem; align-items:center;">
+        <button type="button" class="btn btn-sm btn-accent" id="modal-conf-all" onclick="filterModalLogos('ALL')">All 32 Teams</button>
+        <button type="button" class="btn btn-sm btn-outline" id="modal-conf-afc" onclick="filterModalLogos('AFC')">AFC (16)</button>
+        <button type="button" class="btn btn-sm btn-outline" id="modal-conf-nfc" onclick="filterModalLogos('NFC')">NFC (16)</button>
+        <input type="text" id="modal-team-search" placeholder="Search any of the 32 NFL teams..." oninput="renderModalLogoGrid()" style="flex:1; min-width:160px; padding:0.4rem 0.75rem; font-size:0.85rem;">
+      </div>
+
+      <div class="nfl-logo-grid modal-grid" id="modal-nfl-logo-grid">
+        <!-- All 32 NFL team logos rendered dynamically -->
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+        <button type="button" class="btn btn-accent" onclick="closeProfilePicModal()">Done</button>
+      </div>
     </div>
   </div>
 
@@ -840,243 +1104,129 @@
   </footer>
 
   <script>
-                // --- REAL FOOTBALL FIELD & THROWN SPIRAL FOOTBALLS ENGINE ---
+    // --- CLEAN FOOTBALL FIELD BACKGROUND CANVAS ---
     const canvas = document.getElementById('field-canvas');
     const ctx = canvas.getContext('2d');
-    const bgPhotoLayer = document.getElementById('bg-photo-layer');
 
-    const backgroundPresets = {
-      stadium: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?auto=format&fit=crop&w=1920&q=80',
-      turf: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?auto=format&fit=crop&w=1920&q=80',
-      arena: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=1920&q=80',
-      grass: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1920&q=80'
-    };
-
-    function changeBackground(key) {
-      const url = backgroundPresets[key] || backgroundPresets.stadium;
-      if (bgPhotoLayer) {
-        bgPhotoLayer.style.backgroundImage = `linear-gradient(rgba(5, 20, 11, 0.45), rgba(5, 20, 11, 0.68)), url('${url}')`;
-      }
-      showToast('Field background updated!');
-    }
-
-    function resizeCanvas() {
+    function drawFootballFieldBackground() {
+      if (!canvas || !ctx) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
 
-    // CLASS: Realistic Thrown Football soaring in a high-speed spiral arc
-    class ThrownFootball {
-      constructor(w, h, forceLeft = null, customTarget = null) {
-        this.w = w;
-        this.h = h;
-        this.reset(forceLeft, customTarget);
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Sideline aprons and playing field bounds
+      const sidelineWidth = Math.max(24, Math.min(84, w * 0.065));
+      const fieldLeft = sidelineWidth;
+      const fieldRight = w - sidelineWidth;
+      const fieldPlayWidth = fieldRight - fieldLeft;
+
+      // Divide visible height cleanly into 10-yard / 5-yard turf segments centered on the 50-yard line
+      const numTenYardBands = 6;
+      const majorStep = h / numTenYardBands;
+      const stripeHeight = majorStep / 2;
+
+      // 1. Base sideline turf apron
+      ctx.fillStyle = '#082a14';
+      ctx.fillRect(0, 0, w, h);
+
+      // 2. Alternating 5-yard mowed emerald turf stripes
+      const turfDark = '#135a2a';
+      const turfLight = '#196e35';
+      const totalStripes = Math.ceil(h / stripeHeight) + 1;
+      for (let i = 0; i < totalStripes; i++) {
+        ctx.fillStyle = i % 2 === 0 ? turfDark : turfLight;
+        ctx.fillRect(fieldLeft, i * stripeHeight, fieldPlayWidth, stripeHeight + 1);
       }
 
-      reset(forceLeft = null, customTarget = null) {
-        const fromLeft = forceLeft !== null ? forceLeft : (Math.random() > 0.45);
-        const types = ['bomb', 'bullet', 'slant', 'laser'];
-        this.type = types[Math.floor(Math.random() * types.length)];
+      // 3. Solid white sidelines
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(fieldLeft, 0);
+      ctx.lineTo(fieldLeft, h);
+      ctx.moveTo(fieldRight, 0);
+      ctx.lineTo(fieldRight, h);
+      ctx.stroke();
 
-        if (customTarget) {
-          // Thrown toward specific coordinates (e.g. click)
-          this.x = fromLeft ? -50 : this.w + 50;
-          this.y = this.h * 0.7 + (Math.random() - 0.5) * 80;
-          const dx = customTarget.x - this.x;
-          const dy = customTarget.y - this.y;
-          const dist = Math.hypot(dx, dy) || 1;
-          const speed = 18;
-          this.vx = (dx / dist) * speed;
-          this.vy = (dy / dist) * speed - 4.5;
-          this.gravity = 0.13;
-        } else if (fromLeft) {
-          // Thrown from left sideline toward right endzone
-          this.x = -70 - Math.random() * 80;
-          this.y = this.h * 0.4 + Math.random() * (this.h * 0.5);
-          const targetX = this.w + 80;
-          const targetY = this.h * 0.1 + Math.random() * (this.h * 0.6);
+      // 4. Yard lines, hash marks, and yard numbers (20, 30, 40, 50, 40, 30, 20)
+      const yardLabels = [20, 30, 40, 50, 40, 30, 20];
+      const hashLeftOuter = fieldLeft + 18;
+      const hashRightOuter = fieldRight - 18;
+      const hashLeftCenter = fieldLeft + fieldPlayWidth * 0.38;
+      const hashRightCenter = fieldLeft + fieldPlayWidth * 0.62;
 
-          const isBomb = this.type === 'bomb';
-          const speed = isBomb ? (12 + Math.random() * 4) : (16 + Math.random() * 5);
-          const angle = Math.atan2(targetY - this.y, targetX - this.x);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-          this.vx = Math.cos(angle) * speed;
-          this.vy = Math.sin(angle) * speed - (isBomb ? 6 + Math.random() * 2.5 : 2.5);
-          this.gravity = isBomb ? 0.15 : 0.08;
-        } else {
-          // Thrown from right sideline toward left side
-          this.x = this.w + 70 + Math.random() * 80;
-          this.y = this.h * 0.4 + Math.random() * (this.h * 0.5);
-          const targetX = -80;
-          const targetY = this.h * 0.1 + Math.random() * (this.h * 0.6);
+      for (let k = 0; k <= numTenYardBands; k++) {
+        const yLine = k * majorStep;
+        const yardNumber = yardLabels[k] || 10;
+        const isFifty = yardNumber === 50;
 
-          const isBomb = this.type === 'bomb';
-          const speed = isBomb ? (12 + Math.random() * 4) : (16 + Math.random() * 5);
-          const angle = Math.atan2(targetY - this.y, targetX - this.x);
-
-          this.vx = Math.cos(angle) * speed;
-          this.vy = Math.sin(angle) * speed - (isBomb ? 6 + Math.random() * 2.5 : 2.5);
-          this.gravity = isBomb ? 0.15 : 0.08;
-        }
-
-        this.size = 30 + Math.random() * 18;
-        this.spinPhase = Math.random() * Math.PI * 2;
-        this.spinSpeed = 0.32 + Math.random() * 0.22; // High-speed spiral rotation
-        this.opacity = 0.95;
-        this.trail = [];
-        this.maxTrail = 10;
-        this.delay = Math.random() * 45;
-      }
-
-      update() {
-        if (this.delay > 0) {
-          this.delay--;
-          return;
-        }
-
-        this.trail.unshift({ x: this.x, y: this.y, size: this.size });
-        if (this.trail.length > this.maxTrail) this.trail.pop();
-
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy += this.gravity;
-        this.spinPhase += this.spinSpeed;
-
-        if (this.x < -150 || this.x > this.w + 150 || this.y > this.h + 160) {
-          this.reset();
-        }
-      }
-
-      draw(ctx) {
-        if (this.delay > 0) return;
-
-        // 1. Aerodynamic speed trail behind the thrown football
-        if (this.trail.length > 2) {
-          ctx.save();
-          for (let t = 1; t < this.trail.length; t++) {
-            const p1 = this.trail[t - 1];
-            const p2 = this.trail[t];
-            const factor = 1 - (t / this.trail.length);
-            ctx.strokeStyle = `rgba(255, 230, 150, ${factor * 0.45})`;
-            ctx.lineWidth = (this.size * 0.35) * factor;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-
-        // 2. Draw spiraling football aligned to flight path
-        ctx.save();
-        ctx.translate(this.x, this.y);
-
-        const flightAngle = Math.atan2(this.vy, this.vx);
-        ctx.rotate(flightAngle);
-        ctx.globalAlpha = this.opacity;
-
-        const s = this.size;
-        const radiusY = s * 0.58;
-
-        // Rich Wilson NFL leather texture gradient
-        const leather = ctx.createLinearGradient(0, -radiusY, 0, radiusY);
-        leather.addColorStop(0, '#823D0F');
-        leather.addColorStop(0.35, '#A85317');
-        leather.addColorStop(0.7, '#75350B');
-        leather.addColorStop(1, '#471F06');
-        ctx.fillStyle = leather;
-
+        // 10-yard line
+        ctx.strokeStyle = isFifty ? '#FFB800' : 'rgba(255, 255, 255, 0.92)';
+        ctx.lineWidth = isFifty ? 4.5 : 3.5;
         ctx.beginPath();
-        ctx.ellipse(0, 0, s, radiusY, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = '#281103';
+        ctx.moveTo(fieldLeft, yLine);
+        ctx.lineTo(fieldRight, yLine);
         ctx.stroke();
 
-        // Collegiate / NFL white tip stripes
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
-        ctx.lineWidth = s * 0.12;
-
-        // Left tip stripe
-        ctx.beginPath();
-        ctx.arc(-s * 0.46, 0, s * 0.42, -Math.PI * 0.4, Math.PI * 0.4);
-        ctx.stroke();
-
-        // Right tip stripe
-        ctx.beginPath();
-        ctx.arc(s * 0.46, 0, s * 0.42, Math.PI * 0.6, Math.PI * 1.4);
-        ctx.stroke();
-
-        // 3D Tight Spiral: White laces rotate around the football
-        const laceOffset = Math.sin(this.spinPhase) * (radiusY * 0.65);
-        const laceFacing = Math.cos(this.spinPhase);
-
-        if (laceFacing > -0.25) {
-          ctx.save();
-          ctx.strokeStyle = '#FFFFFF';
+        // Midfield 50-yard marker circle
+        if (isFifty && fieldPlayWidth > 360) {
+          ctx.strokeStyle = 'rgba(255, 184, 0, 0.5)';
           ctx.lineWidth = 3;
-
-          // Center lace line
           ctx.beginPath();
-          ctx.moveTo(-s * 0.34, laceOffset);
-          ctx.lineTo(s * 0.34, laceOffset);
+          ctx.arc(w * 0.5, yLine, 48, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // 5-yard line & 1-yard hash marks between 10-yard lines
+        if (k < numTenYardBands) {
+          const y5 = yLine + stripeHeight;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(fieldLeft, y5);
+          ctx.lineTo(fieldRight, y5);
           ctx.stroke();
 
-          // Cross stitches
-          ctx.lineWidth = 2.4;
-          const stitchHeight = radiusY * 0.24 * Math.max(0.2, laceFacing);
-          for (let l = -0.24; l <= 0.24; l += 0.08) {
-            ctx.beginPath();
-            ctx.moveTo(s * l, laceOffset - stitchHeight);
-            ctx.lineTo(s * l, laceOffset + stitchHeight);
-            ctx.stroke();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+          ctx.lineWidth = 2;
+          for (let sub = 1; sub < 10; sub++) {
+            if (sub === 5) continue;
+            const yHash = yLine + (majorStep * 0.1 * sub);
+            [hashLeftOuter, hashLeftCenter, hashRightCenter, hashRightOuter].forEach(hx => {
+              ctx.beginPath();
+              ctx.moveTo(hx - 6, yHash);
+              ctx.lineTo(hx + 6, yHash);
+              ctx.stroke();
+            });
           }
-          ctx.restore();
         }
 
-        ctx.restore();
+        // Painted yard numbers along both sidelines
+        if (k > 0 && k < numTenYardBands && fieldPlayWidth > 420) {
+          ctx.font = '900 26px Montserrat, Arial Black, sans-serif';
+          ctx.fillStyle = isFifty ? 'rgba(255, 184, 0, 0.92)' : 'rgba(255, 255, 255, 0.85)';
+          const textLeft = isFifty ? '50' : (k < 3 ? `${yardNumber} ◄` : `► ${yardNumber}`);
+          const textRight = isFifty ? '50' : (k < 3 ? `► ${yardNumber}` : `${yardNumber} ◄`);
+          ctx.fillText(textLeft, fieldLeft + 58, yLine);
+          ctx.fillText(textRight, fieldRight - 58, yLine);
+        }
       }
+
+      // Subtle vignette so foreground cards stay crisp and legible
+      const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, w * 0.25, w * 0.5, h * 0.5, w * 0.8);
+      vig.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vig.addColorStop(1, 'rgba(4, 18, 9, 0.45)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
     }
 
-    // Fleet of thrown footballs
-    const thrownFleet = [];
-    const NUM_THROWN_BALLS = 8;
-    for (let b = 0; b < NUM_THROWN_BALLS; b++) {
-      const fb = new ThrownFootball(canvas.width, canvas.height);
-      fb.delay = b * 25;
-      thrownFleet.push(fb);
-    }
-
-    function triggerSpiralThrow(customTarget = null) {
-      const fb = new ThrownFootball(canvas.width, canvas.height, Math.random() > 0.5, customTarget || { x: canvas.width * 0.5, y: canvas.height * 0.3 });
-      fb.delay = 0;
-      thrownFleet.push(fb);
-      if (thrownFleet.length > 14) thrownFleet.shift();
-      showToast('🏈 Spiral pass thrown!');
-    }
-
-    // Click/tap anywhere on background to throw a football!
-    window.addEventListener('click', (e) => {
-      if (['BUTTON', 'INPUT', 'SELECT', 'A', 'TEXTAREA'].includes(e.target.tagName)) return;
-      triggerSpiralThrow({ x: e.clientX, y: e.clientY });
-    });
-
-    // --- ANIMATION LOOP: THROWN FOOTBALLS OVER FOOTBALL FIELD ---
-    function drawStadiumBackground() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw all spiraling thrown footballs in flight
-      thrownFleet.forEach(football => {
-        football.update();
-        football.draw(ctx);
-      });
-
-      requestAnimationFrame(drawStadiumBackground);
-    }
-    drawStadiumBackground();
+    window.addEventListener('resize', drawFootballFieldBackground);
+    drawFootballFieldBackground();
 
     // --- 100% REAL NFL SUPERSTARS DATABASE WITH VERIFIED OFFICIAL HEADSHOTS ---
     const realNFLPlayers = [
@@ -3764,18 +3914,62 @@
       "Iowa has earned the nickname 'Tight End University' for producing stars George Kittle, Sam LaPorta, and T.J. Hockenson."
     ];
 
+    // --- ALL 32 NFL TEAM LOGOS DATABASE FOR PROFILE PICS ---
+    const nflTeamsList = [
+      { abbr: 'ARI', name: 'Arizona Cardinals', shortName: 'Cardinals', conference: 'NFC', color: '#a40227', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png' },
+      { abbr: 'ATL', name: 'Atlanta Falcons', shortName: 'Falcons', conference: 'NFC', color: '#a71930', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/atl.png' },
+      { abbr: 'BAL', name: 'Baltimore Ravens', shortName: 'Ravens', conference: 'AFC', color: '#29126f', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png' },
+      { abbr: 'BUF', name: 'Buffalo Bills', shortName: 'Bills', conference: 'AFC', color: '#00338d', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png' },
+      { abbr: 'CAR', name: 'Carolina Panthers', shortName: 'Panthers', conference: 'NFC', color: '#0085ca', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/car.png' },
+      { abbr: 'CHI', name: 'Chicago Bears', shortName: 'Bears', conference: 'NFC', color: '#0b1c3a', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/chi.png' },
+      { abbr: 'CIN', name: 'Cincinnati Bengals', shortName: 'Bengals', conference: 'AFC', color: '#fb4f14', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png' },
+      { abbr: 'CLE', name: 'Cleveland Browns', shortName: 'Browns', conference: 'AFC', color: '#472a08', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/cle.png' },
+      { abbr: 'DAL', name: 'Dallas Cowboys', shortName: 'Cowboys', conference: 'NFC', color: '#002a5c', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png' },
+      { abbr: 'DEN', name: 'Denver Broncos', shortName: 'Broncos', conference: 'AFC', color: '#0a2343', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/den.png' },
+      { abbr: 'DET', name: 'Detroit Lions', shortName: 'Lions', conference: 'NFC', color: '#0076b6', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png' },
+      { abbr: 'GB', name: 'Green Bay Packers', shortName: 'Packers', conference: 'NFC', color: '#204e32', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png' },
+      { abbr: 'HOU', name: 'Houston Texans', shortName: 'Texans', conference: 'AFC', color: '#021018', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png' },
+      { abbr: 'IND', name: 'Indianapolis Colts', shortName: 'Colts', conference: 'AFC', color: '#003b75', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ind.png' },
+      { abbr: 'JAX', name: 'Jacksonville Jaguars', shortName: 'Jaguars', conference: 'AFC', color: '#007487', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/jax.png' },
+      { abbr: 'KC', name: 'Kansas City Chiefs', shortName: 'Chiefs', conference: 'AFC', color: '#e31837', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png' },
+      { abbr: 'LV', name: 'Las Vegas Raiders', shortName: 'Raiders', conference: 'AFC', color: '#000000', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/lv.png' },
+      { abbr: 'LAC', name: 'Los Angeles Chargers', shortName: 'Chargers', conference: 'AFC', color: '#0080c6', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/lac.png' },
+      { abbr: 'LAR', name: 'Los Angeles Rams', shortName: 'Rams', conference: 'NFC', color: '#003594', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png' },
+      { abbr: 'MIA', name: 'Miami Dolphins', shortName: 'Dolphins', conference: 'AFC', color: '#008e97', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/mia.png' },
+      { abbr: 'MIN', name: 'Minnesota Vikings', shortName: 'Vikings', conference: 'NFC', color: '#4f2683', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/min.png' },
+      { abbr: 'NE', name: 'New England Patriots', shortName: 'Patriots', conference: 'AFC', color: '#002a5c', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png' },
+      { abbr: 'NO', name: 'New Orleans Saints', shortName: 'Saints', conference: 'NFC', color: '#d3bc8d', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/no.png' },
+      { abbr: 'NYG', name: 'New York Giants', shortName: 'Giants', conference: 'NFC', color: '#003c7f', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png' },
+      { abbr: 'NYJ', name: 'New York Jets', shortName: 'Jets', conference: 'AFC', color: '#115740', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png' },
+      { abbr: 'PHI', name: 'Philadelphia Eagles', shortName: 'Eagles', conference: 'NFC', color: '#06424d', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png' },
+      { abbr: 'PIT', name: 'Pittsburgh Steelers', shortName: 'Steelers', conference: 'AFC', color: '#000000', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/pit.png' },
+      { abbr: 'SF', name: 'San Francisco 49ers', shortName: '49ers', conference: 'NFC', color: '#aa0000', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png' },
+      { abbr: 'SEA', name: 'Seattle Seahawks', shortName: 'Seahawks', conference: 'NFC', color: '#002a5c', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png' },
+      { abbr: 'TB', name: 'Tampa Bay Buccaneers', shortName: 'Buccaneers', conference: 'NFC', color: '#bd1c36', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/tb.png' },
+      { abbr: 'TEN', name: 'Tennessee Titans', shortName: 'Titans', conference: 'AFC', color: '#4495d2', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png' },
+      { abbr: 'WSH', name: 'Washington Commanders', shortName: 'Commanders', conference: 'NFC', color: '#5a1414', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png' }
+    ];
+
     // --- STATE MANAGEMENT ---
     let currentUser = localStorage.getItem('fp_user') || null;
+    let currentUserTeam = localStorage.getItem('fp_user_team') || 'SF';
+    let userAccounts = JSON.parse(localStorage.getItem('fp_accounts')) || {};
     let comments = JSON.parse(localStorage.getItem('fp_comments')) || {};
     let personalNotes = JSON.parse(localStorage.getItem('fp_notes')) || {};
     let players = realNFLPlayers;
     let currentHighlightPlayerIndex = 0;
 
+    let signupSelectedTeam = 'SF';
+    let signupLogoConfFilter = 'ALL';
+    let modalLogoConfFilter = 'ALL';
+
     // --- APP INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
       initCountdown();
       loadRandomFact();
+      enforceLoginGate();
       renderAuthUI();
+      renderSignupLogoGrid();
       renderSpotlight();
       renderDirectory();
       renderColleges();
@@ -4196,11 +4390,20 @@
           <h3>💬 Fan Comments</h3>
           <div style="margin:1rem 0;" id="comments-list">
             ${pComments.length === 0 ? '<p style="color:var(--text-muted);">No comments yet. Be the first!</p>' : ''}
-            ${pComments.map(c => `
-              <div style="background:var(--input-bg); padding:0.75rem 1rem; border-radius:6px; margin-bottom:0.5rem; border:1px solid var(--border);">
-                <strong>${c.user}:</strong> <span style="color:var(--text-muted);">${c.text}</span>
+            ${pComments.map(c => {
+              const teamObj = getTeamByAbbr(c.teamAbbr || 'SF');
+              return `
+              <div style="background:var(--input-bg); padding:0.75rem 1rem; border-radius:8px; margin-bottom:0.5rem; border:1px solid var(--border); display:flex; align-items:center; gap:0.75rem;">
+                <div class="profile-avatar-circle" style="width:30px; height:30px; border-color:${teamObj.color};" title="${teamObj.name}">
+                  <img src="${teamObj.logo}" alt="${teamObj.shortName}">
+                </div>
+                <div>
+                  <strong>${escapeHtml(c.user)}</strong> <span style="font-size:0.72rem; color:var(--accent); font-weight:700;">(${teamObj.abbr})</span>:
+                  <span style="color:var(--text-muted);">${escapeHtml(c.text)}</span>
+                </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
           ${currentUser ? `
             <div style="display:flex; gap:0.5rem;">
@@ -4226,7 +4429,7 @@
       if(!input.value.trim()) return;
 
       if(!comments[playerId]) comments[playerId] = [];
-      comments[playerId].push({ user: currentUser, text: input.value.trim() });
+      comments[playerId].push({ user: currentUser, teamAbbr: currentUserTeam, text: input.value.trim() });
       localStorage.setItem('fp_comments', JSON.stringify(comments));
 
       openPlayerDetail(playerId);
@@ -4813,40 +5016,279 @@
       }
     }
 
-    // --- AUTHENTICATION MODULE ---
+    // --- AUTHENTICATION GATE & 32-TEAM NFL PROFILE PIC MODULE ---
+    function getTeamByAbbr(abbr) {
+      return nflTeamsList.find(t => t.abbr === abbr) || nflTeamsList.find(t => t.abbr === 'SF') || nflTeamsList[0];
+    }
+
+    function enforceLoginGate() {
+      const gate = document.getElementById('login-gate');
+      const nav = document.querySelector('.navbar');
+      const main = document.querySelector('main.container');
+      const footer = document.querySelector('footer');
+
+      if (!currentUser) {
+        if (gate) gate.classList.add('active');
+        if (nav) nav.classList.add('site-locked');
+        if (main) main.classList.add('site-locked');
+        if (footer) footer.classList.add('site-locked');
+      } else {
+        if (gate) gate.classList.remove('active');
+        if (nav) nav.classList.remove('site-locked');
+        if (main) main.classList.remove('site-locked');
+        if (footer) footer.classList.remove('site-locked');
+      }
+    }
+
+    function switchAuthTab(tab) {
+      const signinForm = document.getElementById('signin-form');
+      const signupForm = document.getElementById('signup-form');
+      const signinBtn = document.getElementById('tab-signin-btn');
+      const signupBtn = document.getElementById('tab-signup-btn');
+      const errBanner = document.getElementById('auth-error-banner');
+      if (errBanner) errBanner.classList.remove('visible');
+
+      if (tab === 'signup') {
+        signinForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        signinBtn.classList.remove('active');
+        signupBtn.classList.add('active');
+        renderSignupLogoGrid();
+      } else {
+        signinForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        signinBtn.classList.add('active');
+        signupBtn.classList.remove('active');
+      }
+    }
+
+    function showAuthError(msg) {
+      const errBanner = document.getElementById('auth-error-banner');
+      if (!errBanner) return;
+      errBanner.textContent = msg;
+      errBanner.classList.add('visible');
+    }
+
+    function filterSignupLogos(conf) {
+      signupLogoConfFilter = conf;
+      ['all', 'afc', 'nfc'].forEach(c => {
+        const btn = document.getElementById(`signup-conf-${c}`);
+        if (btn) {
+          btn.className = (conf.toLowerCase() === c) ? 'btn btn-sm btn-accent' : 'btn btn-sm btn-outline';
+        }
+      });
+      renderSignupLogoGrid();
+    }
+
+    function renderSignupLogoGrid() {
+      const grid = document.getElementById('signup-nfl-logo-grid');
+      if (!grid) return;
+      const search = (document.getElementById('signup-team-search')?.value || '').toLowerCase().trim();
+
+      const filtered = nflTeamsList.filter(t => {
+        const matchConf = signupLogoConfFilter === 'ALL' || t.conference === signupLogoConfFilter;
+        const matchSearch = !search || t.name.toLowerCase().includes(search) || t.abbr.toLowerCase().includes(search);
+        return matchConf && matchSearch;
+      });
+
+      grid.innerHTML = filtered.map(t => `
+        <button type="button" class="nfl-logo-option ${t.abbr === signupSelectedTeam ? 'selected' : ''}" onclick="selectSignupTeam('${t.abbr}')" title="${t.name}">
+          <div class="nfl-logo-badge-bg" style="border:2px solid ${t.color};">
+            <img src="${t.logo}" alt="${t.name}">
+          </div>
+          <span class="nfl-logo-abbr">${t.abbr}</span>
+          <span class="nfl-logo-name">${t.shortName}</span>
+        </button>
+      `).join('');
+
+      const activeTeam = getTeamByAbbr(signupSelectedTeam);
+      const preview = document.getElementById('signup-avatar-preview');
+      const label = document.getElementById('signup-team-label');
+      if (preview) {
+        preview.style.borderColor = activeTeam.color;
+        preview.innerHTML = `<img src="${activeTeam.logo}" alt="${activeTeam.name}">`;
+      }
+      if (label) label.textContent = `${activeTeam.name} (${activeTeam.abbr})`;
+    }
+
+    function selectSignupTeam(abbr) {
+      signupSelectedTeam = abbr;
+      renderSignupLogoGrid();
+    }
+
+    function handleSignUp(e) {
+      e.preventDefault();
+      const username = document.getElementById('signup-username').value.trim();
+      const password = document.getElementById('signup-password').value;
+
+      if (username.length < 2) {
+        showAuthError('Username must be at least 2 characters.');
+        return;
+      }
+      if (password.length < 4) {
+        showAuthError('Password must be at least 4 characters.');
+        return;
+      }
+
+      const key = username.toLowerCase();
+      if (userAccounts[key]) {
+        showAuthError(`Username "${username}" is already taken. Switch to Sign In or pick another username.`);
+        return;
+      }
+
+      userAccounts[key] = {
+        username: username,
+        password: password,
+        teamAbbr: signupSelectedTeam
+      };
+      localStorage.setItem('fp_accounts', JSON.stringify(userAccounts));
+
+      currentUser = username;
+      currentUserTeam = signupSelectedTeam;
+      localStorage.setItem('fp_user', currentUser);
+      localStorage.setItem('fp_user_team', currentUserTeam);
+
+      enforceLoginGate();
+      renderAuthUI();
+      showToast(`Welcome, ${currentUser}! Entered stadium with ${getTeamByAbbr(currentUserTeam).shortName} logo.`);
+    }
+
+    function handleSignIn(e) {
+      e.preventDefault();
+      const username = document.getElementById('signin-username').value.trim();
+      const password = document.getElementById('signin-password').value;
+      const key = username.toLowerCase();
+      const acct = userAccounts[key];
+
+      if (!acct) {
+        showAuthError(`No account found for "${username}". Click "Create Account" above to sign up and choose your NFL team logo!`);
+        return;
+      }
+      if (acct.password !== password) {
+        showAuthError('Incorrect password. Please try again.');
+        return;
+      }
+
+      currentUser = acct.username;
+      currentUserTeam = acct.teamAbbr || 'SF';
+      localStorage.setItem('fp_user', currentUser);
+      localStorage.setItem('fp_user_team', currentUserTeam);
+
+      enforceLoginGate();
+      renderAuthUI();
+      showToast(`Welcome back, ${currentUser}!`);
+    }
+
     function renderAuthUI() {
       const container = document.getElementById('auth-section');
-      if(currentUser) {
+      if (!container) return;
+
+      if (currentUser) {
+        const team = getTeamByAbbr(currentUserTeam);
         container.innerHTML = `
-          <span style="font-size:0.85rem; color:var(--accent);">👤 ${currentUser}</span>
-          <button class="btn btn-outline" style="padding:0.4rem 0.8rem;" onclick="logout()">Logout</button>
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="profile-trigger-btn" onclick="openProfilePicModal()" title="Click to change your NFL Team Profile Pic">
+              <div class="profile-avatar-circle" style="border-color:${team.color};">
+                <img src="${team.logo}" alt="${team.name}">
+              </div>
+              <span style="font-size:0.84rem; font-weight:700;">${escapeHtml(currentUser)}</span>
+              <span class="badge badge-accent" style="font-size:0.65rem; padding:0.12rem 0.35rem;">${team.abbr}</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+          </div>
         `;
       } else {
         container.innerHTML = `
-          <button class="btn btn-accent" style="padding:0.4rem 0.8rem;" onclick="openAuthModal()">Login</button>
+          <button type="button" class="btn btn-accent btn-sm" onclick="openAuthModal()">Login</button>
         `;
       }
     }
 
-    function openAuthModal() { document.getElementById('auth-modal').classList.add('active'); }
-    function closeAuthModal() { document.getElementById('auth-modal').classList.remove('active'); }
-
-    function handleAuthSubmit(e) {
-      e.preventDefault();
-      const user = document.getElementById('auth-username').value.trim();
-      if(user) {
-        currentUser = user;
-        localStorage.setItem('fp_user', currentUser);
-        renderAuthUI();
-        closeAuthModal();
-        showToast(`Welcome back, ${currentUser}!`);
+    function openProfilePicModal() {
+      const modal = document.getElementById('profile-pic-modal');
+      if (modal) {
+        modal.classList.add('active');
+        renderModalLogoGrid();
       }
+    }
+
+    function closeProfilePicModal() {
+      const modal = document.getElementById('profile-pic-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function filterModalLogos(conf) {
+      modalLogoConfFilter = conf;
+      ['all', 'afc', 'nfc'].forEach(c => {
+        const btn = document.getElementById(`modal-conf-${c}`);
+        if (btn) {
+          btn.className = (conf.toLowerCase() === c) ? 'btn btn-sm btn-accent' : 'btn btn-sm btn-outline';
+        }
+      });
+      renderModalLogoGrid();
+    }
+
+    function renderModalLogoGrid() {
+      const grid = document.getElementById('modal-nfl-logo-grid');
+      if (!grid) return;
+      const search = (document.getElementById('modal-team-search')?.value || '').toLowerCase().trim();
+
+      const filtered = nflTeamsList.filter(t => {
+        const matchConf = modalLogoConfFilter === 'ALL' || t.conference === modalLogoConfFilter;
+        const matchSearch = !search || t.name.toLowerCase().includes(search) || t.abbr.toLowerCase().includes(search);
+        return matchConf && matchSearch;
+      });
+
+      grid.innerHTML = filtered.map(t => `
+        <button type="button" class="nfl-logo-option ${t.abbr === currentUserTeam ? 'selected' : ''}" onclick="updateUserProfileTeam('${t.abbr}')" title="${t.name}">
+          <div class="nfl-logo-badge-bg" style="border:2px solid ${t.color};">
+            <img src="${t.logo}" alt="${t.name}">
+          </div>
+          <span class="nfl-logo-abbr">${t.abbr}</span>
+          <span class="nfl-logo-name">${t.shortName}</span>
+        </button>
+      `).join('');
+
+      const activeTeam = getTeamByAbbr(currentUserTeam);
+      const preview = document.getElementById('modal-avatar-preview');
+      const unameEl = document.getElementById('modal-profile-username');
+      const teamEl = document.getElementById('modal-profile-team');
+      if (preview) {
+        preview.style.borderColor = activeTeam.color;
+        preview.innerHTML = `<img src="${activeTeam.logo}" alt="${activeTeam.name}">`;
+      }
+      if (unameEl) unameEl.textContent = currentUser || 'Fan Profile';
+      if (teamEl) teamEl.textContent = `Selected: ${activeTeam.name} (${activeTeam.abbr})`;
+    }
+
+    function updateUserProfileTeam(abbr) {
+      currentUserTeam = abbr;
+      localStorage.setItem('fp_user_team', currentUserTeam);
+
+      if (currentUser) {
+        const key = currentUser.toLowerCase();
+        if (userAccounts[key]) {
+          userAccounts[key].teamAbbr = abbr;
+          localStorage.setItem('fp_accounts', JSON.stringify(userAccounts));
+        }
+      }
+
+      renderModalLogoGrid();
+      renderAuthUI();
+      showToast(`Profile pic updated to ${getTeamByAbbr(abbr).name}!`);
+    }
+
+    function openAuthModal() {
+      enforceLoginGate();
     }
 
     function logout() {
       currentUser = null;
       localStorage.removeItem('fp_user');
+      closeProfilePicModal();
       renderAuthUI();
+      enforceLoginGate();
+      switchAuthTab('signin');
       showToast('Logged out.');
     }
 
