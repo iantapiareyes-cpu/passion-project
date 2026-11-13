@@ -3,64 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Football Passion - Ultimate Fan Hub</title>
+  <title>Football Passion - Ultimate NFL Fan Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Montserrat:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #0c331a;
-      --bg-card: rgba(12, 38, 22, 0.82);
-      --bg-nav: rgba(7, 26, 15, 0.95);
-      --text-main: #F8F9FA;
-      --text-muted: #A8C4AD;
+      /* Lights OFF (Dark Night Stadium with Floodlights) */
+      --bg-main: #040b14;
+      --bg-card: rgba(8, 17, 30, 0.82);
+      --bg-surface-alt: rgba(15, 29, 48, 0.78);
+      --bg-nav: rgba(5, 11, 20, 0.88);
+      --text-main: #F8FAFC;
+      --text-muted: #A9BDD4;
       --primary: #1E5631;
       --primary-hover: #2A7944;
       --accent: #FFB800;
       --accent-green: #10B981;
       --accent-blue: #38BDF8;
-      --border: rgba(62, 118, 80, 0.5);
+      --border: rgba(255, 255, 255, 0.16);
+      --border-strong: rgba(255, 184, 0, 0.42);
       --danger: #EF4444;
-      --input-bg: rgba(8, 28, 16, 0.9);
+      --input-bg: rgba(5, 12, 24, 0.84);
+      --card-shadow: 0 18px 46px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     [data-theme="light"] {
-      --bg-main: #E2E8F0;
-      --bg-card: rgba(255, 255, 255, 0.92);
-      --bg-nav: rgba(11, 29, 58, 0.95);
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --primary: #1E5631;
-      --primary-hover: #276E3F;
-      --accent: #D97706;
-      --accent-green: #059669;
-      --accent-blue: #0284C7;
-      --border: rgba(226, 232, 240, 0.8);
+      /* Lights ON (Bright Sunlit Football Field with Turf-Green Typography) */
+      --bg-main: #0f4c23;
+      --bg-card: rgba(247, 253, 248, 0.91);
+      --bg-surface-alt: rgba(236, 249, 239, 0.95);
+      --bg-nav: rgba(9, 54, 24, 0.93);
+      --text-main: #0D4A22;
+      --text-muted: #1E6B38;
+      --primary: #166534;
+      --primary-hover: #15803D;
+      --accent: #15803D;
+      --accent-green: #047857;
+      --accent-blue: #0F766E;
+      --border: rgba(16, 92, 42, 0.22);
+      --border-strong: rgba(21, 128, 61, 0.55);
       --danger: #DC2626;
-      --input-bg: #FFFFFF;
+      --input-bg: rgba(255, 255, 255, 0.94);
+      --card-shadow: 0 16px 40px rgba(4, 24, 12, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.85);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
-      background-color: #05140b;
+      background-color: var(--bg-main);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow-x: hidden;
+      transition: background-color 0.35s ease, color 0.25s ease;
     }
-    h1, h2, h3, h4, .brand-title { font-family: 'Montserrat', sans-serif; text-transform: uppercase; }
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+    .tabular-num, .timer-num, .stat-box-val-td, .stat-box-val-block, .stat-box-val-score, .metric-item-val {
+      font-variant-numeric: tabular-nums;
+      font-family: 'JetBrains Mono', 'Montserrat', monospace;
+    }
 
-    /* Clean Football Field Canvas Background */
+    /* Sunlit Football Field Photo + Precision Turf Markings (Lights ON) */
+    #field-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.04) 0%, rgba(4, 26, 12, 0.28) 100%),
+        url('/src/assets/images/football_field_sunlit_1794598054950.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 1;
+      transition: opacity 0.45s ease;
+    }
     #field-canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.34;
+      mix-blend-mode: overlay;
+      transition: opacity 0.45s ease;
+    }
+
+    /* Dark Night Stadium With Blazing Floodlights (Lights OFF) */
+    #stadium-backdrop {
+      position: fixed;
+      inset: 0;
       z-index: 0;
       pointer-events: none;
+      background-image:
+        radial-gradient(circle at 50% 48%, rgba(4, 10, 20, 0.16) 0%, rgba(2, 6, 14, 0.62) 100%),
+        linear-gradient(180deg, rgba(2, 5, 12, 0.18) 0%, rgba(3, 8, 18, 0.46) 65%, rgba(2, 5, 12, 0.78) 100%),
+        url('/src/assets/images/stadium_night_floodlights_1794598055175.jpg');
+      background-size: cover;
+      background-position: center 22%;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+    }
+    #stadium-backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 38% 32% at 10% 14%, rgba(255, 226, 158, 0.22) 0%, transparent 72%),
+        radial-gradient(ellipse 38% 32% at 90% 14%, rgba(255, 226, 158, 0.22) 0%, transparent 72%);
+      pointer-events: none;
+    }
+    [data-theme="dark"] #stadium-backdrop {
+      opacity: 1;
+    }
+    [data-theme="dark"] #field-backdrop,
+    [data-theme="dark"] #field-canvas {
+      opacity: 0;
     }
 
     .navbar, .container, footer, .toast {
@@ -68,51 +136,212 @@
       z-index: 5;
     }
 
-    /* Navigation */
-    .navbar { background-color: var(--bg-nav); backdrop-filter: blur(10px); border-bottom: 2px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; position: sticky; top: 0; z-index: 100; }
-    .brand { display: flex; align-items: center; gap: 0.5rem; font-size: 1.4rem; font-weight: 900; color: #FFF; text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    .brand span { color: var(--accent); }
-    .nav-links { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-    .nav-btn { background: transparent; border: 1px solid transparent; color: #94A3B8; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
-    .nav-btn:hover, .nav-btn.active { color: #FFF; background: rgba(255,255,255,0.1); border-color: var(--border); }
-    .nav-btn.active { border-bottom: 2px solid var(--accent); color: var(--accent); }
-    .nav-controls { display: flex; gap: 0.75rem; align-items: center; }
+    /* Broadcast Navigation Bar */
+    .navbar {
+      background-color: var(--bg-nav);
+      backdrop-filter: blur(18px) saturate(140%);
+      border-bottom: 1px solid rgba(255, 184, 0, 0.28);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      color: #FFF;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .brand span { color: #FFB800; }
+    .nav-links { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #CBD5E1;
+      padding: 0.5rem 0.95rem;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+    }
+    .nav-btn:hover { color: #FFF; background: rgba(255, 255, 255, 0.09); }
+    .nav-btn.active {
+      color: #FFB800;
+      background: rgba(255, 184, 0, 0.12);
+      border-color: rgba(255, 184, 0, 0.35);
+    }
+    .nav-controls { display: flex; gap: 0.65rem; align-items: center; flex-shrink: 0; }
+
+    #theme-toggle-btn {
+      white-space: nowrap;
+      border-radius: 8px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.84rem;
+      border: 1px solid rgba(255, 184, 0, 0.45);
+      background: rgba(255, 184, 0, 0.14);
+      color: #FFF;
+      box-shadow: 0 0 16px rgba(255, 184, 0, 0.16);
+    }
+    #theme-toggle-btn:hover {
+      background: rgba(255, 184, 0, 0.25);
+      border-color: #FFB800;
+    }
 
     /* Buttons & Inputs */
-    .btn { background-color: var(--primary); color: #FFF; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+    .btn {
+      background-color: var(--primary);
+      color: #FFF;
+      border: 1px solid transparent;
+      padding: 0.6rem 1.2rem;
+      border-radius: 7px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
     .btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
-    .btn-accent { background-color: var(--accent); color: #000; }
-    .btn-accent:hover { opacity: 0.9; }
+    .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .btn-accent { background: linear-gradient(135deg, #FFB800, #F59E0B); color: #0B1120; border-color: rgba(255, 255, 255, 0.25); }
+    .btn-accent:hover { filter: brightness(1.06); }
     .btn-danger { background-color: var(--danger); }
-    .btn-outline { background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text-main); }
-    .btn-outline:hover { background: rgba(255,255,255,0.1); }
-    .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+    .btn-outline { background: rgba(15, 23, 42, 0.28); border: 1px solid var(--border); color: var(--text-main); }
+    .btn-outline:hover { background: rgba(255, 184, 0, 0.14); border-color: var(--accent); }
+    .btn-sm { padding: 0.38rem 0.78rem; font-size: 0.8rem; }
 
-    input, select, textarea { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.95rem; outline: none; width: 100%; }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,184,0,0.2); }
+    input, select, textarea {
+      background: var(--input-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.62rem 0.95rem;
+      border-radius: 7px;
+      font-size: 0.94rem;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.18); }
 
     /* Layout Containers */
-    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; width: 100%; flex: 1; position: relative; z-index: 1; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 2rem 1.25rem; width: 100%; flex: 1; position: relative; z-index: 5; }
     .view { display: none; }
-    .view.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+    .view.active { display: block; animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Cards & Grids */
-    .card { background: rgba(9, 28, 16, 0.78); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45); }
+    /* Cards & Cohesive Broadcast Glass Surfaces */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--card-shadow);
+    }
+    [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4 { color: #0B461E; }
+    [data-theme="light"] .hero h1, [data-theme="light"] .hero h2, [data-theme="light"] .hero h3, [data-theme="light"] .hero h4 { color: #86EFAC; }
+    [data-theme="light"] .hl-picture-stage h1, [data-theme="light"] .hl-picture-stage h2, [data-theme="light"] .hl-picture-stage h3, [data-theme="light"] .hl-picture-stage h4 { color: #FFFFFF; }
+    [data-theme="light"] .college-header-banner h3 { color: #FFFFFF; }
+    [data-theme="light"] .h2h-right-now-section { background: var(--bg-card); color: var(--text-main); border-color: var(--border); box-shadow: var(--card-shadow); }
+    [data-theme="light"] .h2h-form-card { background: var(--bg-surface-alt); }
+    [data-theme="light"] .h2h-form-card h4 { color: var(--text-main) !important; }
+    [data-theme="light"] .h2h-matchup-container {
+      background: linear-gradient(180deg, rgba(247, 253, 248, 0.93), rgba(232, 247, 236, 0.95));
+      color: var(--text-main);
+      box-shadow: var(--card-shadow);
+    }
+    [data-theme="light"] .h2h-pos-btn:hover { color: var(--text-main); }
+    [data-theme="light"] .btn-outline { background: rgba(255, 255, 255, 0.84); color: #0D4A22; }
+    [data-theme="light"] .btn-accent { color: #072D14; }
+    [data-theme="light"] .navbar .btn-outline { background: rgba(255, 255, 255, 0.14); color: #D1FAE5; border-color: rgba(134, 239, 172, 0.35); }
+    [data-theme="light"] .brand { color: #ECFDF5; }
+    [data-theme="light"] .brand span { color: #4ADE80; }
+    [data-theme="light"] .nav-btn { color: #BBF7D0; }
+    [data-theme="light"] .nav-btn:hover { color: #FFFFFF; background: rgba(74, 222, 128, 0.14); }
+    [data-theme="light"] .nav-btn.active { color: #4ADE80; background: rgba(74, 222, 128, 0.16); border-color: rgba(74, 222, 128, 0.45); }
+    [data-theme="light"] .h2h-pos-btn.active, [data-theme="light"] .auth-tab-btn.active { color: #FFFFFF; }
+    [data-theme="light"] .h2h-circle-jersey { color: #86EFAC; border-color: #22C55E; }
+    [data-theme="light"] .hl-picture-stage [style*="var(--accent)"], [data-theme="light"] .college-header-banner [style*="var(--accent)"] { color: #86EFAC !important; }
+    [data-theme="light"] .badge-accent { background: #15803D; color: #FFFFFF; }
+    [data-theme="light"] .badge-college { background: rgba(21, 128, 61, 0.12); border-color: rgba(21, 128, 61, 0.45); color: #14532D; }
+    [data-theme="light"] .alumni-pill { background: rgba(16, 92, 42, 0.08); color: #0D4A22; }
+    [data-theme="light"] .alumni-pill:hover { color: #064E3B; background: rgba(21, 128, 61, 0.18); }
+    [data-theme="light"] .h2h-rivalry-box { background: rgba(16, 92, 42, 0.06) !important; }
+    [data-theme="light"] .signature-play-box { background: rgba(21, 128, 61, 0.09); border-color: rgba(21, 128, 61, 0.3); color: #0D4A22; }
+    [data-theme="light"] .h2h-verdict-box { background: rgba(21, 128, 61, 0.09); border-color: rgba(21, 128, 61, 0.35); }
+    [data-theme="light"] .login-gate-card {
+      background: rgba(247, 253, 248, 0.95);
+      color: var(--text-main);
+      box-shadow: 0 28px 70px rgba(4, 24, 12, 0.45);
+    }
+    [data-theme="light"] .auth-tabs { background: rgba(16, 92, 42, 0.09); }
+    [data-theme="light"] .nfl-logo-grid { background: rgba(16, 92, 42, 0.06); }
+    [data-theme="light"] .nfl-logo-option { background: rgba(255, 255, 255, 0.8); }
+    [data-theme="light"] footer { color: #BBF7D0; }
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.5rem; }
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
 
-    /* Hero & Widgets */
-    .hero { background: linear-gradient(135deg, rgba(30,86,49,0.85), rgba(11,29,58,0.9)), url('https://images.unsplash.com/photo-1566577739112-5180d4bf9390?auto=format&fit=crop&w=1200&q=80') center/cover; padding: 3rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-    .countdown-timer { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
-    .timer-block { background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); padding: 0.75rem 1.25rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); min-width: 70px; }
-    .timer-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
-    .timer-label { font-size: 0.75rem; text-transform: uppercase; color: #94A3B8; }
+    /* Hero Championship Scoreboard Banner */
+    .hero {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(6, 20, 14, 0.68) 0%, rgba(7, 16, 32, 0.84) 100%),
+        url('/src/assets/images/stadium_night_floodlights_1794598055175.jpg') center 35%/cover no-repeat;
+      padding: 3.25rem 2rem;
+      border-radius: 14px;
+      text-align: center;
+      margin-bottom: 1.75rem;
+      border: 1px solid rgba(255, 184, 0, 0.42);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      color: #FFFFFF;
+      overflow: hidden;
+    }
+    .hero h2 {
+      font-size: clamp(1.75rem, 3.2vw, 2.55rem);
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.65);
+    }
+    .countdown-timer { display: flex; justify-content: center; gap: 0.9rem; margin-top: 1.65rem; flex-wrap: wrap; }
+    .timer-block {
+      background: rgba(5, 12, 24, 0.72);
+      backdrop-filter: blur(12px);
+      padding: 0.85rem 1.35rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 184, 0, 0.35);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 20px rgba(0, 0, 0, 0.35);
+      min-width: 82px;
+    }
+    .timer-num { font-size: 1.95rem; font-weight: 800; color: #FFB800; line-height: 1.1; }
+    .timer-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #CBD5E1; margin-top: 0.25rem; font-weight: 700; }
 
     .badge { background: var(--primary); color: #FFF; padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
     .badge-accent { background: var(--accent); color: #000; }
@@ -120,68 +349,116 @@
     .badge-college { background: rgba(255,184,0,0.15); border: 1px solid var(--accent); color: var(--accent); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem; }
 
     /* Player Card UI & Realistic Picture Showcase */
-    .player-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 6px 20px rgba(0,0,0,0.25); transition: transform 0.2s, box-shadow 0.2s; }
-    .player-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px rgba(0,0,0,0.45); }
-    
+    .player-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px) saturate(140%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .player-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-strong);
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+    }
+
     .player-img-wrapper {
       position: relative;
       width: 100%;
-      height: 220px;
+      height: 224px;
       overflow: hidden;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
-      background: radial-gradient(circle at 50% 30%, rgba(30, 86, 49, 0.45), rgba(7, 19, 38, 0.98));
+      background: radial-gradient(circle at 50% 30%, rgba(30, 86, 49, 0.52), rgba(7, 17, 32, 0.98));
       display: flex;
       align-items: flex-end;
       justify-content: center;
     }
+    .player-img-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 44px);
+      pointer-events: none;
+    }
+    .player-card-team-crest {
+      position: absolute;
+      right: -12px;
+      bottom: -8px;
+      width: 128px;
+      height: 128px;
+      object-fit: contain;
+      opacity: 0.13;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    }
     .player-img {
+      position: relative;
+      z-index: 1;
       width: auto;
       max-width: 90%;
-      height: 212px;
+      height: 214px;
       object-fit: contain;
-      transition: transform 0.3s, filter 0.3s;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,0.7));
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.75));
     }
     .player-card:hover .player-img {
       transform: scale(1.06) translateY(-3px);
-      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.9));
+      filter: drop-shadow(0 14px 24px rgba(0,0,0,0.9));
     }
     .play-overlay-badge {
       position: absolute;
       bottom: 10px;
       right: 10px;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(4px);
-      color: var(--accent);
-      border: 1px solid rgba(255,184,0,0.5);
-      padding: 0.25rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      z-index: 2;
+      background: rgba(5, 12, 22, 0.85);
+      backdrop-filter: blur(8px);
+      color: #FFB800;
+      border: 1px solid rgba(255, 184, 0, 0.45);
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      transition: background 0.2s, color 0.2s;
+      transition: background 0.16s ease, color 0.16s ease;
     }
     .play-overlay-badge:hover {
-      background: var(--accent);
-      color: #000;
+      background: #FFB800;
+      color: #0B1120;
     }
-    .player-info { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .player-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
     .player-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem; }
 
     /* Direct Stat Boxes (Touchdowns, Blocks, Score) */
-    .stat-badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: var(--input-bg); padding: 0.65rem 0.5rem; border-radius: 8px; margin: 0.65rem 0; border: 1px solid var(--border); text-align: center; }
-    .stat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .stat-box-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-    .stat-box-val-td { font-size: 1.2rem; font-weight: 800; color: #FFB800; line-height: 1.2; margin: 0.15rem 0; }
-    .stat-box-val-block { font-size: 1.2rem; font-weight: 800; color: #10B981; line-height: 1.2; margin: 0.15rem 0; }
-    .stat-box-val-score { font-size: 1.2rem; font-weight: 800; color: #38BDF8; line-height: 1.2; margin: 0.15rem 0; }
+    .stat-badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: var(--input-bg); padding: 0.7rem 0.55rem; border-radius: 8px; margin: 0.7rem 0; border: 1px solid var(--border); text-align: center; }
+    .stat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+    .stat-box + .stat-box { border-left: 1px solid var(--border); padding-left: 0.35rem; }
+    .stat-box-label { font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .stat-box-val-td { font-size: 1.18rem; font-weight: 800; color: #D97706; line-height: 1.25; margin: 0.15rem 0; }
+    .stat-box-val-block { font-size: 1.18rem; font-weight: 800; color: #059669; line-height: 1.25; margin: 0.15rem 0; }
+    .stat-box-val-score { font-size: 1.18rem; font-weight: 800; color: #0284C7; line-height: 1.25; margin: 0.15rem 0; }
+    [data-theme="dark"] .stat-box-val-td { color: #FFB800; }
+    [data-theme="dark"] .stat-box-val-block { color: #10B981; }
+    [data-theme="dark"] .stat-box-val-score { color: #38BDF8; }
     .stat-box-sub { font-size: 0.65rem; color: var(--text-muted); }
 
     /* Signature Play Snippet */
-    .signature-play-box { background: rgba(255, 184, 0, 0.08); border-left: 3px solid var(--accent); padding: 0.45rem 0.65rem; border-radius: 0 6px 6px 0; font-size: 0.78rem; line-height: 1.35; margin: 0.5rem 0 0.75rem; color: var(--text-main); }
+    .signature-play-box {
+      background: rgba(255, 184, 0, 0.09);
+      border: 1px solid rgba(255, 184, 0, 0.28);
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      margin: 0.5rem 0 0.85rem;
+      color: var(--text-main);
+    }
 
     /* Search row responsive layout */
     .search-bar-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; align-items: center; }
@@ -450,6 +727,21 @@
       border-radius: 10px;
       padding: 1.25rem;
       margin-top: 1.5rem;
+    }
+
+    /* Statistical Tale of the Tape Comparison Bars */
+    .stat-bar-bg {
+      height: 10px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .stat-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10B981 0%, #FFB800 100%);
+      border-radius: 999px;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
 /* College Cards Styling */
@@ -762,12 +1054,14 @@
 </head>
 <body>
 
-  <!-- Football Field Background Canvas -->
+  <!-- Daylight Football Field Backdrop (Lights ON) & Dark Floodlit Stadium Backdrop (Lights OFF) -->
+  <div id="field-backdrop"></div>
+  <div id="stadium-backdrop"></div>
   <canvas id="field-canvas"></canvas>
 
   <!-- Navigation Bar -->
   <nav class="navbar">
-    <a href="#" class="brand" onclick="switchView('home')">🏈 FOOTBALL <span>PASSION v2</span></a>
+    <a href="#" class="brand" onclick="switchView('home')">🏈 FOOTBALL <span>PASSION</span></a>
     <div class="nav-links">
       <button class="nav-btn active" id="nav-home" onclick="switchView('home')">Home</button>
       <button class="nav-btn" id="nav-directory" onclick="switchView('directory')">NFL Player Directory</button>
@@ -775,7 +1069,7 @@
       <button class="nav-btn" id="nav-compare" onclick="switchView('compare')">Head-to-Head</button>
     </div>
     <div class="nav-controls">
-      <button class="btn btn-outline" style="padding: 0.4rem 0.8rem;" onclick="toggleTheme()" title="Toggle theme">☀️/🌙</button>
+      <button class="btn btn-outline" id="theme-toggle-btn" onclick="toggleTheme()" title="Lights ON = Football Field | Lights OFF = Dark Stadium With Floodlights">☀️ Lights: ON · Field</button>
       <div id="auth-section">
         <!-- Auth buttons loaded dynamically via JS -->
       </div>
@@ -944,7 +1238,7 @@
         </div>
 
         <!-- Marquee 1-Click Same-Position Rivalries -->
-        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
+        <div class="h2h-rivalry-box" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
             <span style="font-weight:800; font-size:0.8rem; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:0.4rem;">
               🔥 Marquee Same-Position Rivalries (1-Click Matchups)
@@ -1082,25 +1376,20 @@
               <strong id="hl-player-ovr" style="font-size:1.25rem; color:#FFF;">99</strong>
             </div>
           </div>
-          <div id="hl-signature-caption" style="margin-top:0.65rem; background:rgba(255,184,0,0.12); border-left:3px solid var(--accent); padding:0.45rem 0.75rem; border-radius:0 6px 6px 0; font-size:0.85rem; color:#F8FAFC;">
+          <div id="hl-signature-caption" style="margin-top:0.65rem; background:rgba(255,184,0,0.12); border:1px solid rgba(255,184,0,0.35); padding:0.5rem 0.78rem; border-radius:8px; font-size:0.85rem; color:#F8FAFC;">
             🎬 Signature Highlight Play
           </div>
         </div>
       </div>
 
-      <!-- 2. VIDEO REEL, STATS & SIGNATURE MOMENTS BELOW THE HIGHLIGHT PICTURE -->
+      <!-- 2. STATS, SIGNATURE MOMENTS & YOUTUBE REEL BELOW THE HIGHLIGHT PICTURE -->
       <div class="hl-modal-body">
         <div id="hl-quick-stats" class="stat-badge-grid" style="margin-top:0;"></div>
 
-        <!-- Embedded Video Reel -->
-        <div class="responsive-video">
-          <iframe id="hl-iframe" src="" title="NFL Highlights" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-        </div>
-
         <!-- Highlight Details & External Link -->
         <div style="margin: 1rem 0;">
-          <h4 style="color:var(--accent); margin-bottom:0.4rem;">🎬 Career Signature Moments & Highlights:</h4>
-          <div id="hl-moments-list" style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.88rem; color:var(--text-main);">
+          <h4 style="color:var(--accent); margin-bottom:0.55rem;">🎬 Career Signature Moments & Highlights:</h4>
+          <div id="hl-moments-list" style="display:flex; flex-direction:column; gap:0.45rem; font-size:0.9rem; color:var(--text-main);">
             <!-- Loaded dynamically -->
           </div>
         </div>
@@ -1124,7 +1413,7 @@
       <div style="text-align:center; margin-bottom:1.25rem;">
         <div style="font-size:2.1rem; line-height:1;">🏈</div>
         <h2 style="margin-top:0.4rem; font-size:1.55rem; letter-spacing:1px;">
-          FOOTBALL <span style="color:var(--accent);">PASSION v2</span>
+          FOOTBALL <span style="color:var(--accent);">PASSION</span>
         </h2>
         <p style="color:var(--text-muted); font-size:0.88rem; margin-top:0.25rem;">
           Log in or create your fan account to enter the stadium and choose your NFL team profile pic.
@@ -1238,7 +1527,7 @@
   <div id="toast" class="toast"></div>
 
   <footer>
-    <p>Football Passion v2 &copy; 2026. Ultimate NFL Fan Hub, Real Player Headshots & College Pipelines.</p>
+    <p>Football Passion &copy; 2026 &middot; NFL Superstars, Head-to-Head Matchups &amp; College Pipelines.</p>
   </footer>
 
   <script>
@@ -6329,6 +6618,9 @@
 
     // --- APP INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('fp_theme') || 'light';
+      applyTheme(savedTheme, false);
+
       initCountdown();
       loadRandomFact();
       enforceLoginGate();
@@ -6370,13 +6662,25 @@
       window.scrollTo(0, 0);
     }
 
-    // --- FEATURE: DARK/LIGHT THEME ---
+    // --- FEATURE: LIGHTS ON (SUNLIT FOOTBALL FIELD) / LIGHTS OFF (DARK FLOODLIT STADIUM) ---
+    function applyTheme(theme, notify = true) {
+      const next = theme === 'dark' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('fp_theme', next);
+
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) {
+        btn.innerHTML = next === 'dark' ? '🌙 Lights: OFF · Stadium' : '☀️ Lights: ON · Field';
+      }
+      if (notify) {
+        showToast(next === 'dark' ? 'Lights OFF — Night Stadium Floodlights Active!' : 'Lights ON — Daylight Football Field Active!');
+      }
+    }
+
     function toggleTheme() {
-      const body = document.body;
-      const current = body.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      body.setAttribute('data-theme', next);
-      showToast(`Switched to ${next} theme`);
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next, true);
     }
 
     // --- FEATURE: COUNTDOWN TIMER ---
@@ -6493,18 +6797,21 @@
         return;
       }
 
-      grid.innerHTML = filtered.map(p => `
+      grid.innerHTML = filtered.map(p => {
+        const teamObj = getTeamByPlayerTeamName(p.team);
+        return `
         <div class="player-card">
-          <div class="player-img-wrapper" onclick="openHighlightModal('${p.id}')" title="Click to view ${p.name}'s picture & highlights">
-            <img src="${p.img}" alt="${p.name}" class="player-img" onerror="this.src='https://a.espncdn.com/i/headshots/nfl/players/full/3139477.png'">
+          <div class="player-img-wrapper" style="background: radial-gradient(circle at 50% 30%, ${teamObj.color}aa 0%, rgba(12, 42, 24, 0.85) 55%, rgba(6, 15, 28, 0.98) 100%);" onclick="openHighlightModal('${p.id}')" title="Click to view ${p.name}'s picture & highlights">
+            <img src="${teamObj.logo}" alt="" class="player-card-team-crest" referrerpolicy="no-referrer">
+            <img src="${p.img}" alt="${p.name}" class="player-img" referrerpolicy="no-referrer" onerror="this.src='https://a.espncdn.com/i/headshots/nfl/players/full/3139477.png'">
             
             <div style="position: absolute; top: 10px; left: 10px; display: flex; gap: 0.35rem; z-index: 2;">
               <span class="badge ${p.positionCategory === 'OL' ? 'badge-green' : ''}">${p.position}</span>
-              <span class="badge" style="background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);">#${p.jersey || '00'}</span>
+              <span class="badge" style="background: rgba(5,12,22,0.82); backdrop-filter: blur(4px);">#${p.jersey || '00'}</span>
             </div>
             
             <div style="position: absolute; top: 10px; right: 10px; z-index: 2;">
-              <span style="background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); color: var(--accent); padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(255,184,0,0.4);">
+              <span class="tabular-num" style="background: rgba(5,12,22,0.86); backdrop-filter: blur(4px); color: #FFB800; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 800; font-size: 0.84rem; border: 1px solid rgba(255,184,0,0.45);">
                 OVR ${p.rating}
               </span>
             </div>
@@ -6565,7 +6872,8 @@
             </div>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // --- HIGHLIGHT THEATER MODAL FUNCTIONS ---
@@ -6587,8 +6895,6 @@
 
     function closeHighlightModal() {
       document.getElementById('highlight-modal').classList.remove('active');
-      const iframe = document.getElementById('hl-iframe');
-      if(iframe) iframe.src = '';
     }
 
     function renderHighlightTheater(p) {
@@ -6655,9 +6961,6 @@
         imgEl.src = p.img;
         imgEl.alt = `${p.name} Highlight Picture`;
       }
-
-      const iframe = document.getElementById('hl-iframe');
-      iframe.src = p.video || `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(p.name + ' NFL career highlights')}`;
 
       // Career signature moments list
       const momentsList = document.getElementById('hl-moments-list');
@@ -6798,22 +7101,29 @@
         </div>
 
         <div class="grid-2">
-          <!-- HIGHLIGHT REEL PLAYER -->
+          <!-- HIGHLIGHT PICTURE & BEST PLAYS -->
           <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-              <h3>📹 Highlight Reel & Best Plays</h3>
-              <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(p.name + ' NFL highlights career best plays')}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
-                ▶️ Watch on YouTube
-              </a>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+              <h3>🎬 Signature Highlights & Best Plays</h3>
+              <button type="button" class="btn btn-accent btn-sm" onclick="openHighlightModal('${p.id}')">
+                📸 Open Highlight Picture
+              </button>
             </div>
-            <div class="responsive-video">
-              <iframe src="${p.video || `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(p.name + ' NFL highlights')}`}" title="${p.name} Highlights" allowfullscreen></iframe>
+            <div class="signature-play-box" style="margin-bottom:0.85rem;">
+              <strong>🔥 Top Signature Play:</strong> ${p.signaturePlay}
             </div>
             <div style="margin-top:0.75rem;">
-              <h5 style="color:var(--accent); margin-bottom:0.35rem;">Key Highlight Moments:</h5>
-              ${(p.highlightMoments || [p.signaturePlay]).map(m => `
-                <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">• ${m}</div>
+              <h5 style="color:var(--accent); margin-bottom:0.45rem;">Key Career Highlight Moments:</h5>
+              ${(p.highlightMoments || [p.signaturePlay]).map((m, i) => `
+                <div style="background:var(--input-bg); border:1px solid var(--border); padding:0.55rem 0.75rem; border-radius:6px; font-size:0.85rem; margin-bottom:0.4rem;">
+                  <strong style="color:var(--accent);">#${i + 1}</strong> ${m}
+                </div>
               `).join('')}
+            </div>
+            <div style="margin-top:0.85rem;">
+              <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(p.name + ' NFL highlights career best plays')}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+                ▶️ Watch 4K Reel on YouTube
+              </a>
             </div>
           </div>
 
