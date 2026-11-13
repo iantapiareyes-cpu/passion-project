@@ -63,7 +63,7 @@
       pointer-events: none;
     }
 
-    .navbar, .container, footer, .modal, .toast {
+    .navbar, .container, footer, .toast {
       position: relative;
       z-index: 5;
     }
@@ -465,11 +465,98 @@
     .alumni-pill:hover { background: rgba(255,184,0,0.2); border-color: var(--accent); color: #FFF; }
 
     /* Modal / Auth Overlay */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; }
     .modal.active { display: flex; }
+    #highlight-modal {
+      z-index: 99999;
+      background: rgba(2, 8, 14, 0.88);
+      backdrop-filter: blur(10px);
+    }
     .modal-content { background: var(--bg-card); backdrop-filter: blur(15px); border: 1px solid var(--border); padding: 2rem; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
-    .modal-theater { max-width: 760px; }
+    .modal-theater {
+      max-width: 820px;
+      padding: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 2px solid var(--accent);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.9), 0 0 45px rgba(255,184,0,0.28);
+    }
     .modal-wide { max-width: 720px; }
+
+    /* Top Highlight Picture Showcase Inside Highlight Modal */
+    .hl-picture-stage {
+      position: relative;
+      width: 100%;
+      min-height: 310px;
+      background: radial-gradient(circle at 50% 35%, rgba(30, 86, 49, 0.9), rgba(4, 14, 24, 0.98));
+      border-bottom: 3px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      color: #FFF;
+    }
+    .hl-picture-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 72px);
+      pointer-events: none;
+    }
+    .hl-stage-top-bar {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.2rem 0.25rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .hl-team-watermark {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      transform: translate(-50%, -50%);
+      width: 240px;
+      height: 240px;
+      object-fit: contain;
+      opacity: 0.14;
+      pointer-events: none;
+      filter: drop-shadow(0 0 24px rgba(255,255,255,0.2));
+      z-index: 1;
+    }
+    .hl-picture-center {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0.25rem 1rem 0;
+      min-height: 240px;
+    }
+    .hl-hero-photo {
+      height: 255px;
+      max-width: 92%;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.92));
+      transition: transform 0.25s ease;
+    }
+    .hl-stage-bottom-bar {
+      position: relative;
+      z-index: 4;
+      background: linear-gradient(180deg, rgba(4, 12, 22, 0.15) 0%, rgba(4, 12, 22, 0.94) 45%, rgba(4, 12, 22, 0.99) 100%);
+      padding: 1rem 1.35rem 1rem;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .hl-modal-body {
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+    @media (max-width: 640px) {
+      .hl-hero-photo { height: 210px; }
+      .hl-picture-center { min-height: 195px; }
+      .hl-modal-body { padding: 1rem; }
+    }
 
     /* Login Gate System */
     .login-gate {
@@ -729,7 +816,7 @@
       <div class="card" style="margin-top: 1.5rem; text-align: center;">
         <h3>Explore Real NFL Superstars & College Pipelines</h3>
         <p style="color: var(--text-muted); max-width: 650px; margin: 0.5rem auto 1.25rem;">
-          Browse authentic headshots, highlights, touchdowns, and blocks for 36 verified NFL players, or compare any two stars head-to-head.
+          Browse authentic highlight pictures, game videos, touchdowns, and blocks for <strong id="home-player-total-count">92</strong> verified NFL players across every position, or compare any two stars head-to-head.
         </p>
         <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
           <button class="btn btn-accent" onclick="switchView('directory')">🏈 Browse NFL Player Photos & Stats</button>
@@ -746,11 +833,11 @@
           <div>
             <h2>🏈 NFL Player Photos, Highlights & Stats</h2>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.35rem;">
-              Featuring authentic player headshots, live <strong>Touchdowns (TDs)</strong>, <strong>Pancake Blocks</strong>, <strong>Scores</strong>, and career highlight reels.
+              Featuring authentic highlight pictures, live <strong>Touchdowns (TDs)</strong>, <strong>Pancake Blocks</strong>, <strong>Scores</strong>, and players across <strong>every NFL position</strong>.
             </p>
           </div>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button class="btn btn-outline btn-sm" onclick="setQuickSearch('')">Show All 36 Real Superstars</button>
+            <button class="btn btn-outline btn-sm" id="btn-show-all-players" onclick="setQuickSearch('')">Show All 92 Real Superstars</button>
           </div>
         </div>
 
@@ -761,13 +848,34 @@
           </div>
           <div>
             <select id="position-filter" onchange="renderDirectory()">
-              <option value="ALL">All Positions</option>
-              <option value="QB">Quarterbacks (QB)</option>
-              <option value="OL">Offensive Linemen (OT/OG/C - Blocks)</option>
-              <option value="RB">Running Backs (RB)</option>
-              <option value="WR">Wide Receivers (WR)</option>
-              <option value="TE">Tight Ends (TE)</option>
-              <option value="DEF">Defense & Pass Rush (EDGE/LB/CB)</option>
+              <option value="ALL">All Positions (Every NFL Position)</option>
+              <optgroup label="Offense — Skill Positions">
+                <option value="QB">Quarterbacks (QB)</option>
+                <option value="RB">Running Backs (RB)</option>
+                <option value="FB">Fullbacks (FB)</option>
+                <option value="WR">Wide Receivers (WR)</option>
+                <option value="TE">Tight Ends (TE)</option>
+              </optgroup>
+              <optgroup label="Offense — Offensive Line (Blocks)">
+                <option value="OL">All Offensive Line (OT/OG/C)</option>
+                <option value="OT">Offensive Tackles (OT)</option>
+                <option value="OG">Offensive Guards (OG)</option>
+                <option value="C">Centers (C)</option>
+              </optgroup>
+              <optgroup label="Defense — Front Seven & Secondary">
+                <option value="DEF">All Defense (EDGE/DT/LB/CB/S)</option>
+                <option value="EDGE">Edge Rushers (EDGE)</option>
+                <option value="DT">Defensive Tackles (DT)</option>
+                <option value="LB">Linebackers (LB)</option>
+                <option value="CB">Cornerbacks (CB)</option>
+                <option value="S">Safeties (S)</option>
+              </optgroup>
+              <optgroup label="Special Teams">
+                <option value="ST">All Special Teams (K/P/LS)</option>
+                <option value="K">Kickers (K)</option>
+                <option value="P">Punters (P)</option>
+                <option value="LS">Long Snappers (LS)</option>
+              </optgroup>
             </select>
           </div>
           <div>
@@ -786,11 +894,11 @@
           <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Quick NFL Highlights:</span>
           <button class="btn btn-outline btn-sm" onclick="setQuickSearch('Touchdowns')">🔥 Touchdown Leaders</button>
           <button class="btn btn-outline btn-sm" onclick="setQuickSearch('Blocks')">🛡️ Elite Blockers (O-Line)</button>
-          <button class="btn btn-outline btn-sm" onclick="setQuickSearch('Chiefs')">Chiefs</button>
-          <button class="btn btn-outline btn-sm" onclick="setQuickSearch('49ers')">49ers</button>
+          <button class="btn btn-outline btn-sm" onclick="setPositionQuickFilter('S')">🛰️ Safeties (S)</button>
+          <button class="btn btn-outline btn-sm" onclick="setPositionQuickFilter('FB')">💪 Fullbacks (FB)</button>
+          <button class="btn btn-outline btn-sm" onclick="setPositionQuickFilter('ST')">👟 Special Teams (K/P/LS)</button>
           <button class="btn btn-outline btn-sm" onclick="setQuickSearch('Alabama')">🎓 Alabama Alumni</button>
           <button class="btn btn-outline btn-sm" onclick="setQuickSearch('Iowa')">🎓 Iowa O-Line/TEs</button>
-          <button class="btn btn-outline btn-sm" onclick="setQuickSearch('Ohio State')">🎓 Ohio State Stars</button>
           <span id="player-count-badge" style="margin-left: auto; font-size: 0.85rem; color: var(--accent); font-weight: 700;"></span>
         </div>
       </div>
@@ -938,44 +1046,74 @@
 
   </main>
 
-  <!-- HIGHLIGHT THEATER MODAL -->
+  <!-- HIGHLIGHT THEATER MODAL (ALWAYS ON TOP WITH FEATURED HIGHLIGHT PICTURE AT THE TOP) -->
   <div class="modal" id="highlight-modal">
     <div class="modal-content modal-theater">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
-        <div style="display:flex; align-items:center; gap:0.85rem;">
-          <div style="width:65px; height:65px; border-radius:50%; background:radial-gradient(circle, rgba(30,86,49,0.6), rgba(15,23,42,0.98)); border:2px solid var(--accent); display:flex; align-items:flex-end; justify-content:center; overflow:hidden;">
-            <img id="hl-player-img" src="" alt="Player Photo" style="height:62px; object-fit:contain;">
+      <!-- 1. FEATURED PLAYER HIGHLIGHT PICTURE ON TOP OF EVERYTHING ELSE -->
+      <div class="hl-picture-stage" id="hl-picture-stage">
+        <img id="hl-team-watermark" class="hl-team-watermark" src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" alt="">
+        <div class="hl-stage-top-bar">
+          <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap;">
+            <span class="badge badge-accent">📸 HIGHLIGHT PICTURE</span>
+            <span id="hl-player-badge" class="badge">QB</span>
+            <span id="hl-player-jersey" class="badge" style="background:rgba(0,0,0,0.75); border:1px solid rgba(255,184,0,0.5);">#15</span>
+            <span id="hl-player-counter" style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-weight:700;">1 / 92</span>
           </div>
-          <div>
-            <span id="hl-player-badge" class="badge badge-accent">QB</span>
-            <h2 id="hl-player-name" style="margin-top:0.2rem; font-size:1.35rem;">Player Highlights</h2>
-            <p id="hl-player-sub" style="color:var(--text-muted); font-size:0.82rem;">Team • College</p>
+          <button class="btn btn-outline btn-sm" style="background:rgba(0,0,0,0.75); color:#FFF; border-color:rgba(255,255,255,0.35);" onclick="closeHighlightModal()">✕ Close</button>
+        </div>
+
+        <div class="hl-picture-center">
+          <img id="hl-player-img" class="hl-hero-photo" src="" alt="Player Highlight Picture">
+        </div>
+
+        <div class="hl-stage-bottom-bar">
+          <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <div class="profile-avatar-circle" id="hl-team-logo-wrap" style="width:44px; height:44px;">
+                <img id="hl-team-logo-img" src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" alt="Team Logo">
+              </div>
+              <div>
+                <h2 id="hl-player-name" style="font-size:1.55rem; color:#FFF; margin:0; line-height:1.15;">Player Highlights</h2>
+                <p id="hl-player-sub" style="color:#CBD5E1; font-size:0.84rem; margin-top:0.2rem;">Team • College</p>
+              </div>
+            </div>
+            <div style="background:rgba(255,184,0,0.16); border:1px solid var(--accent); padding:0.35rem 0.75rem; border-radius:8px; text-align:center;">
+              <span style="display:block; font-size:0.65rem; color:var(--accent); font-weight:800; text-transform:uppercase;">OVR SCORE</span>
+              <strong id="hl-player-ovr" style="font-size:1.25rem; color:#FFF;">99</strong>
+            </div>
+          </div>
+          <div id="hl-signature-caption" style="margin-top:0.65rem; background:rgba(255,184,0,0.12); border-left:3px solid var(--accent); padding:0.45rem 0.75rem; border-radius:0 6px 6px 0; font-size:0.85rem; color:#F8FAFC;">
+            🎬 Signature Highlight Play
           </div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="closeHighlightModal()">✕ Close</button>
       </div>
 
-      <!-- Embedded Video Reel -->
-      <div class="responsive-video">
-        <iframe id="hl-iframe" src="" title="NFL Highlights" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-      </div>
+      <!-- 2. VIDEO REEL, STATS & SIGNATURE MOMENTS BELOW THE HIGHLIGHT PICTURE -->
+      <div class="hl-modal-body">
+        <div id="hl-quick-stats" class="stat-badge-grid" style="margin-top:0;"></div>
 
-      <!-- Highlight Details & External Link -->
-      <div style="margin: 1rem 0;">
-        <h4 style="color:var(--accent); margin-bottom:0.4rem;">🎬 Career Signature Moments & Highlights:</h4>
-        <div id="hl-moments-list" style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.88rem; color:var(--text-main);">
-          <!-- Loaded dynamically -->
+        <!-- Embedded Video Reel -->
+        <div class="responsive-video">
+          <iframe id="hl-iframe" src="" title="NFL Highlights" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
         </div>
-      </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-top:1.25rem; border-top:1px solid var(--border); padding-top:1rem;">
-        <div style="display:flex; gap:0.5rem;">
-          <button class="btn btn-outline btn-sm" id="hl-prev-btn" onclick="prevPlayerHighlight()">← Prev Player</button>
-          <button class="btn btn-outline btn-sm" id="hl-next-btn" onclick="nextPlayerHighlight()">Next Player →</button>
+        <!-- Highlight Details & External Link -->
+        <div style="margin: 1rem 0;">
+          <h4 style="color:var(--accent); margin-bottom:0.4rem;">🎬 Career Signature Moments & Highlights:</h4>
+          <div id="hl-moments-list" style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.88rem; color:var(--text-main);">
+            <!-- Loaded dynamically -->
+          </div>
         </div>
-        <a id="hl-youtube-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-accent btn-sm">
-          ▶️ Watch 4K Reel on YouTube
-        </a>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-top:1.25rem; border-top:1px solid var(--border); padding-top:1rem;">
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-outline btn-sm" id="hl-prev-btn" onclick="prevPlayerHighlight()">← Prev Player</button>
+            <button class="btn btn-outline btn-sm" id="hl-next-btn" onclick="nextPlayerHighlight()">Next Player →</button>
+          </div>
+          <a id="hl-youtube-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-accent btn-sm">
+            ▶️ Watch 4K Reel on YouTube
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -3647,6 +3785,2232 @@
       ],
       "verdictAnalysis": "Carter has freakish interior acceleration. The Chris Jones vs Jalen Carter showdown showcases the seasoned three-time Super Bowl champion versus the ascending young wrecking ball."
     }
+  },
+  {
+    "id": "40",
+    "name": "Jared Goff",
+    "position": "QB",
+    "positionCategory": "QB",
+    "team": "Detroit Lions",
+    "jersey": "16",
+    "college": "California",
+    "rating": 93,
+    "touchdowns": 32,
+    "tdType": "30 Pass / 2 Rush",
+    "blocks": 8,
+    "blockType": "Lead Blocks",
+    "totalScore": 192,
+    "passingYds": 4575,
+    "speedScore": 74,
+    "signaturePlay": "No-look play-action lasers down the seam & 100% completion perfect game.",
+    "highlightMoments": [
+      "Historic 18-for-18 passing game for 292 yards and 2 TDs vs Seattle on Monday Night Football",
+      "Orchestrating Detroit's NFC North championship and NFC Championship Game run",
+      "Pinpoint play-action strikes to Amon-Ra St. Brown and Jameson Williams"
+    ],
+    "specialStat": "4,575 Pass Yds • Historic 18/18 Perfect Game • California Alum",
+    "tdDetails": "32 Total Touchdowns (30 Passing TDs, 2 Sneak TDs)",
+    "blockDetails": "8 Lead blocks on Detroit trick-play reverses",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3046779.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jared+Goff+Lions+best+throws+highlights",
+    "doingRightNow": {
+      "statusBadge": "🎯 HISTORIC EFFICIENCY",
+      "formRating": 94,
+      "trend": "Surgical Pocket Rhythm 📈",
+      "headline": "Operating the NFL's most explosive play-action offense with 74%+ completion efficiency.",
+      "recentSummary": "Consistently carving up blitzes and leading Detroit to top-seed contention.",
+      "keyMetrics": [
+        { "label": "Completion %", "val": "74.9%", "icon": "🎯", "rank": "#1 in NFL" },
+        { "label": "Passer Rating", "val": "114.8", "icon": "⚡", "rank": "Top 3" },
+        { "label": "Points / Game", "val": "32.8 PPG", "icon": "🔥", "rank": "#1 Offense" },
+        { "label": "Play-Action YPA", "val": "10.6 Yds", "icon": "🚀", "rank": "#1 in NFL" }
+      ],
+      "verdictAnalysis": "Goff plays with total command in Detroit's scheme, delivering fearless middle-of-the-field throws under pressure."
+    }
+  },
+  {
+    "id": "41",
+    "name": "Jayden Daniels",
+    "position": "QB",
+    "positionCategory": "QB",
+    "team": "Washington Commanders",
+    "jersey": "5",
+    "college": "LSU",
+    "rating": 92,
+    "touchdowns": 31,
+    "tdType": "25 Pass / 6 Rush",
+    "blocks": 11,
+    "blockType": "Lead Blocks",
+    "totalScore": 186,
+    "passingYds": 3568,
+    "speedScore": 95,
+    "signaturePlay": "52-yard Hail Mary miracle touchdown pass as time expired vs Chicago Bears.",
+    "highlightMoments": [
+      "Unbelievable 52-yard Hail Mary walk-off touchdown victory over Chicago",
+      "891 rushing yards and rookie completion percentage record in Washington turnaround",
+      "Poised 4th-quarter road playoff comebacks in his debut NFL season"
+    ],
+    "specialStat": "2023 Heisman Winner • NFL OROY • Hail Mary Hero • LSU Alum",
+    "tdDetails": "31 Total Touchdowns (25 Passing TDs, 6 Rushing TDs)",
+    "blockDetails": "11 Open-field lead blocks on zone-read keepers",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4426348.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jayden+Daniels+Commanders+rookie+highlights",
+    "doingRightNow": {
+      "statusBadge": "⚡ ELECTRIC DUAL-THREAT",
+      "formRating": 93,
+      "trend": "Skyrocketing Star 📈",
+      "headline": "Shattering rookie efficiency records with calm pocket poise and 4.4 breakaway speed.",
+      "recentSummary": "Leading Washington's offense with elite third-down conversions and zero panic under blitzes.",
+      "keyMetrics": [
+        { "label": "Completion %", "val": "69.0%", "icon": "🎯", "rank": "Rookie Record" },
+        { "label": "Rush Yards", "val": "891 Yds", "icon": "🏃", "rank": "Top 2 QB" },
+        { "label": "4th-Down Conv", "val": "87%", "icon": "🔥", "rank": "#1 in NFL" },
+        { "label": "Total TDs", "val": "31 TDs", "icon": "⚡", "rank": "All-Pro Pace" }
+      ],
+      "verdictAnalysis": "Daniels plays like a 10-year veteran while retaining electrifying open-field speed."
+    }
+  },
+  {
+    "id": "42",
+    "name": "Bijan Robinson",
+    "position": "RB",
+    "positionCategory": "RB",
+    "team": "Atlanta Falcons",
+    "jersey": "7",
+    "college": "Texas",
+    "rating": 94,
+    "touchdowns": 15,
+    "tdType": "14 Rush / 1 Rec",
+    "blocks": 22,
+    "blockType": "Pass Pro Pickups",
+    "totalScore": 90,
+    "passingYds": 0,
+    "speedScore": 94,
+    "signaturePlay": "Ankle-breaking jump-cut leaving two linebackers grasping air for a 37-yard TD.",
+    "highlightMoments": [
+      "Over 1,880 scrimmage yards powering Atlanta's balanced offensive attack",
+      "Viral open-field jukes and one-handed screen catches out of the backfield",
+      "Doak Walker Award winner at Texas turned elite 3-down NFL weapon"
+    ],
+    "specialStat": "1,456 Rush Yds • 61 Catches • 15 TDs • Texas Alum",
+    "tdDetails": "15 Total Touchdowns (14 Rushing TDs, 1 Receiving TD)",
+    "blockDetails": "22 Blitz-pickup blocks protecting the edge",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4430807.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Bijan+Robinson+Falcons+jukes+highlights",
+    "doingRightNow": {
+      "statusBadge": "💨 ELITE JUKES & VISION",
+      "formRating": 94,
+      "trend": "100+ Yds Weekly 🔥",
+      "headline": "Piling up forced missed tackles as both a workhorse runner and slot-level receiver.",
+      "recentSummary": "Averaging nearly 5 yards per carry with dominant red-zone finishing power.",
+      "keyMetrics": [
+        { "label": "Scrimmage Yds", "val": "1,887 Yds", "icon": "⚡", "rank": "Top 4 NFL" },
+        { "label": "Missed Tackles Forced", "val": "68 MTF", "icon": "🌪️", "rank": "Top 3 RB" },
+        { "label": "Receptions", "val": "61 Rec", "icon": "🧤", "rank": "Top 3 RB" },
+        { "label": "Touchdowns", "val": "15 TDs", "icon": "🏈", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Bijan combines receiver-caliber route running with effortless lateral cuts in tight spaces."
+    }
+  },
+  {
+    "id": "43",
+    "name": "Jonathan Taylor",
+    "position": "RB",
+    "positionCategory": "RB",
+    "team": "Indianapolis Colts",
+    "jersey": "28",
+    "college": "Wisconsin",
+    "rating": 94,
+    "touchdowns": 12,
+    "tdType": "11 Rush / 1 Rec",
+    "blocks": 19,
+    "blockType": "Blitz Pickups",
+    "totalScore": 72,
+    "passingYds": 0,
+    "speedScore": 95,
+    "signaturePlay": "83-yard home-run sprint down the sideline hitting 22.1 MPH.",
+    "highlightMoments": [
+      "NFL Rushing Title with 1,811 rushing yards and 20 total touchdowns in 2021",
+      "5-touchdown explosion against Buffalo Bills in dominant road victory",
+      "3-touchdown 218-yard burst slicing through Tennessee defense"
+    ],
+    "specialStat": "1,431 Rush Yds • 4.7 YPC • Former NFL Rushing Champ • Wisconsin Alum",
+    "tdDetails": "12 Total Touchdowns (11 Rushing, 1 Receiving)",
+    "blockDetails": "19 Pass protection blocks for Colts quarterbacks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4242335.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jonathan+Taylor+Colts+best+runs+highlights",
+    "doingRightNow": {
+      "statusBadge": "🚀 HOME-RUN BREAKAWAY",
+      "formRating": 93,
+      "trend": "Workhorse Surge 📈",
+      "headline": "Reaching top track speed through arm tackles for chunk 50+ yard bursts.",
+      "recentSummary": "Topping 100+ yards per game when healthy with ferocious goal-line balance.",
+      "keyMetrics": [
+        { "label": "Rush Yds / Game", "val": "102.2 YPG", "icon": "🏃", "rank": "Top 4 RB" },
+        { "label": "Top Game Speed", "val": "22.1 MPH", "icon": "⚡", "rank": "Elite" },
+        { "label": "Yards After Contact", "val": "3.1 YAC", "icon": "💥", "rank": "Top 5 RB" },
+        { "label": "Total TDs", "val": "12 TDs", "icon": "🏈", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "Taylor remains one of football's premier home-run backs the moment he hits daylight."
+    }
+  },
+  {
+    "id": "44",
+    "name": "Josh Jacobs",
+    "position": "RB",
+    "positionCategory": "RB",
+    "team": "Green Bay Packers",
+    "jersey": "8",
+    "college": "Alabama",
+    "rating": 93,
+    "touchdowns": 16,
+    "tdType": "15 Rush / 1 Rec",
+    "blocks": 24,
+    "blockType": "Power Pickups",
+    "totalScore": 96,
+    "passingYds": 0,
+    "speedScore": 90,
+    "signaturePlay": "Truck-sticking defenders over the pile for 3-TD afternoon at Lambeau Field.",
+    "highlightMoments": [
+      "Led NFL in rushing with 1,653 yards in 2022 First-Team All-Pro season",
+      "86-yard overtime walk-off touchdown sprint vs Seattle Seahawks",
+      "16 total touchdowns anchoring Green Bay's physical ground game"
+    ],
+    "specialStat": "1,329 Rush Yds • 16 TDs • Former NFL Rushing Champ • Alabama Alum",
+    "tdDetails": "16 Total Touchdowns (15 Rushing TDs, 1 Receiving TD)",
+    "blockDetails": "24 Bone-rattling blitz pickups in play-action",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4047365.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Josh+Jacobs+Packers+Raiders+highlights",
+    "doingRightNow": {
+      "statusBadge": "💪 TACKLE BREAKER KING",
+      "formRating": 94,
+      "trend": "Physical Dominance 🔥",
+      "headline": "Bulldozing stacked boxes in Green Bay with top-3 yards after contact.",
+      "recentSummary": "1,329 rushing yards and 15 rushing TDs while rarely going down on first contact.",
+      "keyMetrics": [
+        { "label": "Broken Tackles", "val": "74 Broken", "icon": "💥", "rank": "#2 in NFL" },
+        { "label": "Rushing TDs", "val": "15 TDs", "icon": "🏈", "rank": "Top 3 RB" },
+        { "label": "Rush Yards", "val": "1,329 Yds", "icon": "🏃", "rank": "Top 6 NFL" },
+        { "label": "Pass Pro Grade", "val": "86.4", "icon": "🛡️", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Jacobs finishes every run violently, turning 2-yard gains into 7-yard momentum plays."
+    }
+  },
+  {
+    "id": "45",
+    "name": "Kyle Juszczyk",
+    "position": "FB",
+    "positionCategory": "FB",
+    "team": "San Francisco 49ers",
+    "jersey": "44",
+    "college": "Harvard",
+    "rating": 95,
+    "touchdowns": 4,
+    "tdType": "2 Rec / 2 Rush",
+    "blocks": 62,
+    "blockType": "Lead & Iso Blocks",
+    "totalScore": 24,
+    "passingYds": 0,
+    "speedScore": 84,
+    "signaturePlay": "Crushing edge-sealing lead block springing Christian McCaffrey for 40+ yard TD & Super Bowl TD catch.",
+    "highlightMoments": [
+      "9x Pro Bowl Fullback and First-Team All-Pro offensive Swiss Army Knife",
+      "Super Bowl LIV touchdown catch + Super Bowl LVIII sideline circus grab",
+      "Over 60 devastating lead-isolation blocks clearing rushing lanes yearly"
+    ],
+    "specialStat": "9x Pro Bowl • 1x All-Pro • #1 NFL Fullback • Harvard Alum",
+    "tdDetails": "4 Total Touchdowns (Receiving wheel routes & short-yardage dives)",
+    "blockDetails": "62 High-impact lead & iso blocks smashing linebackers",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/16002.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Kyle+Juszczyk+49ers+best+blocks+catches+highlights",
+    "doingRightNow": {
+      "statusBadge": "🛡️ #1 FULLBACK IN FOOTBALL",
+      "formRating": 96,
+      "trend": "All-Pro Gold Standard 👑",
+      "headline": "Lining up at FB, TE, slot, and H-back while stonewalling edge rushers.",
+      "recentSummary": "9x Pro Bowler delivering elite lead-blocking snaps and clutch third-down catches.",
+      "keyMetrics": [
+        { "label": "Pro Bowl Selections", "val": "9x Pro Bowl", "icon": "👑", "rank": "#1 FB" },
+        { "label": "Lead Blocks", "val": "62 Blocks", "icon": "🛡️", "rank": "#1 FB" },
+        { "label": "Pass Block Win", "val": "96.2%", "icon": "🧱", "rank": "Elite" },
+        { "label": "Offensive Snaps", "val": "51% Snap Share", "icon": "⚡", "rank": "#1 FB" }
+      ],
+      "verdictAnalysis": "Juszczyk is the blueprint of the modern offensive weapon fullback—equal parts battering ram and reliable pass catcher."
+    }
+  },
+  {
+    "id": "46",
+    "name": "Patrick Ricard",
+    "position": "FB",
+    "positionCategory": "FB",
+    "team": "New York Giants",
+    "jersey": "45",
+    "college": "Maine",
+    "rating": 93,
+    "touchdowns": 2,
+    "tdType": "2 Rec / Goal-Line",
+    "blocks": 66,
+    "blockType": "Pancake Lead Blocks",
+    "totalScore": 12,
+    "passingYds": 0,
+    "speedScore": 77,
+    "signaturePlay": "305-pound Project Pat pancaking middle linebackers to pave 2,000-yard rushing lanes.",
+    "highlightMoments": [
+      "5x Pro Bowl & All-Pro powerhouse paved the way for Lamar Jackson & Derrick Henry",
+      "Converted defensive tackle flattening edge defenders on outside zone",
+      "Goal-line dive catches & thunderous blitz pickups"
+    ],
+    "specialStat": "305-Lb Hammer • 5x Pro Bowl • All-Pro Fullback • Maine Alum",
+    "tdDetails": "2 Total Touchdowns (Goal-line fullback leak passes)",
+    "blockDetails": "66 Devastating pancake lead blocks clearing the A-gap",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/2975417.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Patrick+Ricard+fullback+pancake+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🚜 305-LB BATTERING RAM",
+      "formRating": 94,
+      "trend": "Pancake Machine 💥",
+      "headline": "Detonating defenders on impact as the NFL's heaviest, most feared fullback.",
+      "recentSummary": "Clearing top-tier rushing yards per carry whenever aligned in the I-formation.",
+      "keyMetrics": [
+        { "label": "Run Block Grade", "val": "88.9 PFF", "icon": "🛡️", "rank": "#1 FB" },
+        { "label": "Pancake Blocks", "val": "66 Blocks", "icon": "🚜", "rank": "#1 FB" },
+        { "label": "Pro Bowls", "val": "5x Pro Bowl", "icon": "🏆", "rank": "All-Pro" },
+        { "label": "Weight Advantage", "val": "305 Lbs", "icon": "💥", "rank": "Mismatch" }
+      ],
+      "verdictAnalysis": "Ricard moves defensive ends like blocking sleds. Linebackers dread meeting him in the hole."
+    }
+  },
+  {
+    "id": "47",
+    "name": "Alec Ingold",
+    "position": "FB",
+    "positionCategory": "FB",
+    "team": "Los Angeles Chargers",
+    "jersey": "30",
+    "college": "Wisconsin",
+    "rating": 89,
+    "touchdowns": 2,
+    "tdType": "1 Rush / 1 Rec",
+    "blocks": 54,
+    "blockType": "Lead Seal Blocks",
+    "totalScore": 12,
+    "passingYds": 0,
+    "speedScore": 82,
+    "signaturePlay": "Cracking outside linebackers off the edge to spring explosive 70-yard sweeps.",
+    "highlightMoments": [
+      "Pro Bowl fullback anchoring record-setting zone rushing attacks",
+      "Walter Payton NFL Man of the Year nominee and locker-room captain",
+      "Clutch short-yardage 4th-down conversions and flat-route receptions"
+    ],
+    "specialStat": "Pro Bowl Fullback • Team Captain • Wisconsin Alum",
+    "tdDetails": "2 Total Touchdowns (Short-yardage power dives & play-action flats)",
+    "blockDetails": "54 Seal & kick-out blocks creating outside alleys",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3917668.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Alec+Ingold+fullback+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "💪 PRO BOWL ENFORCER",
+      "formRating": 90,
+      "trend": "Physical Tone-Setter 🔥",
+      "headline": "Taking on pulling edge assignments and converting tough 3rd-and-1 plunges.",
+      "recentSummary": "Precision timing on outside-zone kick-outs with soft hands out of play-action.",
+      "keyMetrics": [
+        { "label": "Kick-Out Blocks", "val": "54 Blocks", "icon": "🛡️", "rank": "Top 3 FB" },
+        { "label": "Short Yardage %", "val": "89% Conv", "icon": "💪", "rank": "Elite" },
+        { "label": "Catch Rate", "val": "84%", "icon": "🧤", "rank": "Sure Hands" },
+        { "label": "Pro Bowl Honors", "val": "Pro Bowler", "icon": "🏆", "rank": "All-AFC" }
+      ],
+      "verdictAnalysis": "Ingold brings classic Wisconsin toughness to every single snap."
+    }
+  },
+  {
+    "id": "48",
+    "name": "A.J. Brown",
+    "position": "WR",
+    "positionCategory": "WR",
+    "team": "New England Patriots",
+    "jersey": "1",
+    "college": "Ole Miss",
+    "rating": 97,
+    "touchdowns": 10,
+    "tdType": "10 Rec TDs",
+    "blocks": 21,
+    "blockType": "Stalk Blocks",
+    "totalScore": 60,
+    "passingYds": 0,
+    "speedScore": 93,
+    "signaturePlay": "Snatching a 50-yard jump ball over double coverage and stiff-arming the safety.",
+    "highlightMoments": [
+      "NFL record 6 consecutive games with 125+ receiving yards",
+      "3x Second-Team All-Pro bullying cornerbacks after the catch",
+      "3x consecutive 1,000+ yard receiving seasons with explosive YAC"
+    ],
+    "specialStat": "3x All-Pro • NFL 125-Yd Streak Record • Ole Miss Alum",
+    "tdDetails": "10 Receiving Touchdowns tearing apart single coverage",
+    "blockDetails": "21 Physical perimeter stalk blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4047646.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=AJ+Brown+NFL+best+catches+highlights",
+    "doingRightNow": {
+      "statusBadge": "💥 BULLY BALL WR1",
+      "formRating": 96,
+      "trend": "Unstoppable on Slants 🔥",
+      "headline": "Posting an elite 3.1+ yards per route run while dominating contested catches.",
+      "recentSummary": "Winning against press coverage at will and generating explosive yards after catch.",
+      "keyMetrics": [
+        { "label": "Yards / Route Run", "val": "3.12 YPRR", "icon": "⚡", "rank": "#1 in NFL" },
+        { "label": "Contested Catch %", "val": "68%", "icon": "🥊", "rank": "Top 2 WR" },
+        { "label": "Yards / Catch", "val": "16.1 YPC", "icon": "🚀", "rank": "Top 5 WR" },
+        { "label": "All-Pro Rating", "val": "97 OVR", "icon": "👑", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Brown is built like a linebacker with sprinter speed—cornerbacks simply cannot win physical battles with him."
+    }
+  },
+  {
+    "id": "49",
+    "name": "Puka Nacua",
+    "position": "WR",
+    "positionCategory": "WR",
+    "team": "Los Angeles Rams",
+    "jersey": "12",
+    "college": "BYU",
+    "rating": 95,
+    "touchdowns": 7,
+    "tdType": "6 Rec / 1 Rush",
+    "blocks": 28,
+    "blockType": "Crackback & Run Blocks",
+    "totalScore": 42,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Sideline toe-tap 37-yard snag taking a massive hit and popping straight back up.",
+    "highlightMoments": [
+      "Shattered all-time NFL rookie records with 105 catches and 1,486 receiving yards",
+      "9 catches for 181 yards in NFL playoff debut against Detroit",
+      "Widely praised as the toughest blocking & YAC wideout in football"
+    ],
+    "specialStat": "All-Time NFL Rookie Rec & Yardage Record • BYU Alum",
+    "tdDetails": "7 Total Touchdowns (6 Receiving TDs, 1 Jet Sweep TD)",
+    "blockDetails": "28 Relentless crackback blocks springing Kyren Williams",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4426515.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Puka+Nacua+Rams+rookie+record+highlights",
+    "doingRightNow": {
+      "statusBadge": "🔥 TARGET MONSTER",
+      "formRating": 96,
+      "trend": "100+ Yds / Game Pace 📈",
+      "headline": "Leading the Rams with 3.5+ yards per route run and fearless middle-field grabs.",
+      "recentSummary": "990+ yards in just 11 games while laying crushing blocks in the run game.",
+      "keyMetrics": [
+        { "label": "Yards / Route Run", "val": "3.56 YPRR", "icon": "⚡", "rank": "#1 in NFL" },
+        { "label": "WR Run Block", "val": "84.0 PFF", "icon": "🛡️", "rank": "#1 WR" },
+        { "label": "Catches / Game", "val": "7.2 Rec", "icon": "🧤", "rank": "Top 4 WR" },
+        { "label": "First Downs", "val": "54 1st Dn", "icon": "🔥", "rank": "Chain Mover" }
+      ],
+      "verdictAnalysis": "Nacua plays every snap with maximum physicality, catching everything near him and blocking like a tight end."
+    }
+  },
+  {
+    "id": "50",
+    "name": "Garrett Wilson",
+    "position": "WR",
+    "positionCategory": "WR",
+    "team": "New York Jets",
+    "jersey": "5",
+    "college": "Ohio State",
+    "rating": 93,
+    "touchdowns": 8,
+    "tdType": "8 Rec TDs",
+    "blocks": 15,
+    "blockType": "Perimeter Stalk Blocks",
+    "totalScore": 48,
+    "passingYds": 0,
+    "speedScore": 94,
+    "signaturePlay": "Airborne Jordan-style one-handed back-pylon catch on Thursday Night Football.",
+    "highlightMoments": [
+      "Jaw-dropping one-handed Superman TD grab vs Houston Texans voted Catch of the Year",
+      "3 straight 1,000+ yard receiving seasons since entering the league",
+      "NFL Offensive Rookie of the Year out of Ohio State"
+    ],
+    "specialStat": "NFL OROY • 3x 1,000-Yd Seasons • 101 Catches • Ohio State Alum",
+    "tdDetails": "8 Receiving Touchdowns with highlight-reel body control",
+    "blockDetails": "15 Perimeter screen & run blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4569618.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Garrett+Wilson+Jets+one+handed+catch+highlights",
+    "doingRightNow": {
+      "statusBadge": "✈️ AIRBORNE ACROBAT",
+      "formRating": 93,
+      "trend": "100+ Catch Season 🔥",
+      "headline": "Eclipsing 100 receptions and delivering viral one-handed touchdown grabs.",
+      "recentSummary": "101 catches for 1,104 yards showing lethal route separation at every level.",
+      "keyMetrics": [
+        { "label": "Receptions", "val": "101 Rec", "icon": "🧤", "rank": "Top 5 NFL" },
+        { "label": "Receiving Yds", "val": "1,104 Yds", "icon": "⚡", "rank": "3rd Straight 1K" },
+        { "label": "Separation Grade", "val": "92", "icon": "🌪️", "rank": "Elite" },
+        { "label": "Highlights", "val": "Catch of Yr", "icon": "🎬", "rank": "#1 Viral" }
+      ],
+      "verdictAnalysis": "Wilson possesses rubber-band joints and sudden hip-drop cuts that make him virtually unguardable 1-on-1."
+    }
+  },
+  {
+    "id": "51",
+    "name": "Nico Collins",
+    "position": "WR",
+    "positionCategory": "WR",
+    "team": "Houston Texans",
+    "jersey": "12",
+    "college": "Michigan",
+    "rating": 94,
+    "touchdowns": 9,
+    "tdType": "9 Rec TDs",
+    "blocks": 19,
+    "blockType": "Downfield Blocks",
+    "totalScore": 54,
+    "passingYds": 0,
+    "speedScore": 93,
+    "signaturePlay": "67-yard catch-and-run splitting both safeties into the end zone.",
+    "highlightMoments": [
+      "Led NFL in receiving yards per game across explosive 2024 campaign",
+      "9 catches for 195 yards in win-or-go-home Week 18 victory at Indianapolis",
+      "6'4\" mismatch winning both vertical go balls and crossers"
+    ],
+    "specialStat": "6'4\" Alpha X-WR • 1,006+ Yds in 12 Games • Michigan Alum",
+    "tdDetails": "9 Receiving Touchdowns averaging 14.8 YPC",
+    "blockDetails": "19 Downfield perimeter blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4258173.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Nico+Collins+Texans+best+catches+highlights",
+    "doingRightNow": {
+      "statusBadge": "🚀 DEEP-THREAT ALPHA",
+      "formRating": 95,
+      "trend": "Top-3 YPG Receiver ⚡",
+      "headline": "Stretching defenses vertically with elite yards per route run alongside C.J. Stroud.",
+      "recentSummary": "1,006 receiving yards in just 12 games with explosive 20+ yard strikes weekly.",
+      "keyMetrics": [
+        { "label": "Yards / Game", "val": "83.8 YPG", "icon": "🚀", "rank": "Top 4 WR" },
+        { "label": "Yards / Catch", "val": "14.8 YPC", "icon": "⚡", "rank": "Deep Threat" },
+        { "label": "20+ Yd Plays", "val": "18 Plays", "icon": "🔥", "rank": "Top 5" },
+        { "label": "PFF Grade", "val": "91.4", "icon": "👑", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "At 6-foot-4 with 4.4 speed, Collins is a nightmare cover matchup for any cornerback in single coverage."
+    }
+  },
+  {
+    "id": "52",
+    "name": "Drake London",
+    "position": "WR",
+    "positionCategory": "WR",
+    "team": "Atlanta Falcons",
+    "jersey": "5",
+    "college": "USC",
+    "rating": 91,
+    "touchdowns": 9,
+    "tdType": "9 Rec TDs",
+    "blocks": 23,
+    "blockType": "Crack & Stalk Blocks",
+    "totalScore": 54,
+    "passingYds": 0,
+    "speedScore": 89,
+    "signaturePlay": "Back-shoulder fade box-out catch with defender draped on his back.",
+    "highlightMoments": [
+      "100 catches for 1,271 yards and 9 touchdowns breakout WR1 season",
+      "Walk-off overtime touchdown grab vs Tampa Bay on Thursday Night Football",
+      "6'4\" jump-ball specialist dominating red-zone targets"
+    ],
+    "specialStat": "100 Catches • 1,271 Yds • 9 TDs • USC Alum",
+    "tdDetails": "9 Receiving Touchdowns on high-point fades",
+    "blockDetails": "23 Physical downfield blocks springing Bijan Robinson",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4426502.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Drake+London+Falcons+best+catches+highlights",
+    "doingRightNow": {
+      "statusBadge": "🎯 RED-ZONE SKY-SCRAPER",
+      "formRating": 92,
+      "trend": "100-Catch WR1 📈",
+      "headline": "Reaching 1,271 yards and 100 catches as Atlanta's undisputed go-to chain mover.",
+      "recentSummary": "9 touchdowns and top-5 contested catch wins across the league.",
+      "keyMetrics": [
+        { "label": "Receptions", "val": "100 Rec", "icon": "🧤", "rank": "Top 6 NFL" },
+        { "label": "Receiving Yds", "val": "1,271 Yds", "icon": "🔥", "rank": "Top 4 NFL" },
+        { "label": "Touchdowns", "val": "9 TDs", "icon": "🏈", "rank": "Top 8 WR" },
+        { "label": "WR Blocking", "val": "81.5 Grade", "icon": "🛡️", "rank": "Top 5 WR" }
+      ],
+      "verdictAnalysis": "London boxes out cornerbacks like a power forward and never shies away from contact."
+    }
+  },
+  {
+    "id": "53",
+    "name": "Jaxon Smith-Njigba",
+    "position": "WR",
+    "positionCategory": "WR",
+    "team": "Seattle Seahawks",
+    "jersey": "11",
+    "college": "Ohio State",
+    "rating": 92,
+    "touchdowns": 6,
+    "tdType": "6 Rec TDs",
+    "blocks": 16,
+    "blockType": "Slot Seal Blocks",
+    "totalScore": 36,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Double-move out-and-up leaving the nickel defender frozen for a 46-yard bomb.",
+    "highlightMoments": [
+      "100 catches for 1,130 yards emerging as Seattle's #1 target machine",
+      "180-yard explosion including 2 touchdowns against Los Angeles Rams",
+      "347-yard Rose Bowl MVP performance at Ohio State"
+    ],
+    "specialStat": "100 Catches • 1,130 Yds • Route Technician • Ohio State Alum",
+    "tdDetails": "6 Receiving Touchdowns out of the slot and boundary",
+    "blockDetails": "16 Slot crackback seal blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4430878.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jaxon+Smith+Njigba+Seahawks+highlights",
+    "doingRightNow": {
+      "statusBadge": "⚡ ROUTE TECHNICIAN",
+      "formRating": 93,
+      "trend": "100-Catch Breakout 📈",
+      "headline": "Shredding nickel coverages with razor-sharp stems and 100 receptions.",
+      "recentSummary": "1,130 yards on 100 grabs with elite third-down reliability.",
+      "keyMetrics": [
+        { "label": "Receptions", "val": "100 Rec", "icon": "🧤", "rank": "Top 6 NFL" },
+        { "label": "Receiving Yds", "val": "1,130 Yds", "icon": "⚡", "rank": "Top 10" },
+        { "label": "Drop Rate", "val": "2.1%", "icon": "🔒", "rank": "Sure Hands" },
+        { "label": "3rd Down Grabs", "val": "28 Conv", "icon": "🎯", "rank": "Clutch" }
+      ],
+      "verdictAnalysis": "JSN creates instant separation at the top of routes, serving as a quarterback's ultimate safety blanket."
+    }
+  },
+  {
+    "id": "54",
+    "name": "Mark Andrews",
+    "position": "TE",
+    "positionCategory": "TE",
+    "team": "Baltimore Ravens",
+    "jersey": "89",
+    "college": "Oklahoma",
+    "rating": 93,
+    "touchdowns": 11,
+    "tdType": "11 Rec TDs",
+    "blocks": 36,
+    "blockType": "Inline & Slot Blocks",
+    "totalScore": 66,
+    "passingYds": 0,
+    "speedScore": 84,
+    "signaturePlay": "Seam touchdown catch splitting two safeties in the back of the end zone.",
+    "highlightMoments": [
+      "Ravens all-time franchise touchdown receptions leader (51+ career TDs)",
+      "11 receiving touchdowns leading all NFL tight ends in 2024",
+      "First-Team All-Pro 1,361-yard season and Mackey Award winner at Oklahoma"
+    ],
+    "specialStat": "11 Rec TDs (TE Leader) • Franchise TD Record • Oklahoma Alum",
+    "tdDetails": "11 Receiving Touchdowns dominating the red zone",
+    "blockDetails": "36 Edge & seam seal blocks for Baltimore's top rushing attack",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3116365.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Mark+Andrews+Ravens+touchdowns+highlights",
+    "doingRightNow": {
+      "statusBadge": "🎯 #1 TD TIGHT END",
+      "formRating": 93,
+      "trend": "11 Red-Zone TDs 🔥",
+      "headline": "Reigning as Lamar Jackson's #1 red-zone weapon with 11 touchdown catches.",
+      "recentSummary": "55 catches, 673 yards, and an NFL-best 11 TDs among tight ends.",
+      "keyMetrics": [
+        { "label": "TE Touchdowns", "val": "11 TDs", "icon": "🏈", "rank": "#1 TE NFL" },
+        { "label": "Red-Zone Efficiency", "val": "78%", "icon": "🎯", "rank": "#1 TE" },
+        { "label": "Career TDs", "val": "51 TDs", "icon": "👑", "rank": "BAL Record" },
+        { "label": "Run Block", "val": "36 Blocks", "icon": "🛡️", "rank": "Solid" }
+      ],
+      "verdictAnalysis": "Andrews has unmatched red-zone chemistry with Lamar Jackson, consistently finding soft spots in zone coverage."
+    }
+  },
+  {
+    "id": "55",
+    "name": "Trey McBride",
+    "position": "TE",
+    "positionCategory": "TE",
+    "team": "Arizona Cardinals",
+    "jersey": "85",
+    "college": "Colorado State",
+    "rating": 94,
+    "touchdowns": 4,
+    "tdType": "2 Rec / 2 Rush-Fumble",
+    "blocks": 41,
+    "blockType": "Inline TE Blocks",
+    "totalScore": 24,
+    "passingYds": 0,
+    "speedScore": 87,
+    "signaturePlay": "Hurdling a cornerback cleanly down the right sideline for a 31-yard gain.",
+    "highlightMoments": [
+      "111 catches for 1,146 yards emerging as top-2 yardage tight end in football",
+      "Famous athletic hurdles turning checkdowns into explosive 25-yard gains",
+      "Mackey Award winner at Colorado State tearing up NFC West defenses"
+    ],
+    "specialStat": "111 Catches • 1,146 Yds • All-Pro Contender • Colorado State Alum",
+    "tdDetails": "4 Total Touchdowns with 111 receptions",
+    "blockDetails": "41 Physical inline edge blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4361307.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Trey+McBride+Cardinals+hurdle+catches+highlights",
+    "doingRightNow": {
+      "statusBadge": "🦘 111-CATCH MACHINE",
+      "formRating": 95,
+      "trend": "Yardage Monster 📈",
+      "headline": "Reaching 111 receptions and 1,146 yards while hurdling defenders weekly.",
+      "recentSummary": "Leading Arizona in targets, yards, and missed tackles forced at TE.",
+      "keyMetrics": [
+        { "label": "Receptions", "val": "111 Rec", "icon": "🧤", "rank": "#2 TE NFL" },
+        { "label": "Receiving Yds", "val": "1,146 Yds", "icon": "⚡", "rank": "#2 TE NFL" },
+        { "label": "Broken Tackles", "val": "22 Broken", "icon": "🦘", "rank": "#1 TE" },
+        { "label": "Inline Blocks", "val": "41 Blocks", "icon": "🛡️", "rank": "High Motor" }
+      ],
+      "verdictAnalysis": "McBride runs like a wrecking ball after the catch and vacuums in every throw near his zip code."
+    }
+  },
+  {
+    "id": "56",
+    "name": "Lane Johnson",
+    "position": "OT",
+    "positionCategory": "OL",
+    "team": "Philadelphia Eagles",
+    "jersey": "65",
+    "college": "Oklahoma",
+    "rating": 98,
+    "touchdowns": 0,
+    "tdType": "Offensive Tackle",
+    "blocks": 68,
+    "blockType": "Pancakes & Shutouts",
+    "totalScore": 98,
+    "passingYds": 0,
+    "speedScore": 80,
+    "signaturePlay": "Allowing 0 sacks across more than 25 consecutive games against elite pass rushers.",
+    "highlightMoments": [
+      "0 sacks allowed across 2021–2022–2024 elite All-Pro right tackle stretches",
+      "Super Bowl LII Champion stonewalling premier NFL edge rushers",
+      "5x Pro Bowl & 2x First-Team All-Pro cornerstone of Philadelphia's O-Line"
+    ],
+    "specialStat": "0 Sacks Allowed • 5x Pro Bowl • 2x All-Pro • Oklahoma Alum",
+    "tdDetails": "0 Touchdowns (Ironclad right-side protector)",
+    "blockDetails": "68 Pancake & edge shutout blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/15797.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Lane+Johnson+Eagles+best+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🔒 ZERO SACKS ALLOWED",
+      "formRating": 98,
+      "trend": "Hall of Fame Track 👑",
+      "headline": "Shutting down Micah Parsons, Myles Garrett, and T.J. Watt 1-on-1 with zero help.",
+      "recentSummary": "92+ pass block grade anchoring the NFL's most dominant offensive line.",
+      "keyMetrics": [
+        { "label": "Sacks Allowed", "val": "0 Sacks", "icon": "🔒", "rank": "#1 RT" },
+        { "label": "Pass Block Grade", "val": "92.8", "icon": "🛡️", "rank": "#1 OT" },
+        { "label": "Pancakes", "val": "68 Blocks", "icon": "🧱", "rank": "All-Pro" },
+        { "label": "All-Pro Honors", "val": "4x All-Pro", "icon": "👑", "rank": "HOF Bound" }
+      ],
+      "verdictAnalysis": "Lane Johnson's kick-slide is textbook perfection—defensive coordinators refuse to line their best rusher over him without stunts."
+    }
+  },
+  {
+    "id": "57",
+    "name": "Jordan Mailata",
+    "position": "OT",
+    "positionCategory": "OL",
+    "team": "Philadelphia Eagles",
+    "jersey": "68",
+    "college": "International Pathway",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "Offensive Tackle",
+    "blocks": 71,
+    "blockType": "Pancake Blocks",
+    "totalScore": 97,
+    "passingYds": 0,
+    "speedScore": 78,
+    "signaturePlay": "365-pound left tackle pancaking edge rushers 5 yards downfield for Saquon Barkley.",
+    "highlightMoments": [
+      "Rated #1 overall offensive tackle by PFF at 95.8 season grade",
+      "Former Australian rugby league giant who never played college football",
+      "Clearing wide-open blindside lanes for 2,000-yard rushing attack"
+    ],
+    "specialStat": "6'8\" 365-Lb Giant • #1 PFF Tackle Grade (95.8) • Rugby Crossover",
+    "tdDetails": "0 Touchdowns (Dominant blindside protector)",
+    "blockDetails": "71 Massive pancake blocks burying edge defenders",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4334215.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jordan+Mailata+Eagles+pancake+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🏆 #1 GRADED NFL TACKLE",
+      "formRating": 98,
+      "trend": "95.8 PFF Overall Grade 🔥",
+      "headline": "Bulldozing defenders as the highest-graded offensive lineman in the entire NFL.",
+      "recentSummary": "Allowing just 1 sack while flattening defenders in Philadelphia's ground assault.",
+      "keyMetrics": [
+        { "label": "Overall PFF Grade", "val": "95.8", "icon": "🏆", "rank": "#1 OT NFL" },
+        { "label": "Run Block Grade", "val": "94.9", "icon": "🚜", "rank": "#1 OT" },
+        { "label": "Pancake Blocks", "val": "71 Blocks", "icon": "🧱", "rank": "Top 2 NFL" },
+        { "label": "Size / Power", "val": "6'8\" 365lb", "icon": "💪", "rank": "Freak" }
+      ],
+      "verdictAnalysis": "Mailata combines unprecedented 365-pound mass with rare feet, throwing defenders completely out of camera frame."
+    }
+  },
+  {
+    "id": "58",
+    "name": "Dion Dawkins",
+    "position": "OT",
+    "positionCategory": "OL",
+    "team": "Buffalo Bills",
+    "jersey": "73",
+    "college": "Temple",
+    "rating": 93,
+    "touchdowns": 1,
+    "tdType": "1 Tackle-Eligible TD",
+    "blocks": 58,
+    "blockType": "Pancake Blocks",
+    "totalScore": 93,
+    "passingYds": 0,
+    "speedScore": 77,
+    "signaturePlay": "Shnowman big-man touchdown catch + mirroring blindside rushers for Josh Allen.",
+    "highlightMoments": [
+      "3x consecutive Pro Bowl Left Tackle anchoring Buffalo's elite offense",
+      "Catching a tackle-eligible receiving touchdown from Josh Allen",
+      "One of the lowest pressure rates allowed in the AFC"
+    ],
+    "specialStat": "3x Pro Bowl LT • Temple Alum • Blindside Enforcer",
+    "tdDetails": "1 Tackle-Eligible Receiving Touchdown",
+    "blockDetails": "58 Blindside pass-pro & pancake blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3051324.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Dion+Dawkins+Bills+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "❄️ SHNOWMAN BLINDSIDE",
+      "formRating": 93,
+      "trend": "All-Pro Caliber Shield 🛡️",
+      "headline": "Giving Josh Allen clean pockets against top AFC pass rushers week after week.",
+      "recentSummary": "Allowing fewer than 2 QB hits all season with fierce run-blocking leverage.",
+      "keyMetrics": [
+        { "label": "Pass Block Win", "val": "93.1%", "icon": "🔒", "rank": "Top 5 LT" },
+        { "label": "Pancakes", "val": "58 Blocks", "icon": "🛡️", "rank": "Elite" },
+        { "label": "Pro Bowls", "val": "3x Pro Bowl", "icon": "❄️", "rank": "All-AFC" },
+        { "label": "Penalties", "val": "Low Rate", "icon": "📏", "rank": "Disciplined" }
+      ],
+      "verdictAnalysis": "Dawkins anchors the left edge with quick hands and heavy anchor power against bull rushes."
+    }
+  },
+  {
+    "id": "59",
+    "name": "Quenton Nelson",
+    "position": "OG",
+    "positionCategory": "OL",
+    "team": "Seattle Seahawks",
+    "jersey": "53",
+    "college": "Notre Dame",
+    "rating": 97,
+    "touchdowns": 1,
+    "tdType": "1 Fumble Recovery TD",
+    "blocks": 72,
+    "blockType": "Pancake Blocks",
+    "totalScore": 97,
+    "passingYds": 0,
+    "speedScore": 76,
+    "signaturePlay": "Pulling around the edge and sending a linebacker flying three yards backward into the turf.",
+    "highlightMoments": [
+      "7x consecutive Pro Bowl selections starting from his rookie NFL year",
+      "3x First-Team All-Pro guard celebrated for his viral ear-holed pancake scream",
+      "Notre Dame Unanimous All-American defining modern interior offensive line play"
+    ],
+    "specialStat": "7x Pro Bowl • 3x First-Team All-Pro • Notre Dame Alum",
+    "tdDetails": "1 Career Touchdown (Goal-line fumble recovery)",
+    "blockDetails": "72 Iconic pancake & pulling blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3129308.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Quenton+Nelson+pancake+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🚜 #1 PULLING GUARD",
+      "formRating": 96,
+      "trend": "Vintage Dominant Form 🔥",
+      "headline": "Flattening defensive tackles on pull blocks and stonewalling interior blitzes.",
+      "recentSummary": "90+ run-blocking grade while earning a 7th straight Pro Bowl nod.",
+      "keyMetrics": [
+        { "label": "Pro Bowls", "val": "7x Straight", "icon": "👑", "rank": "HOF Pace" },
+        { "label": "Run Block Grade", "val": "89.4", "icon": "🚜", "rank": "Top 2 OG" },
+        { "label": "Pancake Blocks", "val": "72 Blocks", "icon": "💥", "rank": "#1 OG" },
+        { "label": "Pressures Allowed", "val": "Just 12", "icon": "🔒", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Nelson finishes every block through the whistle, setting the tone of physicality in the trenches."
+    }
+  },
+  {
+    "id": "60",
+    "name": "Chris Lindstrom",
+    "position": "OG",
+    "positionCategory": "OL",
+    "team": "Atlanta Falcons",
+    "jersey": "63",
+    "college": "Boston College",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "Offensive Guard",
+    "blocks": 69,
+    "blockType": "Zone Seal & Pancakes",
+    "totalScore": 97,
+    "passingYds": 0,
+    "speedScore": 79,
+    "signaturePlay": "Scooping a 320-pound nose tackle laterally to spring Bijan Robinson untouched.",
+    "highlightMoments": [
+      "Back-to-back-to-back All-Pro & Pro Bowl Right Guard",
+      "94.6 PFF Run Block grade—#1 among all NFL interior guards",
+      "Boston College legend turned highest-paid guard anchor in Atlanta"
+    ],
+    "specialStat": "94.6 Run Block Grade (#1 OG) • 3x All-Pro • Boston College Alum",
+    "tdDetails": "0 Touchdowns (Premier zone-blocking guard)",
+    "blockDetails": "69 Zone reach & second-level pancake blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3672833.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Chris+Lindstrom+Falcons+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🥇 #1 GRADED NFL GUARD",
+      "formRating": 97,
+      "trend": "Elite Reach Blocker ⚡",
+      "headline": "Climbing effortlessly to second-level linebackers with the NFL's #1 guard grade.",
+      "recentSummary": "94.6 PFF run-blocking grade paving lanes for Bijan Robinson all season.",
+      "keyMetrics": [
+        { "label": "Run Block Grade", "val": "94.6 PFF", "icon": "🏆", "rank": "#1 Guard" },
+        { "label": "Overall Grade", "val": "93.2", "icon": "🛡️", "rank": "#1 OG NFL" },
+        { "label": "Pancakes", "val": "69 Blocks", "icon": "🚜", "rank": "All-Pro" },
+        { "label": "Sacks Allowed", "val": "1 Sack", "icon": "🔒", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Lindstrom has rare lateral speed for a 307-pound guard, reaching nose tackles that other linemen cannot touch."
+    }
+  },
+  {
+    "id": "61",
+    "name": "Quinn Meinerz",
+    "position": "OG",
+    "positionCategory": "OL",
+    "team": "Denver Broncos",
+    "jersey": "77",
+    "college": "Wisconsin-Whitewater",
+    "rating": 95,
+    "touchdowns": 0,
+    "tdType": "Offensive Guard",
+    "blocks": 66,
+    "blockType": "Pancakes & Pulls",
+    "totalScore": 95,
+    "passingYds": 0,
+    "speedScore": 77,
+    "signaturePlay": "Pancaking two defenders on the same power pull down the goal line.",
+    "highlightMoments": [
+      "First-Team All-Pro Right Guard rising from Division III powerhouse",
+      "Over 88.0 PFF grade anchoring Denver's tough pass-protection wall",
+      "Viral Senior Bowl 'The Belly' hero turned elite NFL All-Pro"
+    ],
+    "specialStat": "First-Team All-Pro OG • Division III Story • Wisconsin-Whitewater Alum",
+    "tdDetails": "0 Touchdowns (Ferocious mauling guard)",
+    "blockDetails": "66 Mauling pancake blocks in the A/B gaps",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4608138.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Quinn+Meinerz+Broncos+All+Pro+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🔥 FIRST-TEAM ALL-PRO OG",
+      "formRating": 95,
+      "trend": "Mauler of the Year 📈",
+      "headline": "Tossing interior linemen aside to protect Bo Nix and earn First-Team All-Pro.",
+      "recentSummary": "Zero sacks allowed over wide stretches with bone-jarring run power.",
+      "keyMetrics": [
+        { "label": "All-Pro Status", "val": "1st Team", "icon": "👑", "rank": "Top 2 OG" },
+        { "label": "PFF Overall", "val": "88.7", "icon": "🛡️", "rank": "Elite" },
+        { "label": "Pancakes", "val": "66 Blocks", "icon": "💥", "rank": "Top 5 OG" },
+        { "label": "Sacks Allowed", "val": "0 Sacks", "icon": "🔒", "rank": "Clean Wall" }
+      ],
+      "verdictAnalysis": "Meinerz plays with tremendous leverage and torque, consistently burying defenders inside."
+    }
+  },
+  {
+    "id": "62",
+    "name": "Tyler Linderbaum",
+    "position": "C",
+    "positionCategory": "OL",
+    "team": "Las Vegas Raiders",
+    "jersey": "65",
+    "college": "Iowa",
+    "rating": 95,
+    "touchdowns": 0,
+    "tdType": "Offensive Center",
+    "blocks": 63,
+    "blockType": "Reach & Combo Blocks",
+    "totalScore": 95,
+    "passingYds": 0,
+    "speedScore": 80,
+    "signaturePlay": "Sprinting 15 yards downfield ahead of a screen pass to take out the free safety.",
+    "highlightMoments": [
+      "Back-to-back Pro Bowl selections anchoring the offensive line from center",
+      "Rimington Trophy winner at Iowa ('OL University') with zero sacks allowed",
+      "Wrestling national champion balance turning nose tackles completely sideways"
+    ],
+    "specialStat": "2x Pro Bowl Center • Rimington Winner • Iowa Alum",
+    "tdDetails": "0 Touchdowns (Commanding center anchor)",
+    "blockDetails": "63 Combo, reach & downfield lead blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4360499.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Tyler+Linderbaum+best+blocks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🎯 ALL-PRO CENTER",
+      "formRating": 95,
+      "trend": "Elite Athleticism ⚡",
+      "headline": "Snapping flawlessly while beating 330-pound nose tackles on reach blocks.",
+      "recentSummary": "Zero sacks allowed and elite second-level range all season.",
+      "keyMetrics": [
+        { "label": "Run Block Win", "val": "76%", "icon": "🛡️", "rank": "#2 Center" },
+        { "label": "Sacks Allowed", "val": "0 Sacks", "icon": "🔒", "rank": "#1 Tier" },
+        { "label": "Pro Bowls", "val": "2x Pro Bowl", "icon": "👑", "rank": "Top 2 C" },
+        { "label": "Combo Blocks", "val": "63 Blocks", "icon": "🚜", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Linderbaum uses championship wrestling leverage to turn giant interior tackles out of every rushing lane."
+    }
+  },
+  {
+    "id": "63",
+    "name": "Dexter Lawrence II",
+    "position": "DT",
+    "positionCategory": "DEF",
+    "team": "Cincinnati Bengals",
+    "jersey": "97",
+    "college": "Clemson",
+    "rating": 98,
+    "touchdowns": 0,
+    "tdType": "Nose Tackle",
+    "blocks": 14,
+    "blockType": "Batted Passes & Stuffs",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 81,
+    "signaturePlay": "342-pound nose tackle ripping straight through the A-gap center for a strip-sack & Sexy Dexy dance.",
+    "highlightMoments": [
+      "9.0 sacks in 12 games directly from nose tackle alignment—historic interior rate",
+      "2x All-Pro & 3x Pro Bowl commanding triple-teams over the football",
+      "Clemson National Champion undefeated powerhouse anchor"
+    ],
+    "specialStat": "342-Lb Nose Tackle • 9.0 Sacks in 12 Games • Clemson Alum",
+    "tdDetails": "0 Touchdowns (Unstoppable 0-technique nose tackle)",
+    "blockDetails": "14 Batted passes & line-of-scrimmage stuffs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4035483.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Dexter+Lawrence+best+sacks+nose+tackle+highlights",
+    "doingRightNow": {
+      "statusBadge": "🌋 SEXY DEXY DOMINANCE",
+      "formRating": 98,
+      "trend": "Historic Nose Tackle Sacks 🔥",
+      "headline": "Generating 9 sacks directly over the center despite facing 65%+ double teams.",
+      "recentSummary": "Best pure nose-tackle pass rusher in the modern NFL.",
+      "keyMetrics": [
+        { "label": "Sacks From NT", "val": "9.0 Sacks", "icon": "💥", "rank": "#1 DT NFL" },
+        { "label": "Pass Rush Win", "val": "19.8%", "icon": "⚡", "rank": "#1 DT" },
+        { "label": "Size & Burst", "val": "342 Lbs", "icon": "🌋", "rank": "Rare" },
+        { "label": "Pro Bowls", "val": "3x Straight", "icon": "👑", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "342-pound players aren't supposed to move like Dexter Lawrence—he wrecks protection calls right over the ball."
+    }
+  },
+  {
+    "id": "64",
+    "name": "Quinnen Williams",
+    "position": "DT",
+    "positionCategory": "DEF",
+    "team": "Dallas Cowboys",
+    "jersey": "92",
+    "college": "Alabama",
+    "rating": 95,
+    "touchdowns": 0,
+    "tdType": "Defensive Tackle",
+    "blocks": 13,
+    "blockType": "Tipped Balls & TFLs",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 84,
+    "signaturePlay": "Lightning swim move beating double team to crush quarterback in 2.1 seconds.",
+    "highlightMoments": [
+      "First-Team All-Pro 12-sack wrecking ball season in the interior",
+      "3x consecutive Pro Bowl defensive tackle with elite run-stop win rate",
+      "Alabama National Champion & Outland Trophy winner"
+    ],
+    "specialStat": "3x Pro Bowl • First-Team All-Pro • Alabama Alum",
+    "tdDetails": "0 Touchdowns (Explosive interior disruptor)",
+    "blockDetails": "13 Batted passes & goal-line stuffs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4040982.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Quinnen+Williams+best+sacks+tackles+highlights",
+    "doingRightNow": {
+      "statusBadge": "⚡ INTERIOR SWIM MASTER",
+      "formRating": 94,
+      "trend": "Elite Run & Pass Force 💥",
+      "headline": "Shooting interior gaps at snap speed with 6.0 sacks and top-5 DT run stops.",
+      "recentSummary": "3x Pro Bowl form crushing inside zone and pocket climbs.",
+      "keyMetrics": [
+        { "label": "QB Pressures", "val": "48 Pressures", "icon": "⚡", "rank": "Top 4 DT" },
+        { "label": "Run Stop Rate", "val": "11.2%", "icon": "🛡️", "rank": "Top 3 DT" },
+        { "label": "Sacks", "val": "6.0 Sacks", "icon": "💥", "rank": "Top 5 DT" },
+        { "label": "Pro Bowls", "val": "3x Pro Bowl", "icon": "👑", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "Quinnen's first-step get-off makes offensive guards look stuck in mud."
+    }
+  },
+  {
+    "id": "65",
+    "name": "Jeffery Simmons",
+    "position": "DT",
+    "positionCategory": "DEF",
+    "team": "Chicago Bears",
+    "jersey": "99",
+    "college": "Mississippi State",
+    "rating": 93,
+    "touchdowns": 0,
+    "tdType": "Defensive Tackle",
+    "blocks": 11,
+    "blockType": "Batted Swats & Blocks",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 82,
+    "signaturePlay": "One-arm bench-pressing a guard backward into the QB's lap on 3rd-and-short.",
+    "highlightMoments": [
+      "3x Pro Bowl defensive tackle famous for violent heavy-handed shed blocks",
+      "Playoff 3-sack explosion overwhelming Cincinnati offensive line",
+      "Goal-line 4th-down tackles stuffing short-yardage power runs"
+    ],
+    "specialStat": "3x Pro Bowl • Heavy-Handed Enforcer • Mississippi State Alum",
+    "tdDetails": "0 Touchdowns (Dominant 3-technique enforcer)",
+    "blockDetails": "11 Batted passes & goal-line blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4035369.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jeffery+Simmons+best+sacks+hits+highlights",
+    "doingRightNow": {
+      "statusBadge": "💥 HEAVY-HANDED DISRUPTOR",
+      "formRating": 93,
+      "trend": "Run-Stuffing Wall 🛡️",
+      "headline": "Taking over interior trenches with 5.0 sacks and 11 tackles for loss.",
+      "recentSummary": "3x Pro Bowl selection tearing through double-team chips.",
+      "keyMetrics": [
+        { "label": "Tackles for Loss", "val": "11 TFL", "icon": "💥", "rank": "Top 4 DT" },
+        { "label": "Sacks", "val": "5.0 Sacks", "icon": "⚡", "rank": "Top 6 DT" },
+        { "label": "Batted Passes", "val": "4 Swats", "icon": "🖐️", "rank": "Top 3 DT" },
+        { "label": "Pro Bowls", "val": "3x Pro Bowl", "icon": "👑", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Big Jeff brings old-school power and nasty hands on every interior snap."
+    }
+  },
+  {
+    "id": "66",
+    "name": "Trey Hendrickson",
+    "position": "EDGE",
+    "positionCategory": "DEF",
+    "team": "Baltimore Ravens",
+    "jersey": "91",
+    "college": "Florida Atlantic",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "Edge Rusher",
+    "blocks": 9,
+    "blockType": "Strip-Sack Swats",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 87,
+    "signaturePlay": "4-sack takeover game bending the edge with non-stop speed-to-power spin.",
+    "highlightMoments": [
+      "NFL Sack Leader with back-to-back 17.5-sack First-Team All-Pro seasons",
+      "First-Team All-Pro pass rusher generating 80+ pressures yearly",
+      "4.0 sacks in single dominating prime-time game"
+    ],
+    "specialStat": "17.5 Sacks (NFL #1) • 2x 17.5-Sack Seasons • Florida Atlantic Alum",
+    "tdDetails": "0 Touchdowns (Relentless NFL sack champion)",
+    "blockDetails": "9 Batted passes & edge-contain deflections",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3052743.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Trey+Hendrickson+17+sacks+highlights",
+    "doingRightNow": {
+      "statusBadge": "🔥 NFL SACK KING (17.5)",
+      "formRating": 98,
+      "trend": "#1 Sack Leader 👑",
+      "headline": "Leading the entire NFL with 17.5 sacks for the second straight year!",
+      "recentSummary": "17.5 Sacks, 19 Tackles for Loss, 36 QB Hits, First-Team All-Pro.",
+      "keyMetrics": [
+        { "label": "Sacks (NFL Leader)", "val": "17.5 Sacks", "icon": "👑", "rank": "#1 in NFL" },
+        { "label": "Tackles for Loss", "val": "19 TFL", "icon": "💥", "rank": "#1 EDGE" },
+        { "label": "QB Hits", "val": "36 Hits", "icon": "⚡", "rank": "#1 in NFL" },
+        { "label": "All-Pro Honors", "val": "1st Team", "icon": "🏆", "rank": "DPOY Top 3" }
+      ],
+      "verdictAnalysis": "Hendrickson never stops rushing—his motor, inside counter, and dip around the edge led the whole NFL in sacks."
+    }
+  },
+  {
+    "id": "67",
+    "name": "Patrick Queen",
+    "position": "LB",
+    "positionCategory": "DEF",
+    "team": "Pittsburgh Steelers",
+    "jersey": "6",
+    "college": "LSU",
+    "rating": 92,
+    "touchdowns": 0,
+    "tdType": "Linebacker",
+    "blocks": 9,
+    "blockType": "Blitz Screens & Swats",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 92,
+    "signaturePlay": "Sideline-to-sideline blitz shooting the B-gap for a forced fumble.",
+    "highlightMoments": [
+      "Back-to-back Pro Bowl selections with 129+ tackles calling Steel Curtain defense",
+      "LSU National Champion defensive MVP flying to the football",
+      "Clutch forced fumbles and tipped third-down passes in AFC North clashes"
+    ],
+    "specialStat": "129 Tackles • 2x Pro Bowl • LSU National Champion",
+    "tdDetails": "0 Touchdowns (Blitzing sideline-to-sideline linebacker)",
+    "blockDetails": "9 Pass deflections & blitz blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4242207.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Patrick+Queen+Steelers+Ravens+tackles+highlights",
+    "doingRightNow": {
+      "statusBadge": "⚡ BLITZING COMMANDER",
+      "formRating": 92,
+      "trend": "129 Tackles & Green Dot 🛡️",
+      "headline": "Racking up 129 tackles while communicating every Steelers defensive check.",
+      "recentSummary": "129 tackles, 2 forced fumbles, 7 passes defended in physical AFC North battles.",
+      "keyMetrics": [
+        { "label": "Total Tackles", "val": "129 Tkl", "icon": "🦅", "rank": "Top 12 NFL" },
+        { "label": "Pro Bowls", "val": "2x Straight", "icon": "🏆", "rank": "All-AFC" },
+        { "label": "Forced Fumbles", "val": "2 FF", "icon": "💥", "rank": "Playmaker" },
+        { "label": "Speed Score", "val": "92 SPD", "icon": "⚡", "rank": "Elite LB" }
+      ],
+      "verdictAnalysis": "Queen brings rare 4.50 speed to the middle linebacker spot, chasing down outside runs from the backside."
+    }
+  },
+  {
+    "id": "68",
+    "name": "Zaire Franklin",
+    "position": "LB",
+    "positionCategory": "DEF",
+    "team": "Green Bay Packers",
+    "jersey": "44",
+    "college": "Syracuse",
+    "rating": 92,
+    "touchdowns": 0,
+    "tdType": "Linebacker",
+    "blocks": 8,
+    "blockType": "Run-Stuff Blocks",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 88,
+    "signaturePlay": "173-tackle tackling clinic leading the entire NFL in stops.",
+    "highlightMoments": [
+      "Led the entire NFL with 173 total tackles + All-Pro & Pro Bowl honors",
+      "5 forced fumbles knocking the ball loose on violent open-field hits",
+      "3x consecutive 165+ tackle seasons as defensive heartbeat"
+    ],
+    "specialStat": "173 Tackles (#1 in NFL) • 5 Forced Fumbles • All-Pro • Syracuse Alum",
+    "tdDetails": "0 Touchdowns (Relentless tackle leader)",
+    "blockDetails": "8 Batted swats & A-gap blitz pickups",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3124005.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Zaire+Franklin+NFL+tackle+leader+highlights",
+    "doingRightNow": {
+      "statusBadge": "🦅 #1 IN NFL TACKLES (173)",
+      "formRating": 94,
+      "trend": "All-Pro Tackle Machine 🔥",
+      "headline": "Leading the entire NFL with 173 tackles, 3.5 sacks, 2 INTs, and 5 forced fumbles.",
+      "recentSummary": "Earned Pro Bowl and All-Pro recognition as the league's most productive tackler.",
+      "keyMetrics": [
+        { "label": "NFL Tackles Leader", "val": "173 Tkl", "icon": "👑", "rank": "#1 in NFL" },
+        { "label": "Forced Fumbles", "val": "5 FF", "icon": "💥", "rank": "Top 2 NFL" },
+        { "label": "Takeaways", "val": "7 Total", "icon": "🎯", "rank": "Ball Hawk" },
+        { "label": "All-Pro", "val": "2nd Team", "icon": "🏆", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Franklin is a heat-seeking missile around the line of scrimmage who also punches out footballs at a historic clip."
+    }
+  },
+  {
+    "id": "69",
+    "name": "Derek Stingley Jr.",
+    "position": "CB",
+    "positionCategory": "DEF",
+    "team": "Houston Texans",
+    "jersey": "24",
+    "college": "LSU",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "Lockdown Corner",
+    "blocks": 18,
+    "blockType": "Pass Breakups",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 96,
+    "signaturePlay": "Ripping an interception cleanly out of Tyreek Hill's hands down the sideline.",
+    "highlightMoments": [
+      "First-Team All-Pro CB intercepting 5 passes and allowing league-low 47.0 rating",
+      "Two-INT statement masterclass shutting down Tyreek Hill and Miami",
+      "Playoff pick-six/turnovers pushing Houston to consecutive AFC South crowns"
+    ],
+    "specialStat": "First-Team All-Pro CB • 5 INTs • 18 PBUs • LSU Alum",
+    "tdDetails": "0 Touchdowns (Shutdown All-Pro ballhawk)",
+    "blockDetails": "18 Pass breakups & swats",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4426434.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Derek+Stingley+Jr+Texans+interceptions+highlights",
+    "doingRightNow": {
+      "statusBadge": "🔒 FIRST-TEAM ALL-PRO CB",
+      "formRating": 98,
+      "trend": "47.0 Passer Rating Allowed 🔥",
+      "headline": "Pairing 5 interceptions with 18 pass deflections while erasing top #1 WRs.",
+      "recentSummary": "Earned First-Team All-Pro honors with unmatched ball skills and hip fluidity.",
+      "keyMetrics": [
+        { "label": "Passer Rating Allowed", "val": "47.0", "icon": "🔒", "rank": "#1 CB NFL" },
+        { "label": "Interceptions", "val": "5 INTs", "icon": "🎯", "rank": "Top 4 NFL" },
+        { "label": "Passes Defended", "val": "18 PBUs", "icon": "🖐️", "rank": "#2 in NFL" },
+        { "label": "All-Pro Honor", "val": "1st Team", "icon": "👑", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "Stingley possesses receiver-level ball tracking on deep passes, turning 50/50 throws into 80/20 interceptions."
+    }
+  },
+  {
+    "id": "70",
+    "name": "Trent McDuffie",
+    "position": "CB",
+    "positionCategory": "DEF",
+    "team": "Los Angeles Rams",
+    "jersey": "22",
+    "college": "Washington",
+    "rating": 95,
+    "touchdowns": 0,
+    "tdType": "All-Pro Cornerback",
+    "blocks": 15,
+    "blockType": "Slot & Boundary Swats",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 94,
+    "signaturePlay": "Flying off the nickel blitz to force a fumble & batting 3rd-down Super Bowl pass.",
+    "highlightMoments": [
+      "2x All-Pro & 2x Super Bowl Champion shutting down both boundary & slot WRs",
+      "Dominant Super Bowl LVIII performance locking up Deebo Samuel",
+      "5 forced fumbles and elite cornerback blitzing instincts"
+    ],
+    "specialStat": "2x All-Pro • 2x Super Bowl Champ • Washington Alum",
+    "tdDetails": "0 Touchdowns (Swiss-army-knife lockdown CB)",
+    "blockDetails": "15 Pass deflections & key blitz stops",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4426405.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Trent+McDuffie+All+Pro+cornerback+highlights",
+    "doingRightNow": {
+      "statusBadge": "🏆 2x ALL-PRO SHADOW",
+      "formRating": 95,
+      "trend": "Sticky Man Coverage 🔒",
+      "headline": "Excelling outside and inside while recording 2 interceptions and 13 breakups.",
+      "recentSummary": "Repeated All-Pro selection with zero missed assignments in big games.",
+      "keyMetrics": [
+        { "label": "All-Pro Selections", "val": "2x All-Pro", "icon": "👑", "rank": "Top 4 CB" },
+        { "label": "Pass Breakups", "val": "13 PBUs", "icon": "🖐️", "rank": "Elite" },
+        { "label": "Coverage Grade", "val": "86.5", "icon": "🔒", "rank": "Top 5 CB" },
+        { "label": "Tackling Grade", "val": "88.0", "icon": "💥", "rank": "#1 CB" }
+      ],
+      "verdictAnalysis": "McDuffie tackles like a safety and mirrors route runners like glue everywhere on the field."
+    }
+  },
+  {
+    "id": "71",
+    "name": "Devon Witherspoon",
+    "position": "CB",
+    "positionCategory": "DEF",
+    "team": "Seattle Seahawks",
+    "jersey": "21",
+    "college": "Illinois",
+    "rating": 93,
+    "touchdowns": 1,
+    "tdType": "1 97-Yd Pick-Six",
+    "blocks": 14,
+    "blockType": "Pass Deflections",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 94,
+    "signaturePlay": "97-yard Monday Night Football pick-six + 2 sacks in historic breakout.",
+    "highlightMoments": [
+      "97-yard interception return TD on Monday Night Football in rookie year",
+      "Back-to-back Pro Bowl selections bringing Kam Chancellor hits to cornerback",
+      "Relentless nickel blitzes & open-field screens blown up behind the line"
+    ],
+    "specialStat": "2x Pro Bowl • 97-Yd Pick-Six • Illinois Alum",
+    "tdDetails": "1 Defensive Touchdown (97-yard MNF pick-six)",
+    "blockDetails": "14 Pass deflections & screen-blowing swats",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4575431.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Devon+Witherspoon+Seahawks+pick+six+hits+highlights",
+    "doingRightNow": {
+      "statusBadge": "💥 HARD-HITTING SPOON",
+      "formRating": 93,
+      "trend": "2x Pro Bowl Corner ⚡",
+      "headline": "Blowing up perimeter screens and locking down slot receivers with 98 tackles.",
+      "recentSummary": "Earned consecutive Pro Bowl nods with infectious physical energy.",
+      "keyMetrics": [
+        { "label": "Total Tackles", "val": "98 Tkl", "icon": "💥", "rank": "#1 CB NFL" },
+        { "label": "Pass Breakups", "val": "9 PBUs", "icon": "🖐️", "rank": "Sticky" },
+        { "label": "Pro Bowls", "val": "2x Straight", "icon": "🏆", "rank": "All-NFC" },
+        { "label": "Pick-Six Career", "val": "97 Yds TD", "icon": "⚡", "rank": "Iconic" }
+      ],
+      "verdictAnalysis": "Witherspoon hits running backs twice his size without hesitation while sticking tightly to slot targets."
+    }
+  },
+  {
+    "id": "72",
+    "name": "Jalen Ramsey",
+    "position": "CB",
+    "positionCategory": "DEF",
+    "team": "Pittsburgh Steelers",
+    "jersey": "5",
+    "college": "Florida State",
+    "rating": 93,
+    "touchdowns": 1,
+    "tdType": "1 Pick-Six Career",
+    "blocks": 15,
+    "blockType": "Pass Deflections",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Shutting down WR1s on an island & diving 1-handed sideline interception.",
+    "highlightMoments": [
+      "7x Pro Bowl & 3x First-Team All-Pro Super Bowl LVI Champion",
+      "Game-sealing red-zone interception against Buffalo Bills",
+      "24+ career interceptions shadowing Hall-of-Fame caliber receivers"
+    ],
+    "specialStat": "7x Pro Bowl • 3x First-Team All-Pro • Florida State Alum",
+    "tdDetails": "1 Defensive Touchdown (Interception return)",
+    "blockDetails": "15 Pass deflections & physical press jams",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3045373.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jalen+Ramsey+best+interceptions+hits+highlights",
+    "doingRightNow": {
+      "statusBadge": "👑 VETERAN ISLAND LOCK",
+      "formRating": 92,
+      "trend": "Elite Versatility 🔒",
+      "headline": "Playing boundary CB, nickel, and safety chess-piece roles at an elite level.",
+      "recentSummary": "24 career INTs, 11 pass deflections, and ferocious run support.",
+      "keyMetrics": [
+        { "label": "Pro Bowls", "val": "7x Pro Bowl", "icon": "👑", "rank": "HOF Pace" },
+        { "label": "Pass Breakups", "val": "11 PBUs", "icon": "🖐️", "rank": "Top Tier" },
+        { "label": "Interceptions", "val": "2 INTs", "icon": "🎯", "rank": "Clutch" },
+        { "label": "Run Defense", "val": "87.1", "icon": "💥", "rank": "Top 3 CB" }
+      ],
+      "verdictAnalysis": "Ramsey combines Hall of Fame instincts with unmatched swagger in matchup situations."
+    }
+  },
+  {
+    "id": "73",
+    "name": "Kyle Hamilton",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Baltimore Ravens",
+    "jersey": "14",
+    "college": "Notre Dame",
+    "rating": 97,
+    "touchdowns": 1,
+    "tdType": "1 Pick-Six TD",
+    "blocks": 13,
+    "blockType": "Pass Swats & Blocked PAT",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "6'4\" unicorns' pick-six on Christmas + 3-sack half blitzing off the slot.",
+    "highlightMoments": [
+      "First-Team All-Pro chess piece playing deep safety, nickel corner, and edge",
+      "107 tackles, 2 sacks, and 9 pass deflections in dominant All-Pro campaign",
+      "Christmas Day pick-six in San Francisco sealing AFC #1 seed"
+    ],
+    "specialStat": "6'4\" Unicorn Safety • All-Pro • 107 Tackles • Notre Dame Alum",
+    "tdDetails": "1 Defensive Touchdown (Christmas Day pick-six)",
+    "blockDetails": "13 Pass breakups & blocked kick deflections",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4575517.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Kyle+Hamilton+Ravens+highlights+pick+six",
+    "doingRightNow": {
+      "statusBadge": "👑 #1 CHESS-PIECE SAFETY",
+      "formRating": 98,
+      "trend": "All-Pro Everywhere 🔥",
+      "headline": "Shutting down tight ends, blitzing quarterbacks, and patrolling deep center field.",
+      "recentSummary": "107 tackles, 9 pass breakups, 2 sacks, and 2 forced fumbles.",
+      "keyMetrics": [
+        { "label": "Total Tackles", "val": "107 Tkl", "icon": "🦅", "rank": "Top 5 S" },
+        { "label": "PFF Overall Grade", "val": "90.1", "icon": "👑", "rank": "#1 Safety" },
+        { "label": "Passes Defended", "val": "9 PBUs", "icon": "🖐️", "rank": "Elite" },
+        { "label": "All-Pro Status", "val": "2x All-Pro", "icon": "🏆", "rank": "#1 Safety" }
+      ],
+      "verdictAnalysis": "At 6-foot-4 with cornerback agility, Hamilton breaks offensive coordinators' rules by guarding three positions at once."
+    }
+  },
+  {
+    "id": "74",
+    "name": "Antoine Winfield Jr.",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Tampa Bay Buccaneers",
+    "jersey": "31",
+    "college": "Minnesota",
+    "rating": 96,
+    "touchdowns": 1,
+    "tdType": "1 Fumble Return TD",
+    "blocks": 14,
+    "blockType": "Goal-Line Punchouts & Swats",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 92,
+    "signaturePlay": "Diving across the goal line to punch the ball loose out of the back of the end zone!",
+    "highlightMoments": [
+      "First-Team All-Pro 122 tackles, 6.0 sacks, 6 forced fumbles, 3 INTs historic line",
+      "Scoop-and-score fumble touchdown sealing NFC South road victory",
+      "Super Bowl LV Champion throwing up iconic peace sign"
+    ],
+    "specialStat": "First-Team All-Pro • 6 Forced Fumbles • 6 Sacks • Minnesota Alum",
+    "tdDetails": "1 Defensive Touchdown (58-yard fumble return TD)",
+    "blockDetails": "14 Goal-line punchouts & pass breakups",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4034790.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Antoine+Winfield+Jr+Buccaneers+highlights",
+    "doingRightNow": {
+      "statusBadge": "💥 TAKEAWAY WIZARD",
+      "formRating": 94,
+      "trend": "Clutch Turnover Maker 🎯",
+      "headline": "Returning fumble touchdowns and timing free-safety blitzes to perfection.",
+      "recentSummary": "All-Pro playmaker specializing in strip-sacks, goal-line punchouts, and ball-hawking.",
+      "keyMetrics": [
+        { "label": "Highest Paid S", "val": "All-Pro", "icon": "👑", "rank": "Top 3 S" },
+        { "label": "Forced Turnovers", "val": "9 Career Peak", "icon": "🎯", "rank": "#1 S" },
+        { "label": "Blitz Sacks", "val": "8.0 Peak", "icon": "⚡", "rank": "#1 DB" },
+        { "label": "TDs Scored", "val": "1 Def TD", "icon": "🏈", "rank": "Clutch" }
+      ],
+      "verdictAnalysis": "Winfield Jr. never takes a bad angle and creates turnovers at the exact moment a game hangs in the balance."
+    }
+  },
+  {
+    "id": "75",
+    "name": "Xavier McKinney",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Green Bay Packers",
+    "jersey": "29",
+    "college": "Alabama",
+    "rating": 96,
+    "touchdowns": 0,
+    "tdType": "Ballhawk Free Safety",
+    "blocks": 13,
+    "blockType": "Interceptions & Swats",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Recording interceptions in 5 straight games to start his Packers career.",
+    "highlightMoments": [
+      "First-Team All-Pro Safety snatching 8 interceptions (#2 in entire NFL)",
+      "NFL record streak of 5 consecutive games with an INT for new team",
+      "Alabama National Champion roaming centerfield cleanly"
+    ],
+    "specialStat": "8 INTs (#2 in NFL) • First-Team All-Pro • Alabama Alum",
+    "tdDetails": "0 Touchdowns (Elite 8-interception ballhawk)",
+    "blockDetails": "13 Pass breakups & deep-half swats",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4241470.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Xavier+McKinney+Packers+8+interceptions+highlights",
+    "doingRightNow": {
+      "statusBadge": "🧲 8-INT BALLHAWK",
+      "formRating": 97,
+      "trend": "All-Pro Centerfielder 🔥",
+      "headline": "Hauling in 8 interceptions and transforming Green Bay's secondary overnight.",
+      "recentSummary": "First-Team All-Pro free safety with 8 INTs, 11 pass breakups, and 88 tackles.",
+      "keyMetrics": [
+        { "label": "Interceptions", "val": "8 INTs", "icon": "🎯", "rank": "#1 Safety" },
+        { "label": "All-Pro Status", "val": "1st Team", "icon": "👑", "rank": "#1 FS" },
+        { "label": "Total Tackles", "val": "88 Tkl", "icon": "🦅", "rank": "Sure Tackler" },
+        { "label": "Passer Rating Allowed", "val": "42.1", "icon": "🔒", "rank": "Lockdown" }
+      ],
+      "verdictAnalysis": "Quarterbacks testing deep middle against McKinney pay the price—his range is unmatched."
+    }
+  },
+  {
+    "id": "76",
+    "name": "Derwin James Jr.",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Los Angeles Chargers",
+    "jersey": "3",
+    "college": "Florida State",
+    "rating": 95,
+    "touchdowns": 0,
+    "tdType": "Enforcer Safety",
+    "blocks": 11,
+    "blockType": "Slot & TE Blanket Swats",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Closing like lightning to deliver a jarring body-slam tackle on Travis Kelce.",
+    "highlightMoments": [
+      "4x Pro Bowl & All-Pro defensive leader with 5.5 sacks from safety spot",
+      "93 tackles & 10 tackles for loss blowing up screens and run fits",
+      "Iconic Florida State freak athlete covering elite NFL tight ends 1-on-1"
+    ],
+    "specialStat": "4x Pro Bowl • 5.5 Sacks • All-Pro Enforcer • Florida State Alum",
+    "tdDetails": "0 Touchdowns (Box-to-deep-half enforcer)",
+    "blockDetails": "11 Pass deflections & run-stop blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3691739.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Derwin+James+Chargers+best+hits+sacks+highlights",
+    "doingRightNow": {
+      "statusBadge": "💥 5.5-SACK BOX ENFORCER",
+      "formRating": 95,
+      "trend": "All-Pro Resurgence 🔥",
+      "headline": "Leading #1 scoring defense with 5.5 sacks, 93 tackles, and shutdown TE coverage.",
+      "recentSummary": "Earned 4th Pro Bowl & All-Pro honors dominating the box and deep slots.",
+      "keyMetrics": [
+        { "label": "Sacks as Safety", "val": "5.5 Sacks", "icon": "⚡", "rank": "#1 S NFL" },
+        { "label": "Total Tackles", "val": "93 Tkl", "icon": "💥", "rank": "Team High" },
+        { "label": "Tackles for Loss", "val": "10 TFL", "icon": "🛡️", "rank": "#1 DB" },
+        { "label": "Pro Bowls", "val": "4x Pro Bowl", "icon": "👑", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "Derwin brings unmatched physical intimidation to every snap, blowing up tight ends and quarterbacks alike."
+    }
+  },
+  {
+    "id": "77",
+    "name": "Brian Branch",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Detroit Lions",
+    "jersey": "32",
+    "college": "Alabama",
+    "rating": 94,
+    "touchdowns": 1,
+    "tdType": "1 Pick-Six Career",
+    "blocks": 16,
+    "blockType": "Pass Breakups & Swats",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Intercepting Patrick Mahomes on NFL opening night & returning it 50 yards for TD.",
+    "highlightMoments": [
+      "Pro Bowl safety piling up 109 tackles, 16 pass breakups, and 4 INTs",
+      "Picked off Patrick Mahomes for a pick-six in his very first NFL game",
+      "16 passes defended—#1 among all NFL safeties"
+    ],
+    "specialStat": "Pro Bowl • 16 Pass Breakups (#1 Safety) • Alabama Alum",
+    "tdDetails": "1 Defensive Touchdown (50-yard pick-six vs Chiefs)",
+    "blockDetails": "16 Pass breakups & aggressive run-fit stops",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4692025.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Brian+Branch+Lions+interceptions+hits+highlights",
+    "doingRightNow": {
+      "statusBadge": "🔥 16 PASS BREAKUPS",
+      "formRating": 96,
+      "trend": "Breakout Pro Bowler 📈",
+      "headline": "Swarming every throw in Detroit with 109 tackles, 4 INTs, and 16 pass deflections.",
+      "recentSummary": "First Pro Bowl selection as the emotional sparkplug of Detroit's defense.",
+      "keyMetrics": [
+        { "label": "Passes Defended", "val": "16 PBUs", "icon": "🖐️", "rank": "#1 S NFL" },
+        { "label": "Total Tackles", "val": "109 Tkl", "icon": "🦅", "rank": "Top 4 S" },
+        { "label": "Interceptions", "val": "4 INTs", "icon": "🎯", "rank": "Top 6 S" },
+        { "label": "Pro Bowl", "val": "Pro Bowler", "icon": "👑", "rank": "All-NFC" }
+      ],
+      "verdictAnalysis": "Branch plays like his hair is on fire—diagnosing screens before the snap and flying to the ball."
+    }
+  },
+  {
+    "id": "78",
+    "name": "Kerby Joseph",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Detroit Lions",
+    "jersey": "31",
+    "college": "Illinois",
+    "rating": 95,
+    "touchdowns": 1,
+    "tdType": "1 Pick-Six TD",
+    "blocks": 12,
+    "blockType": "Interception Swats",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Diving pick-six interception sealing Primetime NFC showdown!",
+    "highlightMoments": [
+      "Led the ENTIRE NFL with 9 interceptions to earn First-Team All-Pro!",
+      "Game-breaking centerfielder alongside Brian Branch in Detroit",
+      "3rd-season First-Team All-Pro scoring crucial defensive TD"
+    ],
+    "specialStat": "9 INTs (#1 IN ENTIRE NFL) • First-Team All-Pro • Illinois Alum",
+    "tdDetails": "1 Defensive Touchdown (Pick-six interception return)",
+    "blockDetails": "12 Deep-zone pass breakups",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4360383.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Kerby+Joseph+Lions+9+interceptions+highlights",
+    "doingRightNow": {
+      "statusBadge": "👑 #1 IN NFL INTS (9)",
+      "formRating": 97,
+      "trend": "First-Team All-Pro 🎯",
+      "headline": "Leading every defender in the NFL with 9 interceptions and a pick-six.",
+      "recentSummary": "9 INTs, 83 tackles, 12 pass deflections, First-Team All-Pro safety.",
+      "keyMetrics": [
+        { "label": "Interceptions (#1 NFL)", "val": "9 INTs", "icon": "👑", "rank": "#1 in NFL" },
+        { "label": "All-Pro Status", "val": "1st Team", "icon": "🏆", "rank": "All-Pro" },
+        { "label": "Pick-Six TDs", "val": "1 TD", "icon": "⚡", "rank": "Playmaker" },
+        { "label": "Passes Defended", "val": "12 PBUs", "icon": "🖐️", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "No player in the entire NFL took the football away more often than Kerby Joseph's 9 interceptions."
+    }
+  },
+  {
+    "id": "79",
+    "name": "Jessie Bates III",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Jacksonville Jaguars",
+    "jersey": "30",
+    "college": "Wake Forest",
+    "rating": 94,
+    "touchdowns": 1,
+    "tdType": "1 Pick-Six Career",
+    "blocks": 11,
+    "blockType": "Forced Fumbles & Swats",
+    "totalScore": 6,
+    "passingYds": 0,
+    "speedScore": 91,
+    "signaturePlay": "Punching the ball loose at the 1-yard line & picking off game-winning drive in final 20 seconds.",
+    "highlightMoments": [
+      "Back-to-back All-Pro seasons forcing 7 fumbles and 10 INTs across two years",
+      "132 tackles & 6 INTs transformational defensive captain",
+      "Clutch 4th-quarter interceptions sealing prime-time road victories"
+    ],
+    "specialStat": "2x All-Pro • 4 Forced Fumbles + 4 INTs • Wake Forest Alum",
+    "tdDetails": "1 Defensive Touchdown (92-yard pick-six)",
+    "blockDetails": "11 Pass breakups & ball-punch deflections",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3919512.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jessie+Bates+III+interceptions+highlights",
+    "doingRightNow": {
+      "statusBadge": "🧲 CLUTCH CLOSER",
+      "formRating": 94,
+      "trend": "Turnover Magnet ⚡",
+      "headline": "Generating 4 INTs, 4 forced fumbles, and 102 tackles as a game-closing safety.",
+      "recentSummary": "Ranked top-3 among all NFL safeties in takeaways created.",
+      "keyMetrics": [
+        { "label": "Turnovers Created", "val": "8 Total", "icon": "🎯", "rank": "Top 3 S" },
+        { "label": "Total Tackles", "val": "102 Tkl", "icon": "🦅", "rank": "Sure Tackler" },
+        { "label": "Forced Fumbles", "val": "4 FF", "icon": "💥", "rank": "#1 S NFL" },
+        { "label": "All-Pro", "val": "2x All-Pro", "icon": "👑", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Bates III has a sixth sense for when the offense tries to attack late—delivering game-sealing takeaways."
+    }
+  },
+  {
+    "id": "80",
+    "name": "Budda Baker",
+    "position": "S",
+    "positionCategory": "DEF",
+    "team": "Arizona Cardinals",
+    "jersey": "3",
+    "college": "Washington",
+    "rating": 94,
+    "touchdowns": 0,
+    "tdType": "Strong Safety",
+    "blocks": 10,
+    "blockType": "TFL & Run-Stop Swats",
+    "totalScore": 0,
+    "passingYds": 0,
+    "speedScore": 92,
+    "signaturePlay": "Flying across the field like a cannonball for 164 tackles and 2.0 sacks.",
+    "highlightMoments": [
+      "7x Pro Bowl & All-Pro defensive heartbeat racking up 164 tackles (#2 in NFL)",
+      "Highest tackle total by an NFL defensive back in modern era",
+      "Fearless downhill missile stuffing 4th-and-1 runs behind the line"
+    ],
+    "specialStat": "7x Pro Bowl • 164 Tackles (#1 DB in NFL) • Washington Alum",
+    "tdDetails": "0 Touchdowns (Relentless 164-tackle enforcer)",
+    "blockDetails": "10 Pass breakups & goal-line stops",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3127287.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Budda+Baker+Cardinals+best+tackles+highlights",
+    "doingRightNow": {
+      "statusBadge": "🦅 164 TACKLES (#1 DB)",
+      "formRating": 95,
+      "trend": "7x Pro Bowl Legend 🔥",
+      "headline": "Smashing every DB tackling pace with 164 stops and 10 tackles for loss.",
+      "recentSummary": "All-Pro & 7th Pro Bowl campaign leading Arizona's defense in every hustle stat.",
+      "keyMetrics": [
+        { "label": "Total Tackles (#1 DB)", "val": "164 Tkl", "icon": "👑", "rank": "#1 DB NFL" },
+        { "label": "Pro Bowls", "val": "7x Pro Bowl", "icon": "🏆", "rank": "All-Pro" },
+        { "label": "Tackles for Loss", "val": "10 TFL", "icon": "💥", "rank": "Top 2 DB" },
+        { "label": "Solo Tackles", "val": "95 Solo", "icon": "⚡", "rank": "Top 5 NFL" }
+      ],
+      "verdictAnalysis": "Pound for pound, nobody in football plays faster or hits harder than Budda Baker."
+    }
+  },
+  {
+    "id": "81",
+    "name": "Brandon Aubrey",
+    "position": "K",
+    "positionCategory": "ST",
+    "team": "Dallas Cowboys",
+    "jersey": "17",
+    "college": "Notre Dame",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "14 FGs of 50+ Yds",
+    "blocks": 0,
+    "blockType": "65-Yd Long Range",
+    "totalScore": 150,
+    "passingYds": 0,
+    "speedScore": 74,
+    "signaturePlay": "Drilling a 65-yard field goal with room to spare & shattering single-season 50+ yard FG record (14 made).",
+    "highlightMoments": [
+      "NFL single-season record 14 field goals made from 50+ yards!",
+      "65-yard missile against Baltimore (2nd longest FG in NFL history)",
+      "Back-to-back All-Pro & Pro Bowl after starting career in MLS soccer"
+    ],
+    "specialStat": "NFL Record 14 50+ Yd FGs • 65-Yd Bomb • 2x All-Pro • Notre Dame Alum",
+    "tdDetails": "150 Total Points (40 FGs made + 30 PATs)",
+    "blockDetails": "84% Touchback rate booming kickoffs out of the end zone",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3953687.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Brandon+Aubrey+65+yard+field+goal+highlights",
+    "doingRightNow": {
+      "statusBadge": "🚀 65-YARD RECORD SNIPER",
+      "formRating": 98,
+      "trend": "Automatic From 60+ 🔥",
+      "headline": "Breaking the NFL record with 14 field goals made from 50+ yards and a 65-yard bomb.",
+      "recentSummary": "150 points scored, 40 made FGs, Pro Bowl & All-Pro automatic leg.",
+      "keyMetrics": [
+        { "label": "50+ Yd FGs Made", "val": "14 Made", "icon": "👑", "rank": "NFL Record" },
+        { "label": "Longest FG", "val": "65 Yards", "icon": "🚀", "rank": "#2 All-Time" },
+        { "label": "Season Points", "val": "150 Pts", "icon": "⚡", "rank": "Top 2 NFL" },
+        { "label": "All-Pro Honor", "val": "2x All-Pro", "icon": "🏆", "rank": "#1 Leg" }
+      ],
+      "verdictAnalysis": "As soon as Dallas crosses the 48-yard line, Aubrey gives them automatic three-point scoring range."
+    }
+  },
+  {
+    "id": "82",
+    "name": "Chris Boswell",
+    "position": "K",
+    "positionCategory": "ST",
+    "team": "Pittsburgh Steelers",
+    "jersey": "9",
+    "college": "Rice",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "93.2% FG Accuracy",
+    "blocks": 0,
+    "blockType": "13 50+ Yd FGs",
+    "totalScore": 158,
+    "passingYds": 0,
+    "speedScore": 72,
+    "signaturePlay": "Going 6-for-6 on field goals—including three 50+ yarders—to win single-handedly!",
+    "highlightMoments": [
+      "First-Team All-Pro kicker leading the entire NFL with 41 FGs & 158 Points!",
+      "6-for-6 field goal clinic at Atlanta + 6-for-6 win vs Baltimore Ravens",
+      "Ice-cold precision kicking inside swirling winds at Acrisure Stadium"
+    ],
+    "specialStat": "First-Team All-Pro • 41/44 FGs (93.2%) • 158 Pts (#1 NFL) • Rice Alum",
+    "tdDetails": "158 Total Points (#1 in entire NFL • 41 FGs + 35 PATs)",
+    "blockDetails": "13-for-15 from 50+ yards in tough AFC North weather",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/17372.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Chris+Boswell+Steelers+game+winners+highlights",
+    "doingRightNow": {
+      "statusBadge": "👑 #1 FIRST-TEAM ALL-PRO K",
+      "formRating": 99,
+      "trend": "158 Pts (#1 in NFL) 🔥",
+      "headline": "Drilling 41 of 44 field goals (93.2%) to claim unanimous First-Team All-Pro.",
+      "recentSummary": "Leading the entire NFL in points scored (158) with two separate 6-FG games.",
+      "keyMetrics": [
+        { "label": "Season Points", "val": "158 Pts", "icon": "👑", "rank": "#1 in NFL" },
+        { "label": "Field Goals Made", "val": "41 / 44", "icon": "🎯", "rank": "#1 in NFL" },
+        { "label": "50+ Yd Accuracy", "val": "13 / 15", "icon": "🚀", "rank": "86.7%" },
+        { "label": "All-Pro Status", "val": "1st Team", "icon": "🏆", "rank": "#1 K NFL" }
+      ],
+      "verdictAnalysis": "Boswell had one of the greatest kicking seasons in NFL history—scoring 158 points in the toughest stadium winds."
+    }
+  },
+  {
+    "id": "83",
+    "name": "Harrison Butker",
+    "position": "K",
+    "positionCategory": "ST",
+    "team": "Kansas City Chiefs",
+    "jersey": "7",
+    "college": "Georgia Tech",
+    "rating": 95,
+    "touchdowns": 0,
+    "tdType": "3x Super Bowl Champ",
+    "blocks": 0,
+    "blockType": "Super Bowl 57-Yd Record",
+    "totalScore": 136,
+    "passingYds": 0,
+    "speedScore": 73,
+    "signaturePlay": "Nailing the Super Bowl record 57-yard bomb + game-winning Super Bowl LVII kick.",
+    "highlightMoments": [
+      "Super Bowl all-time record 57-yard field goal in Super Bowl LVIII",
+      "3x Super Bowl Champion with #2 highest career FG % in NFL history",
+      "Clutch AFC Championship overtime & walk-off kicks year after year"
+    ],
+    "specialStat": "3x Super Bowl Champ • 57-Yd Super Bowl Record • Georgia Tech Alum",
+    "tdDetails": "136+ Season Points • 94.3% Peak Accuracy",
+    "blockDetails": "Undefeated in career playoff game-winning kicks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3055899.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Harrison+Butker+Chiefs+Super+Bowl+kicks+highlights",
+    "doingRightNow": {
+      "statusBadge": "❄️ CLUTCH DYNASTY LEG",
+      "formRating": 95,
+      "trend": "Playoff Ice Water 🏆",
+      "headline": "Delivering automatic walk-off kicks as Kansas City's postseason closer.",
+      "recentSummary": "90%+ career postseason accuracy including 4-for-4 in Super Bowl LVIII.",
+      "keyMetrics": [
+        { "label": "Career FG %", "val": "89.1%", "icon": "🎯", "rank": "#2 All-Time" },
+        { "label": "Super Bowl Record", "val": "57 Yards", "icon": "🚀", "rank": "#1 SB History" },
+        { "label": "Playoff Accuracy", "val": "91.3%", "icon": "❄️", "rank": "Clutch King" },
+        { "label": "Rings", "val": "3x SB Champ", "icon": "👑", "rank": "Dynasty" }
+      ],
+      "verdictAnalysis": "With championship rings on the line, Butker hasn't missed a clutch fourth-quarter or overtime kick."
+    }
+  },
+  {
+    "id": "84",
+    "name": "Ka'imi Fairbairn",
+    "position": "K",
+    "positionCategory": "ST",
+    "team": "Houston Texans",
+    "jersey": "15",
+    "college": "UCLA",
+    "rating": 94,
+    "touchdowns": 0,
+    "tdType": "13 50+ Yd FGs",
+    "blocks": 0,
+    "blockType": "59-Yd Game Winner",
+    "totalScore": 142,
+    "passingYds": 0,
+    "speedScore": 72,
+    "signaturePlay": "Drilling a walk-off 59-yard buzzer-beater field goal to beat Buffalo Bills!",
+    "highlightMoments": [
+      "Connected on 13 field goals from 50+ yards including 59-yard walk-off vs Bills",
+      "36 made field goals totaling 142 points for AFC South champions",
+      "Lou Groza Award winner at UCLA turned franchise scoring leader"
+    ],
+    "specialStat": "13 50+ Yd FGs • 59-Yd Walk-Off • 142 Pts • UCLA Alum",
+    "tdDetails": "142 Season Points (36 FGs + 34 PATs)",
+    "blockDetails": "13-for-16 from 50+ yards in dome & outdoors",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/2971573.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Kaimi+Fairbairn+59+yard+game+winner+highlights",
+    "doingRightNow": {
+      "statusBadge": "🎯 59-YD BUZZER BEATER",
+      "formRating": 94,
+      "trend": "13 Bombs From 50+ 🚀",
+      "headline": "Splitting the uprights from 50+ yards 13 times including a 59-yard winner.",
+      "recentSummary": "142 total points scored with fearless deep-range confidence.",
+      "keyMetrics": [
+        { "label": "50+ Yd FGs", "val": "13 Made", "icon": "🚀", "rank": "#3 NFL" },
+        { "label": "Season Points", "val": "142 Pts", "icon": "⚡", "rank": "Top 5 NFL" },
+        { "label": "Longest Kick", "val": "59 Yards", "icon": "🔥", "rank": "Walk-Off" },
+        { "label": "Field Goals", "val": "36 Made", "icon": "🎯", "rank": "Top 3 NFL" }
+      ],
+      "verdictAnalysis": "Fairbairn's clean compact swing generates effortless 60-yard distance under maximum pressure."
+    }
+  },
+  {
+    "id": "85",
+    "name": "Jake Bates",
+    "position": "K",
+    "positionCategory": "ST",
+    "team": "Detroit Lions",
+    "jersey": "39",
+    "college": "Arkansas",
+    "rating": 92,
+    "touchdowns": 0,
+    "tdType": "58-Yd Game Winner",
+    "blocks": 0,
+    "blockType": "Zero-Miss Streaks",
+    "totalScore": 142,
+    "passingYds": 0,
+    "speedScore": 74,
+    "signaturePlay": "Curving a dramatic 52-yard + 58-yard comeback double-feature to rally Detroit!",
+    "highlightMoments": [
+      "Rose from UFL 64-yard sensation to 89.7% rookie NFL hero",
+      "Nailed both a 58-yarder and 52-yard walk-off in comeback win over Houston",
+      "Scored 142 total points powering NFL's highest-scoring Lions offense"
+    ],
+    "specialStat": "142 Rookie Points • 58-Yd Clutch Heroics • Arkansas Alum",
+    "tdDetails": "142 Total Points (26/29 FGs + 64 PATs)",
+    "blockDetails": "Zero missed kicks in fourth-quarter comeback spots",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4689936.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jake+Bates+Lions+58+yard+game+winner+highlights",
+    "doingRightNow": {
+      "statusBadge": "⚡ COMEBACK WALK-OFF LEG",
+      "formRating": 93,
+      "trend": "Ice-Cold Rookie Star 🔥",
+      "headline": "Drilling game-winning 52-yarders and booming 58-yard lasers for Detroit.",
+      "recentSummary": "142 total points with 89.7% field goal efficiency.",
+      "keyMetrics": [
+        { "label": "Season Points", "val": "142 Pts", "icon": "⚡", "rank": "Top 5 NFL" },
+        { "label": "Longest Kick", "val": "58 Yards", "icon": "🚀", "rank": "Clutch" },
+        { "label": "PATs Made", "val": "64 PATs", "icon": "🎯", "rank": "#1 in NFL" },
+        { "label": "FG %", "val": "89.7%", "icon": "🏆", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "Bates turned from brick salesman to NFL primetime closer in one unforgettable season."
+    }
+  },
+  {
+    "id": "86",
+    "name": "Jack Fox",
+    "position": "P",
+    "positionCategory": "ST",
+    "team": "Detroit Lions",
+    "jersey": "3",
+    "college": "Rice",
+    "rating": 97,
+    "touchdowns": 0,
+    "tdType": "51.0 Gross Avg (#1)",
+    "blocks": 0,
+    "blockType": "46.2 Net Punt Avg (NFL Record)",
+    "totalScore": 97,
+    "passingYds": 17,
+    "speedScore": 75,
+    "signaturePlay": "70-yard spiraling sky-rocket pinning the opponent inside their own 2-yard line!",
+    "highlightMoments": [
+      "First-Team All-Pro Punter breaking the NFL single-season net punting average record!",
+      "51.0 yards per punt gross average & 46.2 net average flipping field position",
+      "Completed trick fake-punt passes for critical first downs"
+    ],
+    "specialStat": "First-Team All-Pro • NFL Net Avg Record (46.2) • Rice Alum",
+    "tdDetails": "17 Fake-Punt Passing Yards (All-Pro Weapon)",
+    "blockDetails": "27 Punts pinned inside the opponent's 20-yard line",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3916370.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Jack+Fox+Lions+All+Pro+punts+highlights",
+    "doingRightNow": {
+      "statusBadge": "👑 #1 ALL-PRO PUNTER",
+      "formRating": 98,
+      "trend": "NFL Net Average Record 🚀",
+      "headline": "Setting all-time NFL efficiency records with a 51.0 gross / 46.2 net average.",
+      "recentSummary": "Unanimous First-Team All-Pro flipping the entire field on every boot.",
+      "keyMetrics": [
+        { "label": "Net Punt Average", "val": "46.2 Yds", "icon": "👑", "rank": "NFL Record" },
+        { "label": "Gross Punt Avg", "val": "51.0 Yds", "icon": "🚀", "rank": "#1 in NFL" },
+        { "label": "Inside 20 Yard Line", "val": "27 Punts", "icon": "🎯", "rank": "Pinpoint" },
+        { "label": "All-Pro", "val": "1st Team", "icon": "🏆", "rank": "#1 P NFL" }
+      ],
+      "verdictAnalysis": "Fox doesn't just punt—his hangtime and directional placement erase return games completely."
+    }
+  },
+  {
+    "id": "87",
+    "name": "AJ Cole",
+    "position": "P",
+    "positionCategory": "ST",
+    "team": "Las Vegas Raiders",
+    "jersey": "6",
+    "college": "NC State",
+    "rating": 96,
+    "touchdowns": 0,
+    "tdType": "50.8 Gross Avg",
+    "blocks": 0,
+    "blockType": "27 Punts Inside 20",
+    "totalScore": 96,
+    "passingYds": 0,
+    "speedScore": 73,
+    "signaturePlay": "71-yard coffin-corner boomer dying cleanly inside the 3-yard line.",
+    "highlightMoments": [
+      "3x Pro Bowl & 2x First-Team All-Pro punter averaging 50+ yards per kick",
+      "NFL-best 50.8 yard average with 5.0+ second hangtime missiles",
+      "27 punts pinned inside the 20-yard line flipping tight AFC West battles"
+    ],
+    "specialStat": "3x Pro Bowl • 2x All-Pro • 50.8 Avg • NC State Alum",
+    "tdDetails": "0 Touchdowns (All-Pro special teams weapon)",
+    "blockDetails": "27 Coffin-corner punts pinned inside the 20",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3686689.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=AJ+Cole+Raiders+All+Pro+punts+highlights",
+    "doingRightNow": {
+      "statusBadge": "🥾 50.8 YARD BOOMER",
+      "formRating": 96,
+      "trend": "3x All-Star Precision 🎯",
+      "headline": "Crushing 50.8-yard spirals while dropping punts like darts inside the 10-yard line.",
+      "recentSummary": "Over 50 yards per punt for the fourth consecutive All-Pro caliber season.",
+      "keyMetrics": [
+        { "label": "Gross Average", "val": "50.8 Yds", "icon": "🚀", "rank": "#2 in NFL" },
+        { "label": "All-Pro Honors", "val": "2x 1st Team", "icon": "👑", "rank": "Elite" },
+        { "label": "Inside 20", "val": "27 Punts", "icon": "🎯", "rank": "Pinpoint" },
+        { "label": "Pro Bowls", "val": "3x Pro Bowl", "icon": "🏆", "rank": "All-AFC" }
+      ],
+      "verdictAnalysis": "AJ Cole combines cannon-leg distance with elite directional touch inside the 10."
+    }
+  },
+  {
+    "id": "88",
+    "name": "Logan Cooke",
+    "position": "P",
+    "positionCategory": "ST",
+    "team": "Jacksonville Jaguars",
+    "jersey": "9",
+    "college": "Mississippi State",
+    "rating": 94,
+    "touchdowns": 0,
+    "tdType": "49.4 Gross Avg",
+    "blocks": 0,
+    "blockType": "34 Punts Inside 20",
+    "totalScore": 94,
+    "passingYds": 0,
+    "speedScore": 72,
+    "signaturePlay": "Backspin rugby-style drop kick stopping dead on the 1-yard line!",
+    "highlightMoments": [
+      "Pro Bowl & All-Pro Punter leading the AFC with 34 punts inside the 20!",
+      "Zero blocked punts across 7 NFL seasons with elite snap-to-kick speed",
+      "49.4 yards per kick + lowest return yardage allowed"
+    ],
+    "specialStat": "Pro Bowl Punter • 34 Punts Inside 20 • Mississippi State Alum",
+    "tdDetails": "0 Touchdowns (Master of backspin placement)",
+    "blockDetails": "34 Punts downed inside opponent 20-yard line",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3115480.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Logan+Cooke+Jaguars+punts+highlights",
+    "doingRightNow": {
+      "statusBadge": "🎯 COFFIN CORNER MASTER",
+      "formRating": 94,
+      "trend": "34 Punts Inside 20 🔥",
+      "headline": "Trapping opposing offenses inside their own 10-yard line at an NFL-best rate.",
+      "recentSummary": "Earned Pro Bowl & All-Pro honors with a 49.4-yard average and 34 pins inside the 20.",
+      "keyMetrics": [
+        { "label": "Inside 20", "val": "34 Punts", "icon": "🎯", "rank": "#1 AFC" },
+        { "label": "Gross Punt Avg", "val": "49.4 Yds", "icon": "🚀", "rank": "Top 4 NFL" },
+        { "label": "Net Avg", "val": "44.8 Yds", "icon": "🛡️", "rank": "#2 NFL" },
+        { "label": "Pro Bowl", "val": "Pro Bowler", "icon": "🏆", "rank": "All-Pro" }
+      ],
+      "verdictAnalysis": "Cooke's backspin drop punts look like golf wedge shots landing cleanly inside the 5."
+    }
+  },
+  {
+    "id": "89",
+    "name": "Bryan Anger",
+    "position": "P",
+    "positionCategory": "ST",
+    "team": "Dallas Cowboys",
+    "jersey": "5",
+    "college": "California",
+    "rating": 93,
+    "touchdowns": 0,
+    "tdType": "2x Pro Bowl / All-Pro",
+    "blocks": 0,
+    "blockType": "17 Punts Inside 20",
+    "totalScore": 93,
+    "passingYds": 0,
+    "speedScore": 71,
+    "signaturePlay": "5.3-second hangtime bomb fair-caught at the 4-yard line with zero return.",
+    "highlightMoments": [
+      "2x Pro Bowl & 2x Second-Team All-Pro punter with 13-year NFL mastery",
+      "Led NFL in net punting average (45.3 yds) during All-Pro season",
+      "Flawless field-goal holding partner for Brandon Aubrey's 65-yard records"
+    ],
+    "specialStat": "2x Pro Bowl • 2x All-Pro • Elite FG Holder • California Alum",
+    "tdDetails": "0 Touchdowns (All-Pro punter & record-setting FG holder)",
+    "blockDetails": "17 Punts inside 20 + flawless holds on 14 50+ yd FGs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/14950.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Bryan+Anger+Cowboys+punts+highlights",
+    "doingRightNow": {
+      "statusBadge": "🥾 ALL-PRO HANGTIME KING",
+      "formRating": 92,
+      "trend": "Elite Field Position 🛡️",
+      "headline": "Generating towering hangtime while flawlessly holding Brandon Aubrey's 60+ kicks.",
+      "recentSummary": "48+ yard gross average with uncanny touch inside the 15-yard line.",
+      "keyMetrics": [
+        { "label": "Career Pro Bowls", "val": "2x Pro Bowl", "icon": "🏆", "rank": "All-Pro" },
+        { "label": "Gross Avg", "val": "48.1 Yds", "icon": "🚀", "rank": "Top 8" },
+        { "label": "Hangtime", "val": "4.9 Sec", "icon": "⏱️", "rank": "Elite" },
+        { "label": "FG Hold Rate", "val": "100% Clean", "icon": "🎯", "rank": "Precision" }
+      ],
+      "verdictAnalysis": "Anger excels at both towering hangtime punts and lightning-fast field-goal lace holds."
+    }
+  },
+  {
+    "id": "90",
+    "name": "Andrew DePaola",
+    "position": "LS",
+    "positionCategory": "ST",
+    "team": "Minnesota Vikings",
+    "jersey": "42",
+    "college": "Rutgers",
+    "rating": 96,
+    "touchdowns": 0,
+    "tdType": "3x Pro Bowl / 2x All-Pro",
+    "blocks": 34,
+    "blockType": "Punt Protection Blocks",
+    "totalScore": 96,
+    "passingYds": 0,
+    "speedScore": 78,
+    "signaturePlay": "Zero bad snaps across 10+ seasons & sprinting downfield to make open-field tackles.",
+    "highlightMoments": [
+      "3x Pro Bowl & 2x First-Team All-Pro Long Snapper—gold standard of the position",
+      "0.68-second punt snaps hitting the exact lace orientation every kick",
+      "Over 30+ career special teams tackles and crisp A-gap protection"
+    ],
+    "specialStat": "3x Pro Bowl • 2x First-Team All-Pro LS • Rutgers Alum",
+    "tdDetails": "0 Touchdowns (First-Team All-Pro Specialist)",
+    "blockDetails": "34 Punt protection blocks & coverage tackles",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/15726.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Andrew+DePaola+All+Pro+long+snapper+highlights",
+    "doingRightNow": {
+      "statusBadge": "👑 #1 ALL-PRO LONG SNAPPER",
+      "formRating": 97,
+      "trend": "100% Perfect Snaps 🎯",
+      "headline": "Delivering consecutive All-Pro seasons with machine-like spiral snaps & zero misses.",
+      "recentSummary": "3x consecutive Pro Bowl honors and 2x First-Team All-Pro recognition.",
+      "keyMetrics": [
+        { "label": "All-Pro Status", "val": "2x 1st Team", "icon": "👑", "rank": "#1 LS NFL" },
+        { "label": "Snap Accuracy", "val": "100% Clean", "icon": "🎯", "rank": "Zero Errors" },
+        { "label": "Snap Velocity", "val": "0.68 Sec", "icon": "⚡", "rank": "#1 Tier" },
+        { "label": "Pro Bowls", "val": "3x Straight", "icon": "🏆", "rank": "All-NFC" }
+      ],
+      "verdictAnalysis": "DePaola is automatic—quarterbacking Minnesota's kicking battery with pinpoint spin and zero wasted motion."
+    }
+  },
+  {
+    "id": "91",
+    "name": "James Winchester",
+    "position": "LS",
+    "positionCategory": "ST",
+    "team": "Kansas City Chiefs",
+    "jersey": "41",
+    "college": "Oklahoma",
+    "rating": 94,
+    "touchdowns": 0,
+    "tdType": "3x Super Bowl Champ",
+    "blocks": 31,
+    "blockType": "Super Bowl Protection Blocks",
+    "totalScore": 94,
+    "passingYds": 0,
+    "speedScore": 76,
+    "signaturePlay": "Ice-cold overtime snap in Super Bowl LVIII setting up Harrison Butker's walk-off title!",
+    "highlightMoments": [
+      "3x Super Bowl Champion delivering flawless snaps in 4 Super Bowl appearances",
+      "150+ consecutive games played without missing a single snap",
+      "Critical overtime & last-second playoff game-winning FG snaps"
+    ],
+    "specialStat": "3x Super Bowl Champ • 10+ Years Zero Missed Games • Oklahoma Alum",
+    "tdDetails": "0 Touchdowns (Championship dynasty long snapper)",
+    "blockDetails": "31 Interior kick-protection blocks & coverage stops",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/16665.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=James+Winchester+Chiefs+long+snapper+highlights",
+    "doingRightNow": {
+      "statusBadge": "🏆 3x SUPER BOWL IRONMAN",
+      "formRating": 95,
+      "trend": "150+ Straight Games 🔥",
+      "headline": "Anchor of Kansas City's dynasty special teams with zero bad snaps in clutch moments.",
+      "recentSummary": "Seamless snaps on 5 game-winning kicks for the undefeated Chiefs.",
+      "keyMetrics": [
+        { "label": "Championship Rings", "val": "3x SB Champ", "icon": "👑", "rank": "Dynasty" },
+        { "label": "Ironman Streak", "val": "160+ Games", "icon": "🛡️", "rank": "#1 Tier" },
+        { "label": "Clutch Snaps", "val": "100% Clean", "icon": "🎯", "rank": "Playoffs" },
+        { "label": "Protection", "val": "31 Blocks", "icon": "🧱", "rank": "Elite" }
+      ],
+      "verdictAnalysis": "When championships are decided in the final 3 seconds, Winchester's snap hits the holder's hands in the exact same spot every time."
+    }
+  },
+  {
+    "id": "92",
+    "name": "Reid Ferguson",
+    "position": "LS",
+    "positionCategory": "ST",
+    "team": "Buffalo Bills",
+    "jersey": "69",
+    "college": "LSU",
+    "rating": 92,
+    "touchdowns": 0,
+    "tdType": "8-Yr Bills Ironman",
+    "blocks": 29,
+    "blockType": "Cold-Weather Protections",
+    "totalScore": 92,
+    "passingYds": 0,
+    "speedScore": 75,
+    "signaturePlay": "Pinpoint snow-game spiral snap setting up a 61-yard Buffalo Bills field goal!",
+    "highlightMoments": [
+      "130+ consecutive games as Buffalo's ironman special teams captain",
+      "Mastering sub-zero wind & blizzard conditions in Orchard Park",
+      "Zero bad snaps across entire career in Buffalo playoffs"
+    ],
+    "specialStat": "Bills Ironman • Snow-Game Specialist • LSU Alum",
+    "tdDetails": "0 Touchdowns (Blizzard-tested special teams anchor)",
+    "blockDetails": "29 Kick protection blocks & coverage stops",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/2976549.png",
+    "video": "https://www.youtube.com/embed?listType=search&list=Reid+Ferguson+Bills+long+snapper+highlights",
+    "doingRightNow": {
+      "statusBadge": "❄️ SNOW-GAME SNIPER",
+      "formRating": 93,
+      "trend": "100% Precision Snapper 🎯",
+      "headline": "Snapping with robotic precision in freezing lake-effect winds without a hitch.",
+      "recentSummary": "130+ consecutive games and elite kick-protection reliability.",
+      "keyMetrics": [
+        { "label": "Games Streak", "val": "130+ Straight", "icon": "❄️", "rank": "Ironman" },
+        { "label": "Snap Accuracy", "val": "100%", "icon": "🎯", "rank": "Clean" },
+        { "label": "Lace Spin Rate", "val": "Elite", "icon": "⚡", "rank": "Pro Caliber" },
+        { "label": "Kick Protections", "val": "29 Blocks", "icon": "🛡️", "rank": "Solid" }
+      ],
+      "verdictAnalysis": "Ferguson handles freezing snow, sleet, and howling stadium gusts with automatic precision."
+    }
   }
 ];
 
@@ -3975,6 +6339,18 @@
       renderColleges();
       renderPositionTabs();
       populateCompareDropdowns();
+
+      const hlModal = document.getElementById('highlight-modal');
+      if (hlModal) {
+        hlModal.addEventListener('click', (e) => {
+          if (e.target === hlModal) closeHighlightModal();
+        });
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && hlModal && hlModal.classList.contains('active')) {
+          closeHighlightModal();
+        }
+      });
     });
 
     // --- VIEW ROUTING ---
@@ -4074,18 +6450,10 @@
         let matchesPos = true;
         if(posFilter === 'ALL') {
           matchesPos = true;
-        } else if(posFilter === 'QB') {
-          matchesPos = p.positionCategory === 'QB';
-        } else if(posFilter === 'OL') {
-          matchesPos = p.positionCategory === 'OL';
-        } else if(posFilter === 'RB') {
-          matchesPos = p.positionCategory === 'RB';
-        } else if(posFilter === 'WR') {
-          matchesPos = p.positionCategory === 'WR';
-        } else if(posFilter === 'TE') {
-          matchesPos = p.positionCategory === 'TE';
-        } else if(posFilter === 'DEF') {
-          matchesPos = p.positionCategory === 'DEF';
+        } else if(['OL', 'DEF', 'ST'].includes(posFilter)) {
+          matchesPos = p.positionCategory === posFilter;
+        } else {
+          matchesPos = p.position === posFilter;
         }
 
         return matchesSearch && matchesPos;
@@ -4115,10 +6483,10 @@
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍🏈</div>
             <h3>No NFL superstar found matching "${safeSearch}"</h3>
             <p style="color: var(--text-muted); max-width: 500px; margin: 0.5rem auto 1.5rem;">
-              Our directory features real player photos and official stats for 36 verified active NFL superstars. Try searching for stars like <strong>Mahomes, Trent Williams, Kittle, Derrick Henry, Justin Jefferson, Nick Bosa, C.J. Stroud</strong>, or filter by College!
+              Our directory features real highlight pictures and official stats for ${players.length} verified active NFL superstars across every NFL position. Try searching for stars like <strong>Mahomes, Kyle Hamilton, Brandon Aubrey, Kyle Juszczyk, Jack Fox, Justin Jefferson</strong>, or filter by Position!
             </p>
             <button class="btn btn-outline" style="font-size: 0.95rem; padding: 0.65rem 1.3rem;" onclick="setQuickSearch('')">
-              Show All 36 Verified Superstars
+              Show All ${players.length} Verified Superstars
             </button>
           </div>
         `;
@@ -4142,7 +6510,7 @@
             </div>
 
             <div class="play-overlay-badge">
-              <span>▶ Watch Highlights</span>
+              <span>📸 Highlight Pic & Reel</span>
             </div>
           </div>
           
@@ -4173,7 +6541,7 @@
                 <div class="stat-box">
                   <span class="stat-box-label">Score / Pts</span>
                   <span class="stat-box-val-score">⚡ ${p.totalScore || (p.touchdowns * 6)}</span>
-                  <span class="stat-box-sub">${p.positionCategory === 'QB' ? 'Pts Gen' : p.positionCategory === 'OL' ? 'O-Line Grade' : 'Pts Scored'}</span>
+                  <span class="stat-box-sub">${p.positionCategory === 'QB' ? 'Pts Gen' : p.positionCategory === 'OL' ? 'O-Line Grade' : p.positionCategory === 'ST' ? 'ST Score' : 'Pts Scored'}</span>
                 </div>
               </div>
 
@@ -4201,12 +6569,20 @@
     }
 
     // --- HIGHLIGHT THEATER MODAL FUNCTIONS ---
+    function getTeamByPlayerTeamName(teamName) {
+      const lower = (teamName || '').toLowerCase();
+      return nflTeamsList.find(t => lower === t.name.toLowerCase() || lower.includes(t.shortName.toLowerCase())) || nflTeamsList[0];
+    }
+
     function openHighlightModal(playerId) {
       const idx = players.findIndex(p => p.id === playerId);
       if(idx === -1) return;
       currentHighlightPlayerIndex = idx;
       renderHighlightTheater(players[currentHighlightPlayerIndex]);
-      document.getElementById('highlight-modal').classList.add('active');
+      const modal = document.getElementById('highlight-modal');
+      modal.classList.add('active');
+      const dialog = modal.querySelector('.modal-theater');
+      if (dialog) dialog.scrollTop = 0;
     }
 
     function closeHighlightModal() {
@@ -4216,14 +6592,68 @@
     }
 
     function renderHighlightTheater(p) {
+      const teamObj = getTeamByPlayerTeamName(p.team);
+
+      const stage = document.getElementById('hl-picture-stage');
+      if (stage) {
+        stage.style.background = `radial-gradient(circle at 50% 34%, ${teamObj.color}dd 0%, rgba(16, 62, 34, 0.85) 45%, rgba(4, 14, 24, 0.98) 100%)`;
+      }
+
+      const wm = document.getElementById('hl-team-watermark');
+      if (wm) {
+        wm.src = teamObj.logo;
+        wm.alt = teamObj.name;
+      }
+
+      const logoImg = document.getElementById('hl-team-logo-img');
+      const logoWrap = document.getElementById('hl-team-logo-wrap');
+      if (logoImg) {
+        logoImg.src = teamObj.logo;
+        logoImg.alt = teamObj.shortName;
+      }
+      if (logoWrap) logoWrap.style.borderColor = teamObj.color;
+
       document.getElementById('hl-player-badge').innerText = p.position;
+      const jerseyEl = document.getElementById('hl-player-jersey');
+      if (jerseyEl) jerseyEl.innerText = `#${p.jersey || '00'}`;
+      const counterEl = document.getElementById('hl-player-counter');
+      if (counterEl) counterEl.innerText = `Player ${currentHighlightPlayerIndex + 1} of ${players.length}`;
+
       document.getElementById('hl-player-name').innerText = p.name;
-      document.getElementById('hl-player-sub').innerHTML = `${p.team} • #${p.jersey} • 🎓 ${p.college} • 🏈 ${p.touchdowns} TDs | 🛡️ ${p.blocks} Blocks | OVR ${p.rating}`;
-      
+      document.getElementById('hl-player-sub').innerHTML = `${p.team} • 🎓 ${p.college}`;
+      const ovrEl = document.getElementById('hl-player-ovr');
+      if (ovrEl) ovrEl.innerText = p.rating;
+
+      const captionEl = document.getElementById('hl-signature-caption');
+      if (captionEl) {
+        captionEl.innerHTML = `<strong>🎬 Highlight Play:</strong> ${p.signaturePlay || p.specialStat}`;
+      }
+
+      const quickStats = document.getElementById('hl-quick-stats');
+      if (quickStats) {
+        quickStats.innerHTML = `
+          <div class="stat-box">
+            <span class="stat-box-label">Touchdowns / Big Plays</span>
+            <span class="stat-box-val-td">🏈 ${p.touchdowns}</span>
+            <span class="stat-box-sub">${p.tdType || 'Total TDs'}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-box-label">Blocks & Stops</span>
+            <span class="stat-box-val-block">🛡️ ${p.blocks}</span>
+            <span class="stat-box-sub">${p.blockType || 'Blocks'}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-box-label">Score / Rating</span>
+            <span class="stat-box-val-score">⚡ ${p.totalScore || (p.touchdowns * 6)}</span>
+            <span class="stat-box-sub">${p.positionCategory === 'QB' ? 'Pts Gen' : p.positionCategory === 'OL' ? 'O-Line Grade' : p.positionCategory === 'ST' ? 'ST Score' : 'Pts Scored'}</span>
+          </div>
+        `;
+      }
+
       const imgEl = document.getElementById('hl-player-img');
       if(imgEl) {
         imgEl.src = p.img;
-        imgEl.alt = p.name;
+        imgEl.alt = `${p.name} Highlight Picture`;
       }
 
       const iframe = document.getElementById('hl-iframe');
@@ -4243,6 +6673,9 @@
       const ytBtn = document.getElementById('hl-youtube-btn');
       ytBtn.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(p.name + ' NFL highlights career best plays')}`;
       ytBtn.innerText = `▶️ Watch ${p.name.split(' ')[0]}'s 4K Reel on YouTube`;
+
+      const dialog = document.querySelector('#highlight-modal .modal-theater');
+      if (dialog) dialog.scrollTop = 0;
     }
 
     function nextPlayerHighlight() {
@@ -4273,6 +6706,16 @@
         pos.value = 'ALL';
         sort.value = 'rating';
       }
+      renderDirectory();
+    }
+
+    function setPositionQuickFilter(posCode) {
+      const input = document.getElementById('search-input');
+      const sort = document.getElementById('sort-filter');
+      const pos = document.getElementById('position-filter');
+      if (input) input.value = '';
+      if (pos) pos.value = posCode;
+      if (sort) sort.value = 'rating';
       renderDirectory();
     }
 
@@ -4442,26 +6885,39 @@
     const positionGroups = [
       { key: 'QB', label: 'Quarterbacks (QB)', icon: '🏈', roles: ['QB'] },
       { key: 'RB', label: 'Running Backs (RB)', icon: '🏃', roles: ['RB'] },
+      { key: 'FB', label: 'Fullbacks (FB)', icon: '💪', roles: ['FB'] },
       { key: 'WR', label: 'Wide Receivers (WR)', icon: '⚡', roles: ['WR'] },
-      { key: 'OL', label: 'Offensive Line (OT/OG/C)', icon: '🛡️', roles: ['OT', 'OG', 'C'] },
       { key: 'TE', label: 'Tight Ends (TE)', icon: '🧤', roles: ['TE'] },
+      { key: 'OT', label: 'Offensive Tackles (OT)', icon: '🧱', roles: ['OT'] },
+      { key: 'OG', label: 'Offensive Guards (OG)', icon: '🏋️', roles: ['OG'] },
+      { key: 'C', label: 'Centers (C)', icon: '🎯', roles: ['C'] },
       { key: 'EDGE', label: 'Edge Rushers (EDGE)', icon: '💥', roles: ['EDGE'] },
-      { key: 'CB', label: 'Cornerbacks (CB)', icon: '🔒', roles: ['CB'] },
+      { key: 'DT', label: 'Defensive Tackles (DT)', icon: '🚜', roles: ['DT'] },
       { key: 'LB', label: 'Linebackers (LB)', icon: '🦅', roles: ['LB'] },
-      { key: 'DT', label: 'Defensive Tackles (DT)', icon: '🚜', roles: ['DT'] }
+      { key: 'CB', label: 'Cornerbacks (CB)', icon: '🔒', roles: ['CB'] },
+      { key: 'S', label: 'Safeties (S)', icon: '🛰️', roles: ['S'] },
+      { key: 'K', label: 'Kickers (K)', icon: '👟', roles: ['K'] },
+      { key: 'P', label: 'Punters (P)', icon: '🥾', roles: ['P'] },
+      { key: 'LS', label: 'Long Snappers (LS)', icon: '⚡', roles: ['LS'] }
     ];
 
     const marqueeRivalries = [
       { name: '👑 Mahomes vs Lamar', pos: 'QB', p1: '1', p2: '5' },
-      { name: '⚡ Josh Allen vs Joe Burrow', pos: 'QB', p1: '6', p2: '9' },
+      { name: '⚡ Josh Allen vs Jayden Daniels', pos: 'QB', p1: '6', p2: '41' },
       { name: '🚜 Derrick Henry vs Saquon Barkley', pos: 'RB', p1: '12', p2: '13' },
+      { name: '💪 Kyle Juszczyk vs Patrick Ricard', pos: 'FB', p1: '45', p2: '46' },
       { name: '🚀 Justin Jefferson vs Ja\'Marr Chase', pos: 'WR', p1: '7', p2: '8' },
-      { name: '🧱 Trent Williams vs Penei Sewell', pos: 'OL', p1: '2', p2: '3' },
-      { name: '🎯 Travis Kelce vs George Kittle', pos: 'TE', p1: '11', p2: '10' },
-      { name: '💥 T.J. Watt vs Micah Parsons', pos: 'EDGE', p1: '21', p2: '22' },
-      { name: '🔒 Sauce Gardner vs Pat Surtain II', pos: 'CB', p1: '25', p2: '38' },
+      { name: '🧱 Trent Williams vs Jordan Mailata', pos: 'OT', p1: '2', p2: '57' },
+      { name: '🏋️ Zack Martin vs Quenton Nelson', pos: 'OG', p1: '17', p2: '59' },
+      { name: '🎯 Creed Humphrey vs Tyler Linderbaum', pos: 'C', p1: '19', p2: '62' },
+      { name: '🧤 George Kittle vs Trey McBride', pos: 'TE', p1: '10', p2: '55' },
+      { name: '💥 T.J. Watt vs Trey Hendrickson', pos: 'EDGE', p1: '21', p2: '66' },
+      { name: '🚜 Chris Jones vs Dexter Lawrence II', pos: 'DT', p1: '39', p2: '63' },
       { name: '🦅 Fred Warner vs Roquan Smith', pos: 'LB', p1: '26', p2: '32' },
-      { name: '💥 Chris Jones vs Jalen Carter', pos: 'DT', p1: '39', p2: '33' }
+      { name: '🔒 Pat Surtain II vs Derek Stingley Jr.', pos: 'CB', p1: '38', p2: '69' },
+      { name: '🛰️ Kyle Hamilton vs Xavier McKinney', pos: 'S', p1: '73', p2: '75' },
+      { name: '👟 Brandon Aubrey vs Chris Boswell', pos: 'K', p1: '81', p2: '82' },
+      { name: '🥾 Jack Fox vs AJ Cole', pos: 'P', p1: '86', p2: '87' }
     ];
 
     function getPlayersInPositionGroup(groupKey) {
