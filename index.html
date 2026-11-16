@@ -1046,6 +1046,91 @@
     .responsive-video { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin: 1rem 0; border: 1px solid var(--border); background: #000; }
     .responsive-video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
+    /* Roster Builder Styles */
+    .roster-section-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-top: 0.35rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .roster-slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.75rem;
+    }
+    .roster-preview-strip {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .roster-preview-avatars {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .roster-mini-slot {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.28rem 0.55rem 0.28rem 0.3rem;
+      font-size: 0.74rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .roster-mini-slot:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .roster-mini-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(30, 86, 49, 0.7), rgba(6, 16, 30, 0.96));
+      border: 1px solid var(--accent);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .roster-mini-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .roster-lineup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 0.55rem;
+      margin: 0.85rem 0;
+    }
+    .roster-slot-pill {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .roster-slot-pill:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
     /* Toast Notification */
     .toast { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: #FFF; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); display: none; z-index: 2000; border: 1px solid rgba(255,255,255,0.2); font-weight: 600; }
 
@@ -1067,6 +1152,7 @@
       <button class="nav-btn" id="nav-directory" onclick="switchView('directory')">NFL Player Directory</button>
       <button class="nav-btn" id="nav-colleges" onclick="switchView('colleges')">College Football</button>
       <button class="nav-btn" id="nav-compare" onclick="switchView('compare')">Head-to-Head</button>
+      <button class="nav-btn" id="nav-rosters" onclick="switchView('rosters')">Roster Builder</button>
     </div>
     <div class="nav-controls">
       <button class="btn btn-outline" id="theme-toggle-btn" onclick="toggleTheme()" title="Lights ON = Football Field | Lights OFF = Dark Stadium With Floodlights">☀️ Lights: ON · Field</button>
@@ -1110,10 +1196,11 @@
       <div class="card" style="margin-top: 1.5rem; text-align: center;">
         <h3>Explore Real NFL Superstars & College Pipelines</h3>
         <p style="color: var(--text-muted); max-width: 650px; margin: 0.5rem auto 1.25rem;">
-          Browse authentic highlight pictures, game videos, touchdowns, and blocks for <strong id="home-player-total-count">92</strong> verified NFL players across every position, or compare any two stars head-to-head.
+          Browse authentic highlight pictures, game videos, touchdowns, and blocks for <strong id="home-player-total-count">126</strong> verified NFL players across every position, or compare any two stars head-to-head.
         </p>
         <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
           <button class="btn btn-accent" onclick="switchView('directory')">🏈 Browse NFL Player Photos & Stats</button>
+          <button class="btn btn-outline" onclick="switchView('rosters')">📋 Open Roster Builder</button>
           <button class="btn btn-outline" onclick="switchView('compare')">⚡ Head-to-Head Player Matchup</button>
           <button class="btn btn-outline" onclick="switchView('colleges')">🏛️ College Football Pipelines</button>
         </div>
@@ -1131,7 +1218,7 @@
             </p>
           </div>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button class="btn btn-outline btn-sm" id="btn-show-all-players" onclick="setQuickSearch('')">Show All 92 Real Superstars</button>
+            <button class="btn btn-outline btn-sm" id="btn-show-all-players" onclick="setQuickSearch('')">Show All 126 Real Superstars</button>
           </div>
         </div>
 
@@ -1338,6 +1425,201 @@
       </div>
     </section>
 
+    <!-- VIEW 6: CUSTOM ROSTER BUILDER -->
+    <section id="view-rosters" class="view">
+      <!-- Header & CSV Export -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2>📋 Custom Roster Builder (23-Man NFL Franchise)</h2>
+            <p style="color: var(--text-muted); margin-top: 0.25rem;">Draft a full 23-player NFL roster from 126 verified stars — complete 5-man Offensive Line, QB &amp; skill weapons, 9-man Defense, and Special Teams.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-outline" onclick="autoDraftRoster()">⚡ Auto-Draft 23-Man Team</button>
+            <button type="button" class="btn btn-accent" onclick="exportRostersCSV()">📥 Export Rosters (CSV)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items: start;">
+        <!-- CREATE / EDIT FORM -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <h3 id="roster-form-title">Create New 23-Man Roster</h3>
+            <span class="badge badge-accent tabular-num" id="roster-draft-ovr-badge">TEAM OVR 95</span>
+          </div>
+
+          <!-- Live Drafted Team Preview Strip -->
+          <div class="roster-preview-strip" style="margin-top: 0.9rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
+              <span style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--accent);">Active 23-Player Lineup Preview</span>
+              <span id="roster-preview-stats" class="tabular-num" style="font-size:0.76rem; color:var(--text-muted); font-weight:700;"></span>
+            </div>
+            <div class="roster-preview-avatars" id="roster-preview-avatars">
+              <!-- Populated live -->
+            </div>
+          </div>
+
+          <form id="roster-form" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.9rem;" onsubmit="handleSaveRoster(event)">
+            <input type="hidden" id="roster-edit-id">
+
+            <div>
+              <label style="display:block; font-size:0.85rem; margin-bottom:0.35rem; font-weight:700;">Team / Roster Name</label>
+              <input type="text" id="roster-name" placeholder="e.g. Championship Dream Team" required>
+            </div>
+
+            <div class="roster-section-label">Offense — Quarterback, Backs &amp; Receivers (7 Starters)</div>
+            <div class="roster-slot-grid">
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Starting QB</label>
+                <select id="roster-qb" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Running Back 1 (RB1)</label>
+                <select id="roster-rb" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">RB2 / Fullback (RB / FB)</label>
+                <select id="roster-rb2" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Wide Receiver 1 (WR1)</label>
+                <select id="roster-wr" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Wide Receiver 2 (WR2)</label>
+                <select id="roster-wr2" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Slot Receiver (WR3)</label>
+                <select id="roster-wr3" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Tight End (TE)</label>
+                <select id="roster-te" onchange="updateRosterLivePreview()" required></select>
+              </div>
+            </div>
+
+            <div class="roster-section-label">Full 5-Man Offensive Line (Pick Any Linemen)</div>
+            <div class="roster-slot-grid">
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Left Tackle (LT / OT)</label>
+                <select id="roster-ot" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Left Guard (LG / OG)</label>
+                <select id="roster-og" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Center (C)</label>
+                <select id="roster-c" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Right Guard (RG / OG)</label>
+                <select id="roster-rg" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Right Tackle (RT / OT)</label>
+                <select id="roster-rt" onchange="updateRosterLivePreview()" required></select>
+              </div>
+            </div>
+
+            <div class="roster-section-label">Defense — D-Line, Linebackers &amp; Secondary (9 Starters)</div>
+            <div class="roster-slot-grid">
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Edge Rusher 1 (EDGE)</label>
+                <select id="roster-dl" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Edge Rusher 2 (EDGE)</label>
+                <select id="roster-edge2" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Defensive Tackle 1 (DT)</label>
+                <select id="roster-dt1" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Defensive Tackle 2 (DT)</label>
+                <select id="roster-dt2" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Linebacker 1 (LB1)</label>
+                <select id="roster-lb1" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Linebacker 2 (LB2)</label>
+                <select id="roster-lb2" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Cornerback 1 (CB1)</label>
+                <select id="roster-db" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Cornerback 2 (CB2)</label>
+                <select id="roster-cb2" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Free / Strong Safety (S)</label>
+                <select id="roster-s" onchange="updateRosterLivePreview()" required></select>
+              </div>
+            </div>
+
+            <div class="roster-section-label">Special Teams (2 Specialists)</div>
+            <div class="roster-slot-grid">
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Kicker (K)</label>
+                <select id="roster-st" onchange="updateRosterLivePreview()" required></select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.82rem; margin-bottom:0.35rem; font-weight:600;">Punter / Long Snapper (P / LS)</label>
+                <select id="roster-p" onchange="updateRosterLivePreview()" required></select>
+              </div>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:0.85rem; margin-bottom:0.35rem; font-weight:700;">Strategy Notes</label>
+              <textarea id="roster-notes" rows="3" placeholder="Notes on offensive tactics, blocking scheme, or defensive blitzes..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="submit" class="btn btn-accent" style="flex: 1; justify-content: center;" id="roster-save-btn">Save 23-Man Roster</button>
+              <button type="button" class="btn btn-outline" id="roster-cancel-btn" style="display:none;" onclick="resetRosterForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- SAVED ROSTERS LIST -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3>Your Saved Rosters</h3>
+            <span class="badge" id="roster-saved-count">0 Teams</span>
+          </div>
+          <div id="roster-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Saved rosters appear here automatically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- HIGHLIGHT THEATER MODAL (ALWAYS ON TOP WITH FEATURED HIGHLIGHT PICTURE AT THE TOP) -->
@@ -1351,7 +1633,7 @@
             <span class="badge badge-accent">📸 HIGHLIGHT PICTURE</span>
             <span id="hl-player-badge" class="badge">QB</span>
             <span id="hl-player-jersey" class="badge" style="background:rgba(0,0,0,0.75); border:1px solid rgba(255,184,0,0.5);">#15</span>
-            <span id="hl-player-counter" style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-weight:700;">1 / 92</span>
+            <span id="hl-player-counter" style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-weight:700;">1 / 126</span>
           </div>
           <button class="btn btn-outline btn-sm" style="background:rgba(0,0,0,0.75); color:#FFF; border-color:rgba(255,255,255,0.35);" onclick="closeHighlightModal()">✕ Close</button>
         </div>
@@ -6300,6 +6582,346 @@
       ],
       "verdictAnalysis": "Ferguson handles freezing snow, sleet, and howling stadium gusts with automatic precision."
     }
+  },
+  {
+    "id": "93", "name": "Jordan Love", "position": "QB", "positionCategory": "QB", "team": "Green Bay Packers", "jersey": "10", "college": "Utah State",
+    "rating": 90, "touchdowns": 32, "tdType": "32 Pass TDs", "blocks": 3, "blockType": "Lead Blocks", "totalScore": 192, "passingYds": 4159, "speedScore": 84,
+    "signaturePlay": "Back-foot deep touchdown lasers across the middle in Dallas playoff upset.",
+    "highlightMoments": ["3-TD perfect-rating Wild Card demolition of Dallas Cowboys", "Thanksgiving clinic in Detroit throwing 3 touchdowns", "Signature deep play-action darts down the seam"],
+    "specialStat": "4,159 Pass Yds • 32 Pass TDs • Packers Franchise QB • Utah State Alum",
+    "tdDetails": "32 Passing Touchdowns", "blockDetails": "3 Downfield blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4036378.png",
+    "doingRightNow": { "statusBadge": "🔥 PLAYOFF CONTENDER", "formRating": 90, "trend": "Deep-Ball Specialist ⚡", "headline": "Launching explosive intermediate and deep strikes across Green Bay's young receiving corps.", "recentSummary": "High-octane passing efficiency and fearless pocket throws.", "keyMetrics": [{ "label": "Big Plays", "val": "32+ TDs", "icon": "🎯", "rank": "Top 6" }, { "label": "Deep YPA", "val": "8.1 YPA", "icon": "🚀", "rank": "Elite" }], "verdictAnalysis": "Love brings fearless arm talent and off-platform creativity." }
+  },
+  {
+    "id": "94", "name": "Dak Prescott", "position": "QB", "positionCategory": "QB", "team": "Dallas Cowboys", "jersey": "4", "college": "Mississippi State",
+    "rating": 91, "touchdowns": 38, "tdType": "36 Pass / 2 Rush", "blocks": 5, "blockType": "Lead Blocks", "totalScore": 228, "passingYds": 4516, "speedScore": 82,
+    "signaturePlay": "4,516-yard All-Pro passing campaign leading the NFL with 36 touchdowns.",
+    "highlightMoments": ["NFL-best 36 passing touchdowns in 2023 All-Pro season", "Clutch 4th-quarter comebacks feeding CeeDee Lamb", "Commanding pre-snap pocket adjustments"],
+    "specialStat": "4,516 Pass Yds • 36 Pass TDs • 2nd-Team All-Pro • Mississippi State Alum",
+    "tdDetails": "38 Total Touchdowns", "blockDetails": "5 Pocket leadership plays",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/2577417.png",
+    "doingRightNow": { "statusBadge": "⭐ PRO BOWL COMMANDER", "formRating": 89, "trend": "Pocket General 🎯", "headline": "Attacking tight windows downfield and controlling the line of scrimmage.", "recentSummary": "Prolific passing yardage and red-zone accuracy.", "keyMetrics": [{ "label": "Pass TDs Peak", "val": "36 TDs", "icon": "🎯", "rank": "#1 in NFL" }, { "label": "Passer Rating", "val": "105.9", "icon": "⚡", "rank": "All-Pro" }], "verdictAnalysis": "Prescott delivers top-tier pre-snap mastery and vertical precision." }
+  },
+  {
+    "id": "95", "name": "Matthew Stafford", "position": "QB", "positionCategory": "QB", "team": "Los Angeles Rams", "jersey": "9", "college": "Georgia",
+    "rating": 91, "touchdowns": 29, "tdType": "29 Pass TDs", "blocks": 2, "blockType": "Pocket Poise", "totalScore": 174, "passingYds": 4380, "speedScore": 77,
+    "signaturePlay": "No-look sidearm laser in Super Bowl LVI drive to Cooper Kupp.",
+    "highlightMoments": ["Super Bowl LVI game-winning touchdown drive", "Signature no-look lasers past linebackers", "Surgical chemistry with Puka Nacua & Davante Adams"],
+    "specialStat": "Super Bowl LVI Champion • 58,000+ Career Yards • Georgia Alum",
+    "tdDetails": "29 Passing Touchdowns", "blockDetails": "2 Lead blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/12483.png",
+    "doingRightNow": { "statusBadge": "🏆 SUPER BOWL VET", "formRating": 91, "trend": "Clutch Arm Talent 🎯", "headline": "Threading no-look sidearm passes into impossible coverage windows.", "recentSummary": "Master of timing routes and 4th-quarter drives.", "keyMetrics": [{ "label": "Arm Velocity", "val": "Elite", "icon": "⚡", "rank": "Top 5" }, { "label": "4th-Qtr Drives", "val": "46 Career", "icon": "🏆", "rank": "Historic" }], "verdictAnalysis": "Stafford remains one of the purest arm talents in NFL history." }
+  },
+  {
+    "id": "96", "name": "Baker Mayfield", "position": "QB", "positionCategory": "QB", "team": "Tampa Bay Buccaneers", "jersey": "6", "college": "Oklahoma",
+    "rating": 90, "touchdowns": 35, "tdType": "32 Pass / 3 Rush", "blocks": 6, "blockType": "Lead Blocks", "totalScore": 210, "passingYds": 4044, "speedScore": 82,
+    "signaturePlay": "Perfect passer rating in Lambeau Field & fiery postseason touchdown darts.",
+    "highlightMoments": ["Heisman-style grit turning Tampa Bay into NFC South champions", "Career-high passing efficiency and red-zone darts", "Stiff-arming edge rushers to extend drives"],
+    "specialStat": "4,044 Pass Yds • Heisman Trophy Winner • Oklahoma Alum",
+    "tdDetails": "35 Total Touchdowns", "blockDetails": "6 Gritty scramble blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3052587.png",
+    "doingRightNow": { "statusBadge": "🔥 NFC SOUTH LEADER", "formRating": 92, "trend": "Career-Best Surge 📈", "headline": "Playing electrifying, fearless football near the top of the NFL in TD passes.", "recentSummary": "Commanding Tampa Bay's high-scoring attack.", "keyMetrics": [{ "label": "Passing TDs", "val": "Top 3 NFL", "icon": "🎯", "rank": "Elite" }, { "label": "Completion %", "val": "71.4%", "icon": "⚡", "rank": "Career Best" }], "verdictAnalysis": "Mayfield is playing the sharpest, most confident football of his career." }
+  },
+  {
+    "id": "97", "name": "Tua Tagovailoa", "position": "QB", "positionCategory": "QB", "team": "Atlanta Falcons", "jersey": "1", "college": "Alabama",
+    "rating": 89, "touchdowns": 29, "tdType": "29 Pass TDs", "blocks": 2, "blockType": "Pocket Quicks", "totalScore": 174, "passingYds": 4624, "speedScore": 81,
+    "signaturePlay": "Lightning-quick 2.3-second release dropping RPO slants in stride.",
+    "highlightMoments": ["Led NFL with 4,624 passing yards in 2023", "Quickest release time in the NFL", "National Championship walk-off bomb at Alabama"],
+    "specialStat": "4,624 Pass Yds Leader • Alabama National Champ",
+    "tdDetails": "29 Passing Touchdowns", "blockDetails": "2 Pitch blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4241479.png",
+    "doingRightNow": { "statusBadge": "⚡ QUICK-RELEASE SNIPER", "formRating": 89, "trend": "High Accuracy 🎯", "headline": "Leading the league in completion percentage with rapid-fire timing throws.", "recentSummary": "Precision ball placement on anticipation routes.", "keyMetrics": [{ "label": "Completion %", "val": "72.9%", "icon": "🎯", "rank": "#1 NFL" }, { "label": "Release Time", "val": "2.35s", "icon": "⚡", "rank": "Fastest" }], "verdictAnalysis": "Tagovailoa processes coverages instantaneously with pinpoint accuracy." }
+  },
+  {
+    "id": "98", "name": "Kyren Williams", "position": "RB", "positionCategory": "SKILL", "team": "Los Angeles Rams", "jersey": "23", "college": "Notre Dame",
+    "rating": 90, "touchdowns": 16, "tdType": "14 Rush / 2 Rec", "blocks": 19, "blockType": "Pass-Pro Pickups", "totalScore": 96, "passingYds": 0, "speedScore": 89,
+    "signaturePlay": "Touchdown machine scoring in 10 straight games with elite blitz pickup.",
+    "highlightMoments": ["All-Pro 1,144-yard breakout season in 12 games", "Double-digit rushing touchdowns behind Stafford", "Fearless blitz-pickup blocks vs 260-lb linebackers"],
+    "specialStat": "1,144+ Rush Yds • TD Machine • Notre Dame Alum",
+    "tdDetails": "16 Total Touchdowns", "blockDetails": "19 Blitz protection blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4430737.png",
+    "doingRightNow": { "statusBadge": "🔥 TD MACHINE", "formRating": 92, "trend": "Workhorse Back 🏃", "headline": "Carrying the Rams offense with relentless goal-line vision and every-down durability.", "recentSummary": "Consistent 100-yard scrimmage impact every Sunday.", "keyMetrics": [{ "label": "Touchdowns", "val": "10+ Rush TDs", "icon": "🎯", "rank": "Top 4 NFL" }, { "label": "Pass Protection", "val": "95 Grade", "icon": "🛡️", "rank": "#1 RB" }], "verdictAnalysis": "Williams combines nose-for-the-end-zone instincts with elite pass protection." }
+  },
+  {
+    "id": "99", "name": "Breece Hall", "position": "RB", "positionCategory": "SKILL", "team": "New York Jets", "jersey": "20", "college": "Iowa State",
+    "rating": 91, "touchdowns": 12, "tdType": "8 Rush / 4 Rec", "blocks": 14, "blockType": "Pass-Pro Pickups", "totalScore": 72, "passingYds": 0, "speedScore": 94,
+    "signaturePlay": "83-yard breakaway house call outrunning the entire secondary.",
+    "highlightMoments": ["76-catch dual-threat receiving & rushing showcase", "Home-run 21.5 mph top gear in open field", "Explosive hurdle & cutback touchdowns"],
+    "specialStat": "1,585 Scrimmage Yds • 94 Speed Score • Iowa State Alum",
+    "tdDetails": "12 Total Touchdowns", "blockDetails": "14 Edge blitz pickups",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4427366.png",
+    "doingRightNow": { "statusBadge": "⚡ DUAL-THREAT RB", "formRating": 90, "trend": "Explosive All-Purpose 🚀", "headline": "Creating chunk plays both on outside zone runs and downfield wheel routes.", "recentSummary": "Dangerous every time he touches the football in space.", "keyMetrics": [{ "label": "Breakaway Speed", "val": "21.5 mph", "icon": "⚡", "rank": "Top 5 RB" }, { "label": "Rec Yards/Gm", "val": "40+ Yds", "icon": "🎯", "rank": "Top 3 RB" }], "verdictAnalysis": "Hall is one of the most explosive three-down backs in football." }
+  },
+  {
+    "id": "100", "name": "De'Von Achane", "position": "RB", "positionCategory": "SKILL", "team": "Miami Dolphins", "jersey": "28", "college": "Texas A&M",
+    "rating": 90, "touchdowns": 13, "tdType": "9 Rush / 4 Rec", "blocks": 9, "blockType": "Chip Blocks", "totalScore": 78, "passingYds": 0, "speedScore": 99,
+    "signaturePlay": "Blistering 4.32 track speed turning 2-yard pitches into 76-yard touchdowns.",
+    "highlightMoments": ["Historic 7.8 yards-per-carry rookie efficiency", "203-yard, 4-touchdown eruption vs Denver", "Uncatchable perimeter acceleration"],
+    "specialStat": "99 Track Speed • 7.8 YPC Record • Texas A&M Alum",
+    "tdDetails": "13 Total Touchdowns", "blockDetails": "9 Speed chip blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4429160.png",
+    "doingRightNow": { "statusBadge": "🚀 99 SPEED BURNER", "formRating": 91, "trend": "Big-Play Threat ⚡", "headline": "Threatening to score on every touch with track-meet acceleration.", "recentSummary": "Leading running backs in explosive 20+ yard scrimmage bursts.", "keyMetrics": [{ "label": "Top Speed", "val": "21.9 mph", "icon": "🚀", "rank": "#1 RB" }, { "label": "Receptions", "val": "Dual Threat", "icon": "🎯", "rank": "Top 3 RB" }], "verdictAnalysis": "Achane possesses game-breaking speed defenses cannot simulate in practice." }
+  },
+  {
+    "id": "101", "name": "Mike Evans", "position": "WR", "positionCategory": "SKILL", "team": "San Francisco 49ers", "jersey": "5", "college": "Texas A&M",
+    "rating": 93, "touchdowns": 13, "tdType": "13 Rec TDs", "blocks": 15, "blockType": "Perimeter Blocks", "totalScore": 78, "passingYds": 0, "speedScore": 89,
+    "signaturePlay": "NFL-record 11 straight 1,000-yard receiving seasons dominating jump balls.",
+    "highlightMoments": ["Tied Jerry Rice's record with 11 consecutive 1,000-yard seasons", "Super Bowl LV champion towering over cornerbacks", "100+ career NFL receiving touchdowns"],
+    "specialStat": "11x 1,000-Yd Seasons • 100+ Career TDs • Texas A&M Alum",
+    "tdDetails": "13 Receiving Touchdowns", "blockDetails": "15 Physical edge blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/16737.png",
+    "doingRightNow": { "statusBadge": "🏛️ HALL OF FAME PACE", "formRating": 93, "trend": "11x 1,000-Yard Legend 🏆", "headline": "Winning every red-zone fade route and rewriting NFL consistency records.", "recentSummary": "Unstoppable contested-catch weapon on vertical routes.", "keyMetrics": [{ "label": "1,000-Yd Streak", "val": "11 Years", "icon": "🏆", "rank": "#1 Tied NFL" }, { "label": "Red-Zone TDs", "val": "Elite", "icon": "🎯", "rank": "Top 3 WR" }], "verdictAnalysis": "Evans is a future Hall of Famer who dominates single coverage at will." }
+  },
+  {
+    "id": "102", "name": "DK Metcalf", "position": "WR", "positionCategory": "SKILL", "team": "Pittsburgh Steelers", "jersey": "4", "college": "Ole Miss",
+    "rating": 91, "touchdowns": 10, "tdType": "10 Rec TDs", "blocks": 21, "blockType": "Crushing WR Blocks", "totalScore": 60, "passingYds": 0, "speedScore": 96,
+    "signaturePlay": "6-foot-4, 235-lb deep post sprint running right past double teams.",
+    "highlightMoments": ["Iconic hustle chase-down tackle at 22.6 mph", "73-yard go-route touchdowns towering over DBs", "Dominating press coverage off the snap"],
+    "specialStat": "96 Speed • Physical Freak • Ole Miss Alum",
+    "tdDetails": "10 Receiving Touchdowns", "blockDetails": "21 Crushing wide receiver blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4047650.png",
+    "doingRightNow": { "statusBadge": "💥 PHYSICAL FREAK WR", "formRating": 90, "trend": "Deep Vertical Threat ⚡", "headline": "Stretching defenses vertically with unmatched size-speed combination.", "recentSummary": "Averaging over 15 yards per catch on vertical seams.", "keyMetrics": [{ "label": "Yards / Rec", "val": "15.2 YPR", "icon": "🚀", "rank": "Top 8 WR" }, { "label": "20+ Yd Catches", "val": "Elite", "icon": "⚡", "rank": "Top 5 WR" }], "verdictAnalysis": "Metcalf forces defenses to keep two safeties deep on every snap." }
+  },
+  {
+    "id": "103", "name": "Davante Adams", "position": "WR", "positionCategory": "SKILL", "team": "Los Angeles Rams", "jersey": "17", "college": "Fresno State",
+    "rating": 93, "touchdowns": 11, "tdType": "11 Rec TDs", "blocks": 13, "blockType": "Crackback Blocks", "totalScore": 66, "passingYds": 0, "speedScore": 89,
+    "signaturePlay": "Unstoppable release off the line leaving All-Pro corners frozen at the snap.",
+    "highlightMoments": ["3x First-Team All-Pro route-running technician", "Over 100 career receiving touchdowns", "Signature red-zone slant & fade mastery"],
+    "specialStat": "3x All-Pro • Elite Route Technician • Fresno State Alum",
+    "tdDetails": "11 Receiving Touchdowns", "blockDetails": "13 Perimeter blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/16800.png",
+    "doingRightNow": { "statusBadge": "🎯 ROUTE-RUNNING MASTER", "formRating": 92, "trend": "Separation Artist ⚡", "headline": "Slicing up man coverage with textbook releases and sideline toe-taps.", "recentSummary": "Automatic on 3rd-and-medium and inside the 10-yard line.", "keyMetrics": [{ "label": "Career TDs", "val": "100+ TDs", "icon": "🏆", "rank": "Historic" }, { "label": "Release Grade", "val": "99", "icon": "🎯", "rank": "#1 NFL" }], "verdictAnalysis": "Adams still owns the sharpest release package in football." }
+  },
+  {
+    "id": "104", "name": "Terry McLaurin", "position": "WR", "positionCategory": "SKILL", "team": "Washington Commanders", "jersey": "17", "college": "Ohio State",
+    "rating": 92, "touchdowns": 13, "tdType": "13 Rec TDs", "blocks": 17, "blockType": "Run-Support Blocks", "totalScore": 78, "passingYds": 0, "speedScore": 93,
+    "signaturePlay": "55-yard over-the-shoulder moonball catch in Cincinnati clutch win.",
+    "highlightMoments": ["Five consecutive 1,000-yard receiving seasons", "Contested-catch king down the sideline", "Explosive chemistry with Jayden Daniels"],
+    "specialStat": "5x 1,000-Yd WR • Scary Terry • Ohio State Alum",
+    "tdDetails": "13 Receiving Touchdowns", "blockDetails": "17 Relentless run blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3121422.png",
+    "doingRightNow": { "statusBadge": "🔥 CONTESTED CATCH KING", "formRating": 94, "trend": "Career-High TDs 📈", "headline": "Hauling in deep moonballs at a league-leading contested-catch rate.", "recentSummary": "Double-digit touchdown pace for Washington's surging offense.", "keyMetrics": [{ "label": "Contested Catch", "val": "72%", "icon": "🎯", "rank": "#1 WR" }, { "label": "Deep TDs", "val": "Top 3 NFL", "icon": "🚀", "rank": "Elite" }], "verdictAnalysis": "McLaurin tracks the deep ball better than almost any receiver in the league." }
+  },
+  {
+    "id": "105", "name": "David Njoku", "position": "TE", "positionCategory": "SKILL", "team": "Los Angeles Chargers", "jersey": "83", "college": "Miami",
+    "rating": 89, "touchdowns": 8, "tdType": "8 Rec TDs", "blocks": 34, "blockType": "In-Line & YAC Blocks", "totalScore": 48, "passingYds": 0, "speedScore": 88,
+    "signaturePlay": "Dragging four defenders 15 yards after contact on sideline stiff-arm.",
+    "highlightMoments": ["Pro Bowl breakout season carrying defenders after catch", "One-handed highlight reel red-zone grabs", "Physical edge sealing on outside runs"],
+    "specialStat": "Pro Bowl TE • YAC Monster • Miami Alum",
+    "tdDetails": "8 Receiving Touchdowns", "blockDetails": "34 Inline & open-field blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3123076.png",
+    "doingRightNow": { "statusBadge": "💪 YAC FREIGHT TRAIN", "formRating": 89, "trend": "Tackle Breaker ⚡", "headline": "Turning short screens into 20-yard gains with ferocious stiff-arms.", "recentSummary": "High-volume security blanket over the middle.", "keyMetrics": [{ "label": "Broken Tackles", "val": "Top 3 TE", "icon": "💥", "rank": "Elite" }, { "label": "Red-Zone Targets", "val": "Heavy", "icon": "🎯", "rank": "Starter" }], "verdictAnalysis": "Njoku brings rare leaping athleticism and physicality after the catch." }
+  },
+  {
+    "id": "106", "name": "Dallas Goedert", "position": "TE", "positionCategory": "SKILL", "team": "Philadelphia Eagles", "jersey": "88", "college": "South Dakota State",
+    "rating": 89, "touchdowns": 6, "tdType": "6 Rec TDs", "blocks": 38, "blockType": "Run-Lane Blocks", "totalScore": 36, "passingYds": 0, "speedScore": 86,
+    "signaturePlay": "170-yard, multi-stiff-arm seam rampage in New Orleans.",
+    "highlightMoments": ["Complete two-way blocker paving lanes for Saquon Barkley", "Clutch playoff 3rd-down chain mover", "Stiff-arming cornerbacks into the turf"],
+    "specialStat": "Two-Way TE • Playoff Performer • South Dakota State Alum",
+    "tdDetails": "6 Receiving Touchdowns", "blockDetails": "38 Dominant edge blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3121023.png",
+    "doingRightNow": { "statusBadge": "🛡️ TWO-WAY ENFORCER", "formRating": 89, "trend": "Elite Seam Blocker 📈", "headline": "Crushing defensive ends in the run game and punishing safeties over the middle.", "recentSummary": "Complete NFL tight end excelling both inline and on crossers.", "keyMetrics": [{ "label": "YAC / Rec", "val": "6.8 Yds", "icon": "🚀", "rank": "#2 TE" }, { "label": "Run Block", "val": "Elite", "icon": "🛡️", "rank": "Top 5 TE" }], "verdictAnalysis": "Goedert does all the dirty work in the trenches while staying lethal downfield." }
+  },
+  {
+    "id": "107", "name": "Christian Darrisaw", "position": "OT", "positionCategory": "OL", "team": "Minnesota Vikings", "jersey": "71", "college": "Virginia Tech",
+    "rating": 94, "touchdowns": 0, "tdType": "Zero-Sack Blindside", "blocks": 58, "blockType": "Pancakes & Wall Blocks", "totalScore": 93, "passingYds": 0, "speedScore": 80,
+    "signaturePlay": "Stoning NFL sack leaders one-on-one in pass protection.",
+    "highlightMoments": ["Top-3 NFL left tackle pass-blocking anchor", "Launching edge rushers out of the screen on outside runs", "Mirroring speed rushers with effortless footwork"],
+    "specialStat": "Elite Blindside LT • 93 Pass Block Grade • Virginia Tech Alum",
+    "tdDetails": "0 Touchdowns (Elite Left Tackle anchor)", "blockDetails": "58 Pancake & dominant seal blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4361985.png",
+    "doingRightNow": { "statusBadge": "🧱 ELITE BLINDSIDE LT", "formRating": 94, "trend": "Shutdown Tackle 🛡️", "headline": "Locking down Minnesota's left edge against the league's top pass rushers.", "recentSummary": "All-Pro caliber pass protection and power run displacement.", "keyMetrics": [{ "label": "Pass Block Grade", "val": "92.8", "icon": "🛡️", "rank": "Top 4 OT" }, { "label": "Sacks Allowed", "val": "Minimal", "icon": "🔒", "rank": "Elite" }], "verdictAnalysis": "Darrisaw is one of the premier franchise left tackles in the NFL." }
+  },
+  {
+    "id": "108", "name": "Andrew Thomas", "position": "OT", "positionCategory": "OL", "team": "New York Giants", "jersey": "78", "college": "Georgia",
+    "rating": 93, "touchdowns": 0, "tdType": "All-Pro Left Tackle", "blocks": 55, "blockType": "Blindside Pancakes", "totalScore": 92, "passingYds": 0, "speedScore": 78,
+    "signaturePlay": "Stalemating Micah Parsons on isolated blindside islands.",
+    "highlightMoments": ["Second-Team All-Pro left tackle cornerstone", "Textbook anchor against power bull rushes", "Zero-penalty technical discipline"],
+    "specialStat": "All-Pro LT • NFC East Wall • Georgia Alum",
+    "tdDetails": "0 Touchdowns (Franchise Left Tackle)", "blockDetails": "55 Blindside pancake blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4259566.png",
+    "doingRightNow": { "statusBadge": "🛡️ FRANCHISE LT", "formRating": 92, "trend": "Island Protector 🧱", "headline": "Controlling NFC East edge rushers single-handedly on passing downs.", "recentSummary": "Elite pass-set balance and hand placement.", "keyMetrics": [{ "label": "All-Pro Honors", "val": "All-Pro", "icon": "🏆", "rank": "Top Tier" }, { "label": "Pressure Rate", "val": "< 3%", "icon": "🔒", "rank": "Elite" }], "verdictAnalysis": "Thomas anchors the left edge with textbook leverage and quiet feet." }
+  },
+  {
+    "id": "109", "name": "Landon Dickerson", "position": "OG", "positionCategory": "OL", "team": "Philadelphia Eagles", "jersey": "69", "college": "Alabama",
+    "rating": 93, "touchdowns": 0, "tdType": "Pro Bowl Left Guard", "blocks": 64, "blockType": "Road-Grader Pancakes", "totalScore": 94, "passingYds": 0, "speedScore": 76,
+    "signaturePlay": "330-pound bulldozer clearing 8-yard highways for Saquon Barkley.",
+    "highlightMoments": ["3x Pro Bowl powerhouse guard in Philadelphia", "Opening unstoppable lanes for Tush Push & Barkley", "Pancaking defensive tackles at the second level"],
+    "specialStat": "3x Pro Bowl Guard • 330-lb Mauler • Alabama Alum",
+    "tdDetails": "0 Touchdowns (Road-grader Left Guard)", "blockDetails": "64 Massive interior pancake blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4035624.png",
+    "doingRightNow": { "statusBadge": "🚜 MAULER LEFT GUARD", "formRating": 94, "trend": "3x Pro Bowl Star 🛡️", "headline": "Driving defenders backward five yards off the snap for Philly's top rushing attack.", "recentSummary": "Zero sacks allowed while anchoring an elite offensive line.", "keyMetrics": [{ "label": "Run Block Win", "val": "76%", "icon": "🚜", "rank": "Top 4 OG" }, { "label": "Pro Bowls", "val": "3x Selection", "icon": "🏆", "rank": "All-Pro Caliber" }], "verdictAnalysis": "Dickerson is a physical tone-setter who thrives on violent run blocks." }
+  },
+  {
+    "id": "110", "name": "Trey Smith", "position": "OG", "positionCategory": "OL", "team": "Kansas City Chiefs", "jersey": "65", "college": "Tennessee",
+    "rating": 92, "touchdowns": 0, "tdType": "2x Super Bowl Champ", "blocks": 63, "blockType": "Violent Finish Blocks", "totalScore": 93, "passingYds": 0, "speedScore": 78,
+    "signaturePlay": "Signature viral pancake finishes burying defensive tackles in the turf.",
+    "highlightMoments": ["Back-to-back Super Bowl champion right guard", "Highest-graded finishing blocker in AFC", "Pulling around the edge to flatten linebackers"],
+    "specialStat": "2x Super Bowl Champ • Pro Bowl Guard • Tennessee Alum",
+    "tdDetails": "0 Touchdowns (Chiefs interior enforcer)", "blockDetails": "63 Bone-rattling pancake blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4242459.png",
+    "doingRightNow": { "statusBadge": "👑 SUPER BOWL ENFORCER", "formRating": 93, "trend": "Pro Bowl Dominance 🔥", "headline": "Protecting Patrick Mahomes' interior pocket and delivering NFL-best pancake blocks.", "recentSummary": "Part of the NFL's premier interior offensive line.", "keyMetrics": [{ "label": "Pancake Finishes", "val": "#1 Ranked", "icon": "💥", "rank": "Elite" }, { "label": "Super Bowls", "val": "2x Rings", "icon": "🏆", "rank": "Champion" }], "verdictAnalysis": "Smith brings relentless nasty finishing power on every single snap." }
+  },
+  {
+    "id": "111", "name": "Joe Thuney", "position": "OG", "positionCategory": "OL", "team": "Chicago Bears", "jersey": "62", "college": "NC State",
+    "rating": 94, "touchdowns": 0, "tdType": "4x Super Bowl Champ", "blocks": 59, "blockType": "Zero-Mistake Blocks", "totalScore": 95, "passingYds": 0, "speedScore": 77,
+    "signaturePlay": "Stepping out to Left Tackle seamlessly when needed without allowing a sack.",
+    "highlightMoments": ["4x Super Bowl Champion & First-Team All-Pro guard", "NFL's premier interior pass protector", "Legendary durability and positional versatility"],
+    "specialStat": "4x Super Bowl Champ • 2x 1st-Team All-Pro • NC State Alum",
+    "tdDetails": "0 Touchdowns (All-Pro pass protector)", "blockDetails": "59 Clean pocket-sealing blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/2577773.png",
+    "doingRightNow": { "statusBadge": "🏆 4x SUPER BOWL ALL-PRO", "formRating": 95, "trend": "Gold Standard OG 🛡️", "headline": "Playing flawless pass protection regardless of lining up at guard or tackle.", "recentSummary": "Near-zero pressure rate across hundreds of pass sets.", "keyMetrics": [{ "label": "Pass Block Win", "val": "97%", "icon": "🔒", "rank": "#1 OG" }, { "label": "Championships", "val": "4 Rings", "icon": "🏆", "rank": "Dynasty" }], "verdictAnalysis": "Thuney is the benchmark of technique and composure on the offensive line." }
+  },
+  {
+    "id": "112", "name": "Tyler Smith", "position": "OG", "positionCategory": "OL", "team": "Dallas Cowboys", "jersey": "73", "college": "Tulsa",
+    "rating": 92, "touchdowns": 0, "tdType": "All-Pro Power Guard", "blocks": 60, "blockType": "Heavy Displacement", "totalScore": 92, "passingYds": 0, "speedScore": 80,
+    "signaturePlay": "Stonewalling interior bull rushes with vice-grip punch power.",
+    "highlightMoments": ["All-Pro guard dominating in Year 2", "Seamless transition from tackle to dominant left guard", "Sending blitzers backward on power counters"],
+    "specialStat": "Pro Bowl & All-Pro Guard • Power Blocker • Tulsa Alum",
+    "tdDetails": "0 Touchdowns (Dallas O-Line cornerstone)", "blockDetails": "60 Interior pancake blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4568652.png",
+    "doingRightNow": { "statusBadge": "🧱 RISING ALL-PRO OG", "formRating": 92, "trend": "Elite Anchor 🛡️", "headline": "Dominating interior battles with rare grip strength and athletic pull speed.", "recentSummary": "Cowboys' best young offensive line cornerstone.", "keyMetrics": [{ "label": "Anchor Grade", "val": "91.5", "icon": "🧱", "rank": "Top 5 OG" }, { "label": "Pro Bowls", "val": "2x Selection", "icon": "🏆", "rank": "All-Pro" }], "verdictAnalysis": "Smith blends overwhelming upper-body power with agile lateral recovery." }
+  },
+  {
+    "id": "113", "name": "Erik McCoy", "position": "C", "positionCategory": "OL", "team": "New Orleans Saints", "jersey": "78", "college": "Texas A&M",
+    "rating": 91, "touchdowns": 0, "tdType": "Pro Bowl Center", "blocks": 57, "blockType": "Zone Reach Blocks", "totalScore": 92, "passingYds": 0, "speedScore": 79,
+    "signaturePlay": "Sprinting into the second level to seal linebackers on outside zone runs.",
+    "highlightMoments": ["2x Pro Bowl center anchoring New Orleans' rushing attack", "Calling complex protection shifts at the snap", "Instant offensive surge whenever healthy in lineup"],
+    "specialStat": "2x Pro Bowl Center • Zone Blocking Ace • Texas A&M Alum",
+    "tdDetails": "0 Touchdowns (Offensive line field general)", "blockDetails": "57 Reach & second-level blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3917331.png",
+    "doingRightNow": { "statusBadge": "🎯 PRO BOWL CENTER", "formRating": 91, "trend": "Run-Game Catalyst 📈", "headline": "Transforming ground efficiency with elite reach blocks and crisp snap timing.", "recentSummary": "High-IQ communicator commanding the interior.", "keyMetrics": [{ "label": "Pro Bowls", "val": "2x Selection", "icon": "🏆", "rank": "Top 5 C" }, { "label": "Reach Speed", "val": "Elite", "icon": "⚡", "rank": "Top Tier" }], "verdictAnalysis": "McCoy elevates every offensive lineman next to him." }
+  },
+  {
+    "id": "114", "name": "Cam Jurgens", "position": "C", "positionCategory": "OL", "team": "Baltimore Ravens", "jersey": "64", "college": "Nebraska",
+    "rating": 90, "touchdowns": 0, "tdType": "Pro Bowl Center", "blocks": 58, "blockType": "Pulling & Climb Blocks", "totalScore": 90, "passingYds": 0, "speedScore": 83,
+    "signaturePlay": "30-yard downfield escort pull clearing safeties on touchdown screens.",
+    "highlightMoments": ["Pro Bowl honors stepping directly into Jason Kelce's shoes", "Explosive pulling speed to the perimeter", "Anchor of record-setting rushing attacks"],
+    "specialStat": "Pro Bowl Center • Athletic Puller • Nebraska Alum",
+    "tdDetails": "0 Touchdowns (Athletic pivot anchor)", "blockDetails": "58 Second-level escort blocks",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4361178.png",
+    "doingRightNow": { "statusBadge": "⚡ ATHLETIC PRO BOWL C", "formRating": 90, "trend": "Elite Pulling Speed 🚀", "headline": "Outrunning linebackers to the edge as one of the fastest centers in football.", "recentSummary": "Seamless transition into Pro Bowl center play.", "keyMetrics": [{ "label": "Pro Bowls", "val": "Pro Bowl", "icon": "🏆", "rank": "NFC Starter" }, { "label": "Pull Speed", "val": "Elite", "icon": "⚡", "rank": "#1 C" }], "verdictAnalysis": "Jurgens pairs Kelce-mentored technique with rare open-field speed." }
+  },
+  {
+    "id": "115", "name": "Danielle Hunter", "position": "EDGE", "positionCategory": "DEF", "team": "Houston Texans", "jersey": "55", "college": "LSU",
+    "rating": 93, "touchdowns": 0, "tdType": "16.5-Sack Edge Force", "blocks": 49, "blockType": "Run Stops & Edge Sets", "totalScore": 148, "passingYds": 0, "speedScore": 91,
+    "signaturePlay": "Long-arm bull rush collapsing tackles right into the quarterback.",
+    "highlightMoments": ["4x Pro Bowl pass-rush nightmare racking up 95+ career sacks", "16.5 sacks & league-leading tackles for loss", "Setting brutal edges against outside zone runs"],
+    "specialStat": "95+ Career Sacks • 4x Pro Bowl EDGE • LSU Alum",
+    "tdDetails": "0 Touchdowns (Dominant sack leader)", "blockDetails": "49 Edge-setting stops & pass deflections",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/2976560.png",
+    "doingRightNow": { "statusBadge": "🔥 SACK LEADER", "formRating": 94, "trend": "Relentless Pressure ⚡", "headline": "Leading the league in pressures alongside Will Anderson Jr. in Houston.", "recentSummary": "Double-digit sacks and constant backfield disruption.", "keyMetrics": [{ "label": "QB Pressures", "val": "Top 3 NFL", "icon": "💥", "rank": "Elite" }, { "label": "Pro Bowls", "val": "4x Star", "icon": "🏆", "rank": "All-Pro" }], "verdictAnalysis": "Hunter combines rare wingspan and explosive bend to wreck game plans." }
+  },
+  {
+    "id": "116", "name": "Brian Burns", "position": "EDGE", "positionCategory": "DEF", "team": "New York Giants", "jersey": "0", "college": "Florida State",
+    "rating": 91, "touchdowns": 0, "tdType": "Spider-Man Edge Speed", "blocks": 41, "blockType": "TFLs & Strip Sacks", "totalScore": 134, "passingYds": 0, "speedScore": 93,
+    "signaturePlay": "Blur-quick ghost spin move bending the corner in 2.1 seconds.",
+    "highlightMoments": ["2x Pro Bowl speed rusher wearing #0", "Strip-sack specialist forcing critical turnovers", "Chasing down mobile QBs from the backside"],
+    "specialStat": "2x Pro Bowl EDGE • 93 Speed Rush • Florida State Alum",
+    "tdDetails": "0 Touchdowns (Lightning-fast edge rusher)", "blockDetails": "41 TFLs & batted passes",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4035631.png",
+    "doingRightNow": { "statusBadge": "⚡ SPEED EDGE RUSHER", "formRating": 91, "trend": "Ghost-Move Specialist 🔥", "headline": "Turning the corner on offensive tackles with devastating speed-to-spin counters.", "recentSummary": "Anchoring New York's defensive front alongside Dexter Lawrence.", "keyMetrics": [{ "label": "Pass Rush Win", "val": "22%+", "icon": "⚡", "rank": "Top 10 EDGE" }, { "label": "TFLs", "val": "Double Digits", "icon": "💥", "rank": "Disruptive" }], "verdictAnalysis": "Burns has one of the cleanest ghost-dip moves in the entire NFL." }
+  },
+  {
+    "id": "117", "name": "Vita Vea", "position": "DT", "positionCategory": "DEF", "team": "Tampa Bay Buccaneers", "jersey": "50", "college": "Washington",
+    "rating": 92, "touchdowns": 0, "tdType": "347-lb Nose Tackle", "blocks": 66, "blockType": "Double-Team Anchors", "totalScore": 144, "passingYds": 0, "speedScore": 74,
+    "signaturePlay": "One-arm bench-pressing NFL centers straight into the quarterback's lap.",
+    "highlightMoments": ["Super Bowl LV champion 347-pound nose tackle", "2x Pro Bowl interior mountain shutting down inside runs", "Shocking hustle chasing screens 20 yards downfield"],
+    "specialStat": "347-lb Power NT • Super Bowl Champ • Washington Alum",
+    "tdDetails": "0 Touchdowns (Unmovable nose tackle)", "blockDetails": "66 Double-team block absorptions & TFLs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3134362.png",
+    "doingRightNow": { "statusBadge": "🏔️ 347-LB INTERIOR WALL", "formRating": 93, "trend": "Sack & Run Force 💥", "headline": "Leading interior defenders in bull-rush collapse while stonewalling the run.", "recentSummary": "Two offensive linemen still can't move him off his spot.", "keyMetrics": [{ "label": "Double-Team Rate", "val": "65%+", "icon": "🛡️", "rank": "Top 3 DT" }, { "label": "Run Defense", "val": "Elite Wall", "icon": "💥", "rank": "All-Pro" }], "verdictAnalysis": "Vea is a terrifying combination of 347-pound mass and freakish burst." }
+  },
+  {
+    "id": "118", "name": "Derrick Brown", "position": "DT", "positionCategory": "DEF", "team": "Carolina Panthers", "jersey": "95", "college": "Auburn",
+    "rating": 92, "touchdowns": 0, "tdType": "NFL Record 103 DT Tackles", "blocks": 68, "blockType": "Shed & Run Stops", "totalScore": 148, "passingYds": 0, "speedScore": 78,
+    "signaturePlay": "NFL single-season record 103 tackles as an interior defensive lineman.",
+    "highlightMoments": ["Shattered NFL defensive tackle tackle record (103 tackles)", "Pro Bowl run-stuffing powerhouse", "Batting passes at the line with massive reach"],
+    "specialStat": "103-Tackle NFL DT Record • Pro Bowl • Auburn Alum",
+    "tdDetails": "0 Touchdowns (Record-breaking DT tackler)", "blockDetails": "68 Run-stuffing block sheds",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4035495.png",
+    "doingRightNow": { "statusBadge": "🏆 NFL RECORD DT", "formRating": 92, "trend": "Tackling Machine 💥", "headline": "Controlling the line of scrimmage with historic run-defense production.", "recentSummary": "Unmatched tackle radius for a 325-lb defensive tackle.", "keyMetrics": [{ "label": "Season Record", "val": "103 Tackles", "icon": "🏆", "rank": "#1 NFL History" }, { "label": "Run Stop Rate", "val": "Elite", "icon": "🛡️", "rank": "Top 3 DT" }], "verdictAnalysis": "Brown resets the standard for high-motor interior defensive line play." }
+  },
+  {
+    "id": "119", "name": "Nnamdi Madubuike", "position": "DT", "positionCategory": "DEF", "team": "Baltimore Ravens", "jersey": "92", "college": "Texas A&M",
+    "rating": 91, "touchdowns": 0, "tdType": "13-Sack DT Breakout", "blocks": 52, "blockType": "Interior Disruption", "totalScore": 142, "passingYds": 0, "speedScore": 83,
+    "signaturePlay": "NFL-record-tying 11 straight games with a sack from defensive tackle.",
+    "highlightMoments": ["13 sacks as a Second-Team All-Pro interior rusher", "Explosive first-step swim move past guards", "Relentless motor anchoring Baltimore's front"],
+    "specialStat": "13-Sack DT • 2x Pro Bowl • Texas A&M Alum",
+    "tdDetails": "0 Touchdowns (Interior pass-rush star)", "blockDetails": "52 Pocket-crushing sheds",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4035245.png",
+    "doingRightNow": { "statusBadge": "⚡ PASS-RUSHING DT", "formRating": 91, "trend": "Interior Disruptor 🔥", "headline": "Shooting interior gaps to blow up both inside runs and quarterback steps.", "recentSummary": "Back-to-back Pro Bowl interior disruption.", "keyMetrics": [{ "label": "Peak DT Sacks", "val": "13.0 Sacks", "icon": "💥", "rank": "#1 DT" }, { "label": "Pro Bowls", "val": "2x Selection", "icon": "🏆", "rank": "All-Pro" }], "verdictAnalysis": "Madubuike brings edge-rusher quickness to the 3-technique spot." }
+  },
+  {
+    "id": "120", "name": "Demario Davis", "position": "LB", "positionCategory": "DEF", "team": "New York Jets", "jersey": "56", "college": "Arkansas State",
+    "rating": 91, "touchdowns": 0, "tdType": "5x All-Pro Linebacker", "blocks": 58, "blockType": "Blitz & Sheds", "totalScore": 146, "passingYds": 0, "speedScore": 86,
+    "signaturePlay": "Timing A-gap blitzes cleanly for thunderous tackles for loss.",
+    "highlightMoments": ["5 consecutive All-Pro selections as defensive captain", "Over 1,400 career tackles & 40+ sacks", "Unmatched pre-snap film study and leadership"],
+    "specialStat": "5x All-Pro LB • 1,400+ Tackles • Arkansas State Alum",
+    "tdDetails": "0 Touchdowns (All-Pro linebacker captain)", "blockDetails": "58 Block sheds & blitz pickups crushed",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/14958.png",
+    "doingRightNow": { "statusBadge": "👑 ALL-PRO LB CAPTAIN", "formRating": 92, "trend": "Ageless General 🛡️", "headline": "Diagnosing plays before the snap and delivering 120+ tackles every year.", "recentSummary": "Elite blitz timing and veteran command.", "keyMetrics": [{ "label": "All-Pro Streak", "val": "5 Straight", "icon": "🏆", "rank": "Hall Caliber" }, { "label": "Tackles / Yr", "val": "120+ Pace", "icon": "💥", "rank": "Top 10 LB" }], "verdictAnalysis": "Davis plays with elite instincts and explosive downhill closing speed." }
+  },
+  {
+    "id": "121", "name": "Frankie Luvu", "position": "LB", "positionCategory": "DEF", "team": "Washington Commanders", "jersey": "4", "college": "Washington State",
+    "rating": 90, "touchdowns": 1, "tdType": "1 Pick-Six / 8 Sacks", "blocks": 47, "blockType": "Blitz Disruption", "totalScore": 140, "passingYds": 0, "speedScore": 88,
+    "signaturePlay": "Leaping over the offensive line at the goal line on a timed blitz.",
+    "highlightMoments": ["Second-Team All-Pro wrecking ball in Washington", "8-sack hybrid linebacker-edge terror", "Sideline-to-sideline infectious physicality"],
+    "specialStat": "All-Pro Hybrid LB • 8-Sack Blitzer • Washington State Alum",
+    "tdDetails": "1 Defensive Touchdown + 8 Sacks", "blockDetails": "47 Lead-blocker collisions & TFLs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3127273.png",
+    "doingRightNow": { "statusBadge": "💥 BLITZING MISSILE", "formRating": 92, "trend": "All-Pro Breakout 🔥", "headline": "Setting the tone for Washington's defense with sacks, TFLs, and forced fumbles.", "recentSummary": "Unblockable as a delayed middle blitzer.", "keyMetrics": [{ "label": "LB Sacks", "val": "8.0 Sacks", "icon": "💥", "rank": "#1 LB" }, { "label": "Honor", "val": "All-Pro", "icon": "🏆", "rank": "Elite" }], "verdictAnalysis": "Luvu plays every down at 100 mph as Dan Quinn's defensive chess piece." }
+  },
+  {
+    "id": "122", "name": "Zack Baun", "position": "LB", "positionCategory": "DEF", "team": "Philadelphia Eagles", "jersey": "53", "college": "Wisconsin",
+    "rating": 94, "touchdowns": 0, "tdType": "Super Bowl LIX Standout", "blocks": 56, "blockType": "151 Tackles / 5 FF", "totalScore": 155, "passingYds": 0, "speedScore": 89,
+    "signaturePlay": "Diving Super Bowl LIX interception & 5 forced fumbles in DPOY-caliber year.",
+    "highlightMoments": ["First-Team All-Pro transforming Eagles defense (151 tackles, 5 FF)", "Signature diving pick in Super Bowl LIX", "Coverage + pass-rush Swiss Army Knife"],
+    "specialStat": "151 Tackles • 1st-Team All-Pro • Super Bowl Champ • Wisconsin Alum",
+    "tdDetails": "0 Touchdowns (5 Forced Fumbles, 151 Tackles)", "blockDetails": "56 Guard-shedding stops",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3917657.png",
+    "doingRightNow": { "statusBadge": "🏆 ALL-PRO LB STAR", "formRating": 96, "trend": "Turnover Machine 📈", "headline": "Dominating both run fits and coverage while forcing fumbles at a league-high clip.", "recentSummary": "150+ tackles, 3.5 sacks, 5 forced fumbles, Super Bowl hero.", "keyMetrics": [{ "label": "Total Tackles", "val": "151", "icon": "💥", "rank": "Top 5 NFL" }, { "label": "Forced Fumbles", "val": "5 FF", "icon": "🔥", "rank": "#1 LB" }], "verdictAnalysis": "Baun surged into a First-Team All-Pro force in every phase at linebacker." }
+  },
+  {
+    "id": "123", "name": "Nick Bolton", "position": "LB", "positionCategory": "DEF", "team": "Kansas City Chiefs", "jersey": "32", "college": "Missouri",
+    "rating": 90, "touchdowns": 1, "tdType": "Super Bowl Scoop & Score", "blocks": 53, "blockType": "Thumper Run Stops", "totalScore": 141, "passingYds": 0, "speedScore": 85,
+    "signaturePlay": "36-yard Super Bowl LVII fumble recovery touchdown scoop-and-score.",
+    "highlightMoments": ["Super Bowl LVII scoop-and-score touchdown", "2x Super Bowl Champion defensive signal-caller", "180-tackle single-season Chiefs record"],
+    "specialStat": "2x Super Bowl Champ • Defensive Green Dot • Missouri Alum",
+    "tdDetails": "1 Super Bowl Fumble Return TD", "blockDetails": "53 Heavy downhill thumps",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4362759.png",
+    "doingRightNow": { "statusBadge": "🏆 2x CHAMP SIGNAL CALLER", "formRating": 91, "trend": "Run-Defense Brain 🧠", "headline": "Calling every adjustment for Steve Spagnuolo's championship defense.", "recentSummary": "Relentless inside tackling and playoff reliability.", "keyMetrics": [{ "label": "Super Bowls", "val": "2x Winner", "icon": "🏆", "rank": "Dynasty" }, { "label": "Tackles / Yr", "val": "106+ Tackles", "icon": "💥", "rank": "Core" }], "verdictAnalysis": "Bolton is the heartbeat of Kansas City's championship defense." }
+  },
+  {
+    "id": "124", "name": "Jack Campbell", "position": "LB", "positionCategory": "DEF", "team": "Detroit Lions", "jersey": "46", "college": "Iowa",
+    "rating": 89, "touchdowns": 0, "tdType": "131-Tackle Enforcer", "blocks": 50, "blockType": "Gap-Stuffing Sheds", "totalScore": 135, "passingYds": 0, "speedScore": 86,
+    "signaturePlay": "6-foot-5 middle linebacker exploding downhill to drop RBs behind the line.",
+    "highlightMoments": ["Butkus Award winner anchoring Detroit's #1 NFC defense", "131 tackles in sophomore breakout", "Swatting tight-end seams with 6'5 frame"],
+    "specialStat": "131 Tackles • Butkus Winner • Iowa Linebacker U",
+    "tdDetails": "0 Touchdowns (Detroit middle linebacker)", "blockDetails": "50 Physical fullback collisions",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4569465.png",
+    "doingRightNow": { "statusBadge": "🦁 LIONS DEFENSE ANCHOR", "formRating": 90, "trend": "Breakout MIKE LB 📈", "headline": "Commanding the middle of Detroit's defense with massive wingspan and tackle radius.", "recentSummary": "Over 130 tackles and top-tier run-fit efficiency.", "keyMetrics": [{ "label": "Total Tackles", "val": "131", "icon": "💥", "rank": "Team Leader" }, { "label": "Pass Deflections", "val": "5 PBUs", "icon": "🛡️", "rank": "6'5 Frame" }], "verdictAnalysis": "Campbell brings old-school Butkus toughness with modern sideline speed." }
+  },
+  {
+    "id": "125", "name": "Christian Gonzalez", "position": "CB", "positionCategory": "DEF", "team": "New England Patriots", "jersey": "0", "college": "Oregon",
+    "rating": 92, "touchdowns": 1, "tdType": "1 Fumble Ret TD", "blocks": 22, "blockType": "Press Jam & PBUs", "totalScore": 144, "passingYds": 0, "speedScore": 95,
+    "signaturePlay": "Shadowing the NFL's #1 wideouts step-for-step with effortless 6'1 length.",
+    "highlightMoments": ["Second-Team All-Pro shutdown cornerback in Year 2", "Holding elite WR1s under 40 yards in shadow coverage", "63-yard fumble return touchdown sprint"],
+    "specialStat": "All-Pro Shutdown CB • 95 Speed • Oregon Alum",
+    "tdDetails": "1 Defensive Fumble Touchdown", "blockDetails": "22 Press-coverage jams & 11 PBUs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/4686772.png",
+    "doingRightNow": { "statusBadge": "🔒 ALL-PRO SHADOW CB", "formRating": 94, "trend": "Lockdown Island 📈", "headline": "Erasing opponent #1 receivers week after week in solo press-man coverage.", "recentSummary": "Earned All-Pro honors allowing one of the lowest passer ratings in football.", "keyMetrics": [{ "label": "All-Pro", "val": "All-Pro CB", "icon": "🏆", "rank": "Top 5 CB" }, { "label": "Completion %", "val": "< 54%", "icon": "🔒", "rank": "Shutdown" }], "verdictAnalysis": "Gonzalez has the size, fluid hips, and recovery speed of an elite shadow corner." }
+  },
+  {
+    "id": "126", "name": "Denzel Ward", "position": "CB", "positionCategory": "DEF", "team": "Cleveland Browns", "jersey": "21", "college": "Ohio State",
+    "rating": 92, "touchdowns": 2, "tdType": "Pick-Six Specialist", "blocks": 26, "blockType": "19 PBUs & Jams", "totalScore": 146, "passingYds": 0, "speedScore": 96,
+    "signaturePlay": "4.32-speed recovery closing on deep slants for league-leading 19 PBUs.",
+    "highlightMoments": ["4x Pro Bowl shutdown cornerback", "Led the NFL with 19 passes defended", "Two-time pick-six hero including 99-yard sprint"],
+    "specialStat": "4x Pro Bowl • 19 PBUs Leader • Ohio State Alum",
+    "tdDetails": "2 Career Defensive Touchdowns", "blockDetails": "26 Screen tackles & 19 PBUs",
+    "img": "https://a.espncdn.com/i/headshots/nfl/players/full/3915535.png",
+    "doingRightNow": { "statusBadge": "⚡ PASSES DEFENDED KING", "formRating": 92, "trend": "4x Pro Bowl Star 🔒", "headline": "Leading the NFL in passes defended with blazing mirror coverage.", "recentSummary": "19 pass breakups and relentless sticky man coverage.", "keyMetrics": [{ "label": "Passes Defended", "val": "19 PBUs", "icon": "🔒", "rank": "#1 NFL" }, { "label": "Pro Bowls", "val": "4x Selection", "icon": "🏆", "rank": "Elite" }], "verdictAnalysis": "Ward's elite burst allows him to contest every throw in man coverage." }
   }
 ];
 
@@ -6612,6 +7234,7 @@
     let players = realNFLPlayers;
     let currentHighlightPlayerIndex = 0;
 
+    let savedRosters = JSON.parse(localStorage.getItem('fp_rosters')) || [];
     let signupSelectedTeam = 'SF';
     let signupLogoConfFilter = 'ALL';
     let modalLogoConfFilter = 'ALL';
@@ -6631,6 +7254,8 @@
       renderColleges();
       renderPositionTabs();
       populateCompareDropdowns();
+      populateRosterSelectors();
+      renderRosterList();
 
       const hlModal = document.getElementById('highlight-modal');
       if (hlModal) {
@@ -6659,6 +7284,10 @@
       if(viewName === 'compare') renderComparison();
       if(viewName === 'colleges') renderColleges();
       if(viewName === 'directory') renderDirectory();
+      if(viewName === 'rosters') {
+        populateRosterSelectors();
+        renderRosterList();
+      }
       window.scrollTo(0, 0);
     }
 
@@ -8070,6 +8699,317 @@
       return (str || '').replace(/[&<>"']/g, function(m) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
       });
+    }
+
+    // --- VIEW 6: ROSTER BUILDER (23-MAN CUSTOM NFL FRANCHISE CREATOR) ---
+    const rosterSlotConfig = [
+      { id: 'roster-qb',    key: 'qb',    label: 'QB',    roles: ['QB'],                defaultIdx: 0 },
+      { id: 'roster-rb',    key: 'rb',    label: 'RB1',   roles: ['RB'],                defaultIdx: 0 },
+      { id: 'roster-rb2',   key: 'rb2',   label: 'RB2/FB',roles: ['RB', 'FB'],          defaultIdx: 2 },
+      { id: 'roster-wr',    key: 'wr',    label: 'WR1',   roles: ['WR'],                defaultIdx: 0 },
+      { id: 'roster-wr2',   key: 'wr2',   label: 'WR2',   roles: ['WR'],                defaultIdx: 1 },
+      { id: 'roster-wr3',   key: 'wr3',   label: 'WR3',   roles: ['WR'],                defaultIdx: 2 },
+      { id: 'roster-te',    key: 'te',    label: 'TE',    roles: ['TE'],                defaultIdx: 0 },
+      { id: 'roster-ot',    key: 'ot',    label: 'LT',    roles: ['OT'],                defaultIdx: 0 },
+      { id: 'roster-og',    key: 'og',    label: 'LG',    roles: ['OG'],                defaultIdx: 0 },
+      { id: 'roster-c',     key: 'c',     label: 'C',     roles: ['C'],                 defaultIdx: 0 },
+      { id: 'roster-rg',    key: 'rg',    label: 'RG',    roles: ['OG'],                defaultIdx: 1 },
+      { id: 'roster-rt',    key: 'rt',    label: 'RT',    roles: ['OT'],                defaultIdx: 1 },
+      { id: 'roster-dl',    key: 'dl',    label: 'EDGE1', roles: ['EDGE'],              defaultIdx: 0 },
+      { id: 'roster-edge2', key: 'edge2', label: 'EDGE2', roles: ['EDGE'],              defaultIdx: 1 },
+      { id: 'roster-dt1',   key: 'dt1',   label: 'DT1',   roles: ['DT'],                defaultIdx: 0 },
+      { id: 'roster-dt2',   key: 'dt2',   label: 'DT2',   roles: ['DT'],                defaultIdx: 1 },
+      { id: 'roster-lb1',   key: 'lb1',   label: 'LB1',   roles: ['LB'],                defaultIdx: 0 },
+      { id: 'roster-lb2',   key: 'lb2',   label: 'LB2',   roles: ['LB'],                defaultIdx: 1 },
+      { id: 'roster-db',    key: 'db',    label: 'CB1',   roles: ['CB'],                defaultIdx: 0 },
+      { id: 'roster-cb2',   key: 'cb2',   label: 'CB2',   roles: ['CB'],                defaultIdx: 1 },
+      { id: 'roster-s',     key: 's',     label: 'S',     roles: ['S'],                 defaultIdx: 0 },
+      { id: 'roster-st',    key: 'st',    label: 'K',     roles: ['K'],                 defaultIdx: 0 },
+      { id: 'roster-p',     key: 'p',     label: 'P/LS',  roles: ['P', 'LS'],           defaultIdx: 0 }
+    ];
+
+    function findPlayerByNameOrFallback(name, roles, fallbackIdx = 0) {
+      if (name) {
+        const exact = players.find(p => p.name === name);
+        if (exact) return exact;
+      }
+      const eligible = players
+        .filter(p => roles.includes(p.position))
+        .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      if (eligible.length) {
+        return eligible[fallbackIdx % eligible.length];
+      }
+      return players[0];
+    }
+
+    function populateRosterSelectors() {
+      rosterSlotConfig.forEach(slot => {
+        const select = document.getElementById(slot.id);
+        if (!select) return;
+        const previousVal = select.value;
+        const eligible = players
+          .filter(p => slot.roles.includes(p.position))
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        select.innerHTML = eligible.map(p => {
+          const teamObj = getTeamByPlayerTeamName(p.team);
+          return `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${p.position} · ${teamObj.abbr} · OVR ${p.rating})</option>`;
+        }).join('');
+
+        if (previousVal && eligible.some(p => p.name === previousVal)) {
+          select.value = previousVal;
+        } else if (eligible.length) {
+          select.selectedIndex = (slot.defaultIdx || 0) % eligible.length;
+        }
+      });
+      updateRosterLivePreview();
+    }
+
+    function getDraftedPlayersFromForm() {
+      return rosterSlotConfig.map(slot => {
+        const el = document.getElementById(slot.id);
+        const val = el ? el.value : '';
+        const player = findPlayerByNameOrFallback(val, slot.roles, slot.defaultIdx || 0);
+        return { slot, player };
+      });
+    }
+
+    function updateRosterLivePreview() {
+      const drafted = getDraftedPlayersFromForm();
+      const ovrBadge = document.getElementById('roster-draft-ovr-badge');
+      const statsEl = document.getElementById('roster-preview-stats');
+      const avatarsEl = document.getElementById('roster-preview-avatars');
+      if (!drafted.length) return;
+
+      const avgOvr = Math.round(drafted.reduce((sum, item) => sum + (item.player.rating || 85), 0) / drafted.length);
+      const totalTds = drafted.reduce((sum, item) => sum + (item.player.touchdowns || 0), 0);
+      const totalBlocks = drafted.reduce((sum, item) => sum + (item.player.blocks || 0), 0);
+
+      if (ovrBadge) ovrBadge.textContent = `TEAM OVR ${avgOvr}`;
+      if (statsEl) statsEl.textContent = `${drafted.length} Players · ${totalTds} TDs · ${totalBlocks} Blocks`;
+      if (avatarsEl) {
+        avatarsEl.innerHTML = drafted.map(({ slot, player }) => `
+          <div class="roster-mini-slot" onclick="openHighlightModal('${player.id}')" title="View ${escapeHtml(player.name)} highlight card">
+            <div class="roster-mini-avatar">
+              <img src="${player.img}" alt="${escapeHtml(player.name)}" referrerpolicy="no-referrer" onerror="this.src='https://a.espncdn.com/i/headshots/nfl/players/full/3139477.png'">
+            </div>
+            <div>
+              <span style="font-size:0.65rem; font-weight:800; color:var(--accent); display:block; line-height:1;">${slot.label}</span>
+              <span style="font-weight:700; color:var(--text-main);">${escapeHtml(player.name.split(' ').slice(-1)[0])}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function autoDraftRoster() {
+      const teamPrefixes = ['Gridiron', 'Championship', 'Sunday Night', 'Emerald', 'Blitz', 'Dynasty', 'Primetime', 'Playoff'];
+      const teamMascots = ['Titans', 'Legends', 'All-Stars', 'Vipers', 'Juggernauts', 'Captains', 'Champions', 'Eagles'];
+      const nameInput = document.getElementById('roster-name');
+      if (nameInput && !document.getElementById('roster-edit-id').value) {
+        const p1 = teamPrefixes[Math.floor(Math.random() * teamPrefixes.length)];
+        const p2 = teamMascots[Math.floor(Math.random() * teamMascots.length)];
+        nameInput.value = `${p1} ${p2}`;
+      }
+
+      const usedNames = new Set();
+      rosterSlotConfig.forEach(slot => {
+        const select = document.getElementById(slot.id);
+        if (!select || !select.options.length) return;
+        const availableOpts = [...select.options].filter(opt => !usedNames.has(opt.value));
+        const pool = availableOpts.length ? availableOpts : [...select.options];
+        const chosen = pool[Math.floor(Math.random() * pool.length)];
+        select.value = chosen.value;
+        usedNames.add(chosen.value);
+      });
+      updateRosterLivePreview();
+      showToast('Auto-drafted a full 23-player NFL roster!');
+    }
+
+    function handleSaveRoster(e) {
+      e.preventDefault();
+      const editId = document.getElementById('roster-edit-id').value;
+      const name = (document.getElementById('roster-name').value || '').trim();
+      if (!name) return;
+
+      const drafted = getDraftedPlayersFromForm();
+      const avgOvr = Math.round(drafted.reduce((sum, item) => sum + (item.player.rating || 85), 0) / drafted.length);
+
+      const rosterEntry = {
+        id: editId || String(Date.now()),
+        name: name,
+        notes: (document.getElementById('roster-notes').value || '').trim(),
+        teamOvr: avgOvr,
+        owner: currentUser || 'Fan',
+        updatedAt: new Date().toLocaleDateString()
+      };
+      rosterSlotConfig.forEach(slot => {
+        const el = document.getElementById(slot.id);
+        if (el) rosterEntry[slot.key] = el.value;
+      });
+
+      if (editId) {
+        const idx = savedRosters.findIndex(r => r.id === editId);
+        if (idx !== -1) {
+          savedRosters[idx] = rosterEntry;
+        } else {
+          savedRosters.unshift(rosterEntry);
+        }
+        showToast(`Updated 23-man roster "${name}"!`);
+      } else {
+        savedRosters.unshift(rosterEntry);
+        showToast(`Saved 23-man custom team "${name}"!`);
+      }
+
+      localStorage.setItem('fp_rosters', JSON.stringify(savedRosters));
+      resetRosterForm();
+      renderRosterList();
+    }
+
+    function editRoster(id) {
+      const r = savedRosters.find(item => item.id === id);
+      if (!r) return;
+
+      document.getElementById('roster-edit-id').value = r.id;
+      document.getElementById('roster-name').value = r.name || '';
+      document.getElementById('roster-notes').value = r.notes || '';
+
+      rosterSlotConfig.forEach(slot => {
+        const el = document.getElementById(slot.id);
+        if (el) {
+          const matched = findPlayerByNameOrFallback(r[slot.key], slot.roles, slot.defaultIdx || 0);
+          el.value = matched.name;
+        }
+      });
+
+      document.getElementById('roster-form-title').textContent = `Editing: ${r.name}`;
+      document.getElementById('roster-save-btn').textContent = 'Update 23-Man Roster';
+      document.getElementById('roster-cancel-btn').style.display = 'inline-flex';
+      updateRosterLivePreview();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteRoster(id) {
+      const target = savedRosters.find(r => r.id === id);
+      savedRosters = savedRosters.filter(r => r.id !== id);
+      localStorage.setItem('fp_rosters', JSON.stringify(savedRosters));
+      if (document.getElementById('roster-edit-id').value === id) {
+        resetRosterForm();
+      }
+      renderRosterList();
+      showToast(target ? `Deleted roster "${target.name}".` : 'Roster deleted.');
+    }
+
+    function resetRosterForm() {
+      const form = document.getElementById('roster-form');
+      if (form) form.reset();
+      document.getElementById('roster-edit-id').value = '';
+      document.getElementById('roster-form-title').textContent = 'Create New 23-Man Roster';
+      document.getElementById('roster-save-btn').textContent = 'Save 23-Man Roster';
+      document.getElementById('roster-cancel-btn').style.display = 'none';
+      populateRosterSelectors();
+    }
+
+    function renderRosterList() {
+      const list = document.getElementById('roster-list');
+      const countEl = document.getElementById('roster-saved-count');
+      if (!list) return;
+
+      if (countEl) {
+        countEl.textContent = `${savedRosters.length} ${savedRosters.length === 1 ? 'Team' : 'Teams'}`;
+      }
+
+      if (savedRosters.length === 0) {
+        list.innerHTML = `
+          <div class="card" style="text-align:center; padding: 2.25rem 1.5rem;">
+            <div style="font-size: 2.25rem; margin-bottom: 0.5rem;">📋🏈</div>
+            <h4>No Custom Rosters Saved Yet</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 440px; margin: 0.5rem auto 1.15rem;">
+              Pick all 23 starters — QB, RB1/RB2, WR1/WR2/WR3, TE, full 5-man Offensive Line (LT, LG, C, RG, RT), 9-man Defense, and Special Teams — to build your NFL franchise.
+            </p>
+            <button type="button" class="btn btn-accent btn-sm" onclick="autoDraftRoster()">⚡ Auto-Draft a 23-Man Lineup Now</button>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = savedRosters.map(r => {
+        const slotPlayers = rosterSlotConfig.map(slot => {
+          const p = findPlayerByNameOrFallback(r[slot.key], slot.roles, slot.defaultIdx || 0);
+          return { slot, p };
+        });
+        const avgOvr = r.teamOvr || Math.round(slotPlayers.reduce((sum, item) => sum + (item.p.rating || 85), 0) / slotPlayers.length);
+
+        return `
+          <div class="card" style="margin-bottom: 0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; flex-wrap:wrap;">
+              <div>
+                <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+                  <h4 style="font-size:1.15rem; margin:0;">${escapeHtml(r.name)}</h4>
+                  <span class="badge badge-accent tabular-num">OVR ${avgOvr}</span>
+                  <span class="badge">23 Players</span>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.25rem;">
+                  Coach: ${escapeHtml(r.owner || 'Fan')} &middot; Saved ${escapeHtml(r.updatedAt || 'Today')}
+                </p>
+              </div>
+              <div style="display:flex; gap:0.4rem;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="editRoster('${r.id}')">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoster('${r.id}')">Delete</button>
+              </div>
+            </div>
+
+            <div class="roster-lineup-grid">
+              ${slotPlayers.map(({ slot, p }) => `
+                <div class="roster-slot-pill" onclick="openHighlightModal('${p.id}')" title="Click to open ${escapeHtml(p.name)}'s highlight card">
+                  <div class="roster-mini-avatar" style="width:32px; height:32px;">
+                    <img src="${p.img}" alt="${escapeHtml(p.name)}" referrerpolicy="no-referrer" onerror="this.src='https://a.espncdn.com/i/headshots/nfl/players/full/3139477.png'">
+                  </div>
+                  <div style="min-width:0; flex:1;">
+                    <div style="font-size:0.65rem; font-weight:800; color:var(--accent); text-transform:uppercase;">${slot.label} · ${p.position}</div>
+                    <div style="font-size:0.82rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name)}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            ${r.notes ? `
+              <div class="signature-play-box" style="margin:0.5rem 0 0;">
+                <strong>Strategy Notes:</strong> ${escapeHtml(r.notes)}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function exportRostersCSV() {
+      if (!savedRosters.length) {
+        showToast('Save at least one custom roster before exporting CSV!');
+        return;
+      }
+
+      const csvEscape = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
+      const headers = ['Roster Name', 'Team OVR', ...rosterSlotConfig.map(s => s.label), 'Strategy Notes', 'Saved Date'];
+      const rows = savedRosters.map(r => [
+        r.name,
+        r.teamOvr || '',
+        ...rosterSlotConfig.map(s => findPlayerByNameOrFallback(r[s.key], s.roles, s.defaultIdx || 0).name),
+        r.notes || '',
+        r.updatedAt || ''
+      ].map(csvEscape).join(','));
+
+      const csvContent = [headers.map(csvEscape).join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'football-passion-rosters.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast(`Exported ${savedRosters.length} custom roster(s) to CSV!`);
     }
   </script>
 </body>
