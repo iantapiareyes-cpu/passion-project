@@ -1206,6 +1206,63 @@
       transform: translateY(-1px);
     }
 
+    /* AI Roster Rating Card (Under Saved Rosters / Empty State) */
+    .ai-rating-card {
+      border: 2px solid rgba(255, 184, 0, 0.35);
+      background: linear-gradient(145deg, rgba(16, 48, 28, 0.14), rgba(255, 184, 0, 0.05));
+    }
+    [data-theme="dark"] .ai-rating-card {
+      background: linear-gradient(145deg, rgba(13, 28, 48, 0.88), rgba(18, 44, 30, 0.65));
+    }
+    .ai-unit-pills {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin: 0.9rem 0;
+    }
+    @media (max-width: 640px) {
+      .ai-unit-pills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .ai-unit-pill {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.5rem;
+      text-align: center;
+    }
+    .ai-score-hero {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 184, 0, 0.45);
+      border-radius: 12px;
+      padding: 0.95rem 1.1rem;
+      margin-bottom: 0.9rem;
+    }
+    .ai-score-badge-10 {
+      min-width: 92px;
+      height: 92px;
+      border-radius: 16px;
+      background: radial-gradient(circle at 30% 25%, rgba(255, 184, 0, 0.28), rgba(16, 82, 42, 0.9));
+      border: 2px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+    }
+    .ai-sub-bar-row {
+      display: grid;
+      grid-template-columns: 118px 1fr 48px;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     /* Toast Notification */
     .toast { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: #FFF; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); display: none; z-index: 2000; border: 1px solid rgba(255,255,255,0.2); font-weight: 600; }
 
@@ -1690,6 +1747,54 @@
           </div>
           <div id="roster-list" style="display: flex; flex-direction: column; gap: 1rem;">
             <!-- Saved rosters appear here automatically -->
+          </div>
+
+          <!-- AI TEAM RATING OUT OF 10 (DIRECTLY UNDER SAVED ROSTERS / EMPTY STATE) -->
+          <div class="card ai-rating-card" id="ai-roster-rating-card" style="margin-top: 1.15rem; margin-bottom: 0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
+              <div>
+                <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+                  <h3 style="margin:0;">🤖 AI Team Rating (Out of 10)</h3>
+                  <span class="badge badge-accent" id="ai-rating-target-badge">Current Draft Team</span>
+                </div>
+                <p style="font-size:0.84rem; color:var(--text-muted); margin-top:0.28rem;">
+                  Live unit snapshot + full AI General Manager scouting report and score out of 10 for the team you made.
+                </p>
+              </div>
+              <button type="button" class="btn btn-accent btn-sm" id="ai-rate-draft-btn" onclick="rateCurrentDraftWithAI()">
+                🤖 Rate Team /10 with AI
+              </button>
+            </div>
+
+            <!-- Live Draft Unit Snapshot -->
+            <div class="ai-unit-pills" id="ai-live-unit-pills">
+              <div class="ai-unit-pill">
+                <span style="display:block; font-size:0.64rem; color:var(--text-muted); font-weight:800; text-transform:uppercase;">Offense</span>
+                <strong id="unit-score-offense" class="tabular-num" style="font-size:1.15rem; color:var(--accent);">9.5/10</strong>
+              </div>
+              <div class="ai-unit-pill">
+                <span style="display:block; font-size:0.64rem; color:var(--text-muted); font-weight:800; text-transform:uppercase;">5-Man O-Line</span>
+                <strong id="unit-score-oline" class="tabular-num" style="font-size:1.15rem; color:#10B981;">9.5/10</strong>
+              </div>
+              <div class="ai-unit-pill">
+                <span style="display:block; font-size:0.64rem; color:var(--text-muted); font-weight:800; text-transform:uppercase;">Defense</span>
+                <strong id="unit-score-defense" class="tabular-num" style="font-size:1.15rem; color:#38BDF8;">9.5/10</strong>
+              </div>
+              <div class="ai-unit-pill">
+                <span style="display:block; font-size:0.64rem; color:var(--text-muted); font-weight:800; text-transform:uppercase;">Special Teams</span>
+                <strong id="unit-score-st" class="tabular-num" style="font-size:1.15rem; color:var(--text-main);">9.2/10</strong>
+              </div>
+            </div>
+
+            <!-- AI Scouting Evaluation Output -->
+            <div id="ai-roster-rating-result">
+              <div style="background:var(--input-bg); border:1px dashed var(--border); border-radius:10px; padding:1rem; text-align:center;">
+                <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:0.75rem;">
+                  Pick any QB, Linemen, Defense, and Specialists on the left — then press <strong>🤖 Rate Team /10 with AI</strong> to get an official AI rating out of 10, letter grade, MVP pick, and playoff prediction!
+                </p>
+                <button type="button" class="btn btn-outline btn-sm" onclick="rateCurrentDraftWithAI()">✨ Get My AI Team Score (/10)</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -9058,6 +9163,182 @@
           </div>
         `).join('');
       }
+      updateDraftUnitSnapshot(drafted);
+    }
+
+    function updateDraftUnitSnapshot(drafted) {
+      if (!drafted || !drafted.length) return;
+      const avgOut10 = (items) => {
+        if (!items.length) return '0.0';
+        const avg = items.reduce((s, x) => s + (x.player.rating || 85), 0) / items.length;
+        return Math.min(10, Math.max(1, avg / 10)).toFixed(1);
+      };
+      const offSlots = drafted.filter(d => ['qb', 'rb', 'rb2', 'wr', 'wr2', 'wr3', 'te'].includes(d.slot.key));
+      const olSlots  = drafted.filter(d => ['ot', 'og', 'c', 'rg', 'rt'].includes(d.slot.key));
+      const defSlots = drafted.filter(d => ['dl', 'edge2', 'dt1', 'dt2', 'lb1', 'lb2', 'db', 'cb2', 's'].includes(d.slot.key));
+      const stSlots  = drafted.filter(d => ['st', 'p'].includes(d.slot.key));
+
+      const offEl = document.getElementById('unit-score-offense');
+      const olEl  = document.getElementById('unit-score-oline');
+      const defEl = document.getElementById('unit-score-defense');
+      const stEl  = document.getElementById('unit-score-st');
+      if (offEl) offEl.textContent = `${avgOut10(offSlots)}/10`;
+      if (olEl)  olEl.textContent  = `${avgOut10(olSlots)}/10`;
+      if (defEl) defEl.textContent = `${avgOut10(defSlots)}/10`;
+      if (stEl)  stEl.textContent  = `${avgOut10(stSlots)}/10`;
+    }
+
+    function renderAIRatingResult(teamLabel, rating) {
+      const box = document.getElementById('ai-roster-rating-result');
+      const targetBadge = document.getElementById('ai-rating-target-badge');
+      if (targetBadge) targetBadge.textContent = teamLabel || 'Current Draft Team';
+      if (!box || !rating) return;
+
+      const score = Number(rating.scoreOutOf10 || 0).toFixed(1);
+      const subUnits = [
+        { label: 'Offense', val: Number(rating.offenseRating || 0) },
+        { label: '5-Man O-Line', val: Number(rating.oLineRating || 0) },
+        { label: 'Defense', val: Number(rating.defenseRating || 0) },
+        { label: 'Special Teams', val: Number(rating.specialTeamsRating || 0) },
+      ];
+      const strengths = Array.isArray(rating.strengths) ? rating.strengths : [];
+      const improvements = Array.isArray(rating.improvements) ? rating.improvements : [];
+
+      box.innerHTML = `
+        <div class="ai-score-hero">
+          <div class="ai-score-badge-10">
+            <span class="tabular-num" style="font-size:1.75rem; font-weight:900; color:#FFB800; line-height:1;">${score}</span>
+            <span style="font-size:0.7rem; font-weight:800; color:#E2E8F0; text-transform:uppercase; margin-top:2px;">OUT OF 10</span>
+          </div>
+          <div style="flex:1; min-width:210px;">
+            <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap; margin-bottom:0.35rem;">
+              <span class="badge badge-accent">Grade: ${escapeHtml(rating.grade || 'A')}</span>
+              <span class="badge badge-green">🏆 ${escapeHtml(rating.championshipOutlook || 'Playoff Contender')}</span>
+            </div>
+            <h4 style="margin:0 0 0.3rem; font-size:1.05rem;">${escapeHtml(rating.headline || 'Championship-Caliber Custom Roster')}</h4>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+              <strong>🌟 Team MVP:</strong> ${escapeHtml(rating.mvpPick || '')}
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.45rem; margin-bottom:0.95rem;">
+          ${subUnits.map(u => {
+            const pct = Math.max(5, Math.min(100, (u.val / 10) * 100));
+            return `
+              <div class="ai-sub-bar-row">
+                <span style="color:var(--text-muted);">${u.label}</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%;"></div></div>
+                <span class="tabular-num" style="text-align:right; color:var(--accent);">${u.val.toFixed(1)}/10</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="grid-2" style="gap:0.75rem;">
+          <div style="background:var(--input-bg); border:1px solid rgba(16,185,129,0.35); border-radius:8px; padding:0.75rem;">
+            <div style="font-size:0.75rem; font-weight:800; color:#10B981; text-transform:uppercase; margin-bottom:0.4rem;">✅ Top Strengths</div>
+            <ul style="padding-left:1.05rem; margin:0; font-size:0.82rem; display:flex; flex-direction:column; gap:0.3rem;">
+              ${strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+            </ul>
+          </div>
+          <div style="background:var(--input-bg); border:1px solid rgba(255,184,0,0.35); border-radius:8px; padding:0.75rem;">
+            <div style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; margin-bottom:0.4rem;">📈 Areas to Watch / Upgrade</div>
+            <ul style="padding-left:1.05rem; margin:0; font-size:0.82rem; display:flex; flex-direction:column; gap:0.3rem;">
+              ${improvements.map(w => `<li>${escapeHtml(w)}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    async function requestAIRosterEvaluation(teamName, notes, draftedList, savedId = null) {
+      const box = document.getElementById('ai-roster-rating-result');
+      const btn = document.getElementById('ai-rate-draft-btn');
+      const targetBadge = document.getElementById('ai-rating-target-badge');
+      const label = teamName || 'Current Draft Team';
+      if (targetBadge) targetBadge.textContent = label;
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '🤖 Rating Team...';
+      }
+      if (box) {
+        box.innerHTML = `
+          <div style="background:var(--input-bg); border:1px solid rgba(255,184,0,0.35); border-radius:10px; padding:1.15rem; text-align:center;">
+            <div style="font-size:1.5rem; margin-bottom:0.35rem;">🤖🏈</div>
+            <strong style="display:block; margin-bottom:0.25rem;">Scouting "${escapeHtml(label)}"...</strong>
+            <span style="font-size:0.82rem; color:var(--text-muted);">AI GM is grading all 23 starters, O-Line trenches, defense, and special teams out of 10.</span>
+          </div>
+        `;
+      }
+
+      try {
+        const res = await fetch('/api/rate-roster', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teamName: label,
+            notes: notes || '',
+            players: draftedList.map(({ slot, player }) => ({
+              slot: slot.label,
+              name: player.name,
+              position: player.position,
+              team: player.team,
+              rating: player.rating,
+              touchdowns: player.touchdowns,
+              blocks: player.blocks,
+            }))
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.rating) {
+          throw new Error(data.error || `Request failed (${res.status})`);
+        }
+
+        renderAIRatingResult(label, data.rating);
+
+        if (savedId) {
+          const idx = savedRosters.findIndex(r => r.id === savedId);
+          if (idx !== -1) {
+            savedRosters[idx].aiRating = data.rating;
+            localStorage.setItem('fp_rosters', JSON.stringify(savedRosters));
+            renderRosterList();
+          }
+        }
+        showToast(`AI rated "${label}" ${Number(data.rating.scoreOutOf10).toFixed(1)} / 10!`);
+      } catch (err) {
+        if (box) {
+          box.innerHTML = `
+            <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.45); border-radius:10px; padding:1rem; font-size:0.86rem;">
+              <strong style="color:#EF4444; display:block; margin-bottom:0.25rem;">Unable to generate AI Team Rating</strong>
+              <span style="color:var(--text-main);">${escapeHtml(err.message || 'Please try again.')}</span>
+            </div>
+          `;
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '🤖 Rate Team /10 with AI';
+        }
+      }
+    }
+
+    function rateCurrentDraftWithAI() {
+      const drafted = getDraftedPlayersFromForm();
+      const rawName = (document.getElementById('roster-name')?.value || '').trim();
+      const notes = (document.getElementById('roster-notes')?.value || '').trim();
+      requestAIRosterEvaluation(rawName || 'My Custom 23-Man Team', notes, drafted, null);
+    }
+
+    function rateSavedRosterWithAI(id) {
+      const r = savedRosters.find(item => item.id === id);
+      if (!r) return;
+      const drafted = rosterSlotConfig.map(slot => ({
+        slot,
+        player: findPlayerByNameOrFallback(r[slot.key], slot.roles, slot.defaultIdx || 0)
+      }));
+      requestAIRosterEvaluation(r.name, r.notes, drafted, r.id);
     }
 
     function autoDraftRoster() {
@@ -9205,13 +9486,15 @@
                 <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
                   <h4 style="font-size:1.15rem; margin:0;">${escapeHtml(r.name)}</h4>
                   <span class="badge badge-accent tabular-num">OVR ${avgOvr}</span>
+                  ${r.aiRating ? `<span class="badge badge-green tabular-num">🤖 AI ${Number(r.aiRating.scoreOutOf10).toFixed(1)}/10 (${escapeHtml(r.aiRating.grade || 'A')})</span>` : ''}
                   <span class="badge">23 Players</span>
                 </div>
                 <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.25rem;">
                   Coach: ${escapeHtml(r.owner || 'Fan')} &middot; Saved ${escapeHtml(r.updatedAt || 'Today')}
                 </p>
               </div>
-              <div style="display:flex; gap:0.4rem;">
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <button type="button" class="btn btn-accent btn-sm" onclick="rateSavedRosterWithAI('${r.id}')">🤖 AI Rate /10</button>
                 <button type="button" class="btn btn-outline btn-sm" onclick="editRoster('${r.id}')">Edit</button>
                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoster('${r.id}')">Delete</button>
               </div>
