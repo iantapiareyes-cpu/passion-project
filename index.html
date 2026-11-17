@@ -432,7 +432,8 @@
       background: #FFB800;
       color: #0B1120;
     }
-    .player-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .player-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: background 0.18s ease; }
+    .player-info:hover { background: rgba(255, 184, 0, 0.06); }
     .player-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem; }
 
     /* Direct Stat Boxes (Touchdowns, Blocks, Score) */
@@ -828,11 +829,84 @@
       min-height: 240px;
     }
     .hl-hero-photo {
-      height: 255px;
+      width: 100%;
+      max-width: 720px;
+      height: 295px;
+      object-fit: cover;
+      object-position: center 22%;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 184, 0, 0.4);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.92);
+      transition: transform 0.25s ease, opacity 0.2s ease;
+    }
+    .hl-hero-photo.portrait-mode {
+      width: auto;
       max-width: 92%;
+      height: 255px;
       object-fit: contain;
+      object-position: bottom center;
+      border: none;
+      box-shadow: none;
       filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.92));
-      transition: transform 0.25s ease;
+    }
+    .hl-gallery-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hl-gallery-strip {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .hl-thumb-btn {
+      position: relative;
+      width: 76px;
+      height: 48px;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      background: rgba(5, 14, 24, 0.85);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .hl-thumb-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+    .hl-thumb-btn.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 14px rgba(255, 184, 0, 0.45);
+    }
+    .hl-thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+    .hl-thumb-btn.portrait-thumb img {
+      object-fit: contain;
+      object-position: bottom center;
+    }
+    .hl-thumb-tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.72);
+      color: #FFF;
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 1px 2px;
+      line-height: 1.2;
     }
     .hl-stage-bottom-bar {
       position: relative;
@@ -845,7 +919,8 @@
       padding: 1.25rem 1.5rem 1.5rem;
     }
     @media (max-width: 640px) {
-      .hl-hero-photo { height: 210px; }
+      .hl-hero-photo { height: 220px; }
+      .hl-hero-photo.portrait-mode { height: 210px; }
       .hl-picture-center { min-height: 195px; }
       .hl-modal-body { padding: 1rem; }
     }
@@ -1639,7 +1714,7 @@
         </div>
 
         <div class="hl-picture-center">
-          <img id="hl-player-img" class="hl-hero-photo" src="" alt="Player Highlight Picture">
+          <img id="hl-player-img" class="hl-hero-photo" src="" alt="Player Highlight Picture" referrerpolicy="no-referrer">
         </div>
 
         <div class="hl-stage-bottom-bar">
@@ -1647,6 +1722,9 @@
             <div style="display:flex; align-items:center; gap:0.75rem;">
               <div class="profile-avatar-circle" id="hl-team-logo-wrap" style="width:44px; height:44px;">
                 <img id="hl-team-logo-img" src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" alt="Team Logo">
+              </div>
+              <div class="profile-avatar-circle" style="width:44px; height:44px; border-color:var(--accent); background:rgba(8,22,14,0.9);">
+                <img id="hl-player-mini-avatar" src="" alt="Player Portrait" style="width:100%; height:100%; object-fit:contain; object-position:bottom;" referrerpolicy="no-referrer">
               </div>
               <div>
                 <h2 id="hl-player-name" style="font-size:1.55rem; color:#FFF; margin:0; line-height:1.15;">Player Highlights</h2>
@@ -1658,14 +1736,28 @@
               <strong id="hl-player-ovr" style="font-size:1.25rem; color:#FFF;">99</strong>
             </div>
           </div>
-          <div id="hl-signature-caption" style="margin-top:0.65rem; background:rgba(255,184,0,0.12); border:1px solid rgba(255,184,0,0.35); padding:0.5rem 0.78rem; border-radius:8px; font-size:0.85rem; color:#F8FAFC;">
+          <div id="hl-photo-caption-bar" style="margin-top:0.55rem; font-size:0.78rem; color:#E2E8F0; background:rgba(15, 23, 42, 0.72); border:1px solid rgba(255,255,255,0.14); padding:0.4rem 0.7rem; border-radius:6px;">
+            📸 Highlight Picture
+          </div>
+          <div id="hl-signature-caption" style="margin-top:0.5rem; background:rgba(255,184,0,0.12); border:1px solid rgba(255,184,0,0.35); padding:0.5rem 0.78rem; border-radius:8px; font-size:0.85rem; color:#F8FAFC;">
             🎬 Signature Highlight Play
           </div>
         </div>
       </div>
 
-      <!-- 2. STATS, SIGNATURE MOMENTS & YOUTUBE REEL BELOW THE HIGHLIGHT PICTURE -->
+      <!-- 2. HIGHLIGHT GALLERY SWITCHER, STATS & SIGNATURE MOMENTS -->
       <div class="hl-modal-body">
+        <div class="hl-gallery-bar">
+          <div style="display:flex; flex-direction:column; gap:0.35rem; flex:1;">
+            <span style="font-size:0.74rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.4px;">📸 Found Highlight Pictures (Click to Switch)</span>
+            <div id="hl-gallery-thumbs" class="hl-gallery-strip"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.25rem;">
+            <button type="button" class="btn btn-outline btn-sm" id="hl-find-more-btn" onclick="findLiveHighlightPhotosForCurrent(true)">🔍 Find More Highlight Pics</button>
+            <span id="hl-live-status" style="font-size:0.72rem; color:var(--text-muted);"></span>
+          </div>
+        </div>
+
         <div id="hl-quick-stats" class="stat-badge-grid" style="margin-top:0;"></div>
 
         <!-- Highlight Details & External Link -->
@@ -1812,6 +1904,7 @@
     <p>Football Passion &copy; 2026 &middot; NFL Superstars, Head-to-Head Matchups &amp; College Pipelines.</p>
   </footer>
 
+  <script src="/src/player-highlights-data.js"></script>
   <script>
     // --- CLEAN FOOTBALL FIELD BACKGROUND CANVAS ---
     const canvas = document.getElementById('field-canvas');
@@ -7450,14 +7543,14 @@
             </div>
           </div>
           
-          <div class="player-info">
+          <div class="player-info" onclick="openHighlightModal('${p.id}')" title="Press to find & view ${p.name}'s highlight picture">
             <div>
               <div class="player-header">
                 <div>
                   <h3 style="font-size: 1.15rem; margin-bottom: 0.2rem;">${p.name}</h3>
                   <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
                     <span style="color:var(--text-muted); font-size:0.85rem;">${p.team}</span>
-                    <span class="badge-college" onclick="filterByCollege('${p.college}')" title="Click to view college" style="cursor:pointer;">🎓 ${p.college}</span>
+                    <span class="badge-college" onclick="event.stopPropagation(); filterByCollege('${p.college}')" title="Click to view college" style="cursor:pointer;">🎓 ${p.college}</span>
                   </div>
                 </div>
               </div>
@@ -7487,15 +7580,15 @@
               </div>
             </div>
 
-            <!-- ACTION BUTTONS: HIGHLIGHTS, STATS, COMPARE -->
+            <!-- ACTION BUTTONS: HIGHLIGHT PICTURE, STATS, COMPARE -->
             <div style="display:flex; gap:0.4rem; margin-top:auto;">
-              <button class="btn btn-accent" style="flex:1; padding:0.45rem 0.5rem; font-size:0.82rem; justify-content:center;" onclick="openHighlightModal('${p.id}')">
-                🎬 Highlights
+              <button class="btn btn-accent" style="flex:1; padding:0.45rem 0.5rem; font-size:0.82rem; justify-content:center;" onclick="event.stopPropagation(); openHighlightModal('${p.id}')">
+                📸 Highlight Picture
               </button>
-              <button class="btn btn-outline" style="padding:0.45rem 0.5rem; font-size:0.82rem;" title="Detailed Scorecard" onclick="openPlayerDetail('${p.id}')">
+              <button class="btn btn-outline" style="padding:0.45rem 0.5rem; font-size:0.82rem;" title="Detailed Scorecard" onclick="event.stopPropagation(); openPlayerDetail('${p.id}')">
                 📊 Stats
               </button>
-              <button class="btn btn-outline" style="padding:0.45rem 0.5rem; font-size:0.82rem;" title="Compare Player Head-to-Head" onclick="compareWithPlayer('${p.id}')">
+              <button class="btn btn-outline" style="padding:0.45rem 0.5rem; font-size:0.82rem;" title="Compare Player Head-to-Head" onclick="event.stopPropagation(); compareWithPlayer('${p.id}')">
                 ⚡ VS
               </button>
             </div>
@@ -7526,6 +7619,154 @@
       document.getElementById('highlight-modal').classList.remove('active');
     }
 
+    const liveHighlightCache = {};
+    let currentHighlightPhotoList = [];
+    let currentHighlightPhotoIdx = 0;
+
+    function getPlayerHighlightPhotos(p) {
+      const stored = (window.playerHighlightPhotos && window.playerHighlightPhotos[p.id]) ? window.playerHighlightPhotos[p.id] : [];
+      const live = liveHighlightCache[p.id] || [];
+      const merged = [];
+      const seen = new Set();
+      [...stored, ...live].forEach(item => {
+        if (!item || !item.url || seen.has(item.url)) return;
+        seen.add(item.url);
+        merged.push({ ...item, isPortrait: false });
+      });
+      merged.push({
+        url: p.img,
+        caption: `${p.name} — Official NFL Player Cutout Portrait`,
+        source: 'Official Portrait',
+        isPortrait: true
+      });
+      return merged;
+    }
+
+    function applySelectedHighlightPhoto(p, photoIdx) {
+      if (!currentHighlightPhotoList.length) return;
+      const safeIdx = Math.max(0, Math.min(photoIdx, currentHighlightPhotoList.length - 1));
+      currentHighlightPhotoIdx = safeIdx;
+      const item = currentHighlightPhotoList[safeIdx];
+
+      const imgEl = document.getElementById('hl-player-img');
+      if (imgEl) {
+        imgEl.className = item.isPortrait ? 'hl-hero-photo portrait-mode' : 'hl-hero-photo';
+        imgEl.onerror = function() {
+          if (this.src !== p.img) {
+            this.className = 'hl-hero-photo portrait-mode';
+            this.src = p.img;
+          }
+        };
+        imgEl.src = item.url;
+        imgEl.alt = `${p.name} Highlight Picture`;
+      }
+
+      const photoCap = document.getElementById('hl-photo-caption-bar');
+      if (photoCap) {
+        const badgeLabel = item.isPortrait ? '🪪 Official Portrait' : `📸 ${item.source || 'Highlight'} Picture`;
+        photoCap.innerHTML = `<strong style="color:var(--accent);">${badgeLabel}:</strong> ${escapeHtml(item.caption || p.signaturePlay || p.name)}`;
+      }
+
+      document.querySelectorAll('.hl-thumb-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === safeIdx);
+      });
+    }
+
+    function renderHighlightThumbs(p) {
+      const strip = document.getElementById('hl-gallery-thumbs');
+      if (!strip) return;
+      strip.innerHTML = currentHighlightPhotoList.map((item, idx) => `
+        <button type="button" class="hl-thumb-btn ${item.isPortrait ? 'portrait-thumb' : ''} ${idx === currentHighlightPhotoIdx ? 'active' : ''}" onclick="selectHighlightPhoto(${idx})" title="${escapeHtml(item.caption || 'Highlight photo')}">
+          <img src="${item.url}" alt="" referrerpolicy="no-referrer" onerror="this.src='${p.img}'">
+          <span class="hl-thumb-tag">${item.isPortrait ? 'Portrait' : `Highlight ${idx + 1}`}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectHighlightPhoto(idx) {
+      const p = players[currentHighlightPlayerIndex];
+      if (!p) return;
+      applySelectedHighlightPhoto(p, idx);
+    }
+
+    async function findLiveHighlightPhotos(p, showResultToast = false) {
+      const statusEl = document.getElementById('hl-live-status');
+      const espnMatch = (p.img || '').match(/\/full\/(\d+)\.png/);
+      const espnId = espnMatch ? espnMatch[1] : null;
+      if (!espnId) {
+        if (statusEl) statusEl.innerText = 'Showing verified highlight photo.';
+        return;
+      }
+
+      if (liveHighlightCache[p.id] && !showResultToast) {
+        if (statusEl) statusEl.innerText = `${Math.max(1, currentHighlightPhotoList.length - 1)} highlight photo(s) ready`;
+        return;
+      }
+
+      if (statusEl) statusEl.innerText = '🔍 Searching live ESPN highlights...';
+      try {
+        const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/news?athlete=${espnId}&limit=10`);
+        if (!res.ok) throw new Error('Network issue');
+        const data = await res.json();
+        const articles = Array.isArray(data.articles) ? data.articles : [];
+        const lastName = p.name.split(' ').slice(-1)[0].toLowerCase().replace(/[^a-z]/g, '');
+        const firstName = p.name.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
+        const fresh = [];
+        const existingUrls = new Set(currentHighlightPhotoList.map(x => x.url));
+
+        for (const a of articles) {
+          for (const im of (a.images || [])) {
+            const url = im.url;
+            if (!url || existingUrls.has(url) || !/\.(jpg|jpeg|png)/i.test(url)) continue;
+            if (url.includes('headshots') || url.includes('teamlogos') || /espnmedia-cdn|akamaized/.test(url)) continue;
+            const cap = (im.caption || a.headline || '').trim();
+            const lower = (cap + ' ' + (a.headline || '')).toLowerCase();
+            if (/injury|injured|investigation|arrest|suspend|concussion|surgery|blood clot/.test(lower)) continue;
+            if (!lower.includes(lastName) && !lower.includes(firstName)) continue;
+            existingUrls.add(url);
+            fresh.push({ url, caption: cap || `${p.name} Live Game Highlight`, source: 'ESPN Live' });
+            if (fresh.length >= 3) break;
+          }
+          if (fresh.length >= 3) break;
+        }
+
+        if (fresh.length > 0) {
+          liveHighlightCache[p.id] = [...(liveHighlightCache[p.id] || []), ...fresh];
+        } else if (!liveHighlightCache[p.id]) {
+          liveHighlightCache[p.id] = [];
+        }
+
+        // Only refresh DOM if user is still viewing the same player
+        const activePlayer = players[currentHighlightPlayerIndex];
+        if (activePlayer && activePlayer.id === p.id) {
+          currentHighlightPhotoList = getPlayerHighlightPhotos(p);
+          renderHighlightThumbs(p);
+          const countActionPics = Math.max(1, currentHighlightPhotoList.length - 1);
+          if (statusEl) {
+            statusEl.innerText = fresh.length > 0
+              ? `✅ Found ${fresh.length} more live highlight pic(s) (${countActionPics} total)`
+              : `✅ ${countActionPics} verified highlight pic(s) loaded`;
+          }
+          if (showResultToast) {
+            if (fresh.length > 0) {
+              applySelectedHighlightPhoto(p, currentHighlightPhotoList.length - 2);
+              showToast(`Found ${fresh.length} more highlight picture(s) for ${p.name}!`);
+            } else {
+              showToast(`Showing all ${countActionPics} verified highlight pictures for ${p.name}.`);
+            }
+          }
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerText = `✅ ${Math.max(1, currentHighlightPhotoList.length - 1)} verified highlight pic(s) ready`;
+      }
+    }
+
+    function findLiveHighlightPhotosForCurrent(forceToast) {
+      const p = players[currentHighlightPlayerIndex];
+      if (!p) return;
+      findLiveHighlightPhotos(p, !!forceToast);
+    }
+
     function renderHighlightTheater(p) {
       const teamObj = getTeamByPlayerTeamName(p.team);
 
@@ -7547,6 +7788,12 @@
         logoImg.alt = teamObj.shortName;
       }
       if (logoWrap) logoWrap.style.borderColor = teamObj.color;
+
+      const miniAvatar = document.getElementById('hl-player-mini-avatar');
+      if (miniAvatar) {
+        miniAvatar.src = p.img;
+        miniAvatar.alt = p.name;
+      }
 
       document.getElementById('hl-player-badge').innerText = p.position;
       const jerseyEl = document.getElementById('hl-player-jersey');
@@ -7585,11 +7832,11 @@
         `;
       }
 
-      const imgEl = document.getElementById('hl-player-img');
-      if(imgEl) {
-        imgEl.src = p.img;
-        imgEl.alt = `${p.name} Highlight Picture`;
-      }
+      currentHighlightPhotoList = getPlayerHighlightPhotos(p);
+      currentHighlightPhotoIdx = 0;
+      renderHighlightThumbs(p);
+      applySelectedHighlightPhoto(p, 0);
+      findLiveHighlightPhotos(p, false);
 
       // Career signature moments list
       const momentsList = document.getElementById('hl-moments-list');
@@ -7735,9 +7982,20 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
               <h3>🎬 Signature Highlights & Best Plays</h3>
               <button type="button" class="btn btn-accent btn-sm" onclick="openHighlightModal('${p.id}')">
-                📸 Open Highlight Picture
+                📸 Open Highlight Gallery
               </button>
             </div>
+            ${(() => {
+              const hl = getPlayerHighlightPhotos(p)[0];
+              return hl ? `
+                <div style="margin-bottom:0.85rem; border-radius:10px; overflow:hidden; border:1px solid rgba(255,184,0,0.35); background:#040e18; cursor:pointer;" onclick="openHighlightModal('${p.id}')">
+                  <img src="${hl.url}" alt="${p.name} Highlight" style="width:100%; height:190px; object-fit:cover; object-position:center 22%; display:block;" referrerpolicy="no-referrer" onerror="this.src='${p.img}'">
+                  <div style="padding:0.45rem 0.7rem; font-size:0.76rem; color:#E2E8F0; background:rgba(4,12,22,0.92);">
+                    <strong style="color:var(--accent);">📸 Highlight Picture:</strong> ${escapeHtml(hl.caption || p.signaturePlay)}
+                  </div>
+                </div>
+              ` : '';
+            })()}
             <div class="signature-play-box" style="margin-bottom:0.85rem;">
               <strong>🔥 Top Signature Play:</strong> ${p.signaturePlay}
             </div>
